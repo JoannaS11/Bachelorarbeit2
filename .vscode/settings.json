@@ -1,5 +1,12 @@
 {
+    
+    "python.pythonPath": "C:\\Users\\joann\\anaconda3\\envs\\BA-mA\\python.exe",
+    "python.terminal.activateEnvironment": true,
+    "terminal.integrated.shell.windows": "C:\\Windows\\System32\\cmd.exe",
+    
     "files.associations": {
         "plyconfig.json": "jsonc"
+        
     }
+    
 }
