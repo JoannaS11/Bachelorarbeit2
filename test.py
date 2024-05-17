@@ -18,7 +18,7 @@ def extract_medial_axis(point_cloud, init):
               down_sample=-1,
               filter_nb_neighbors=20,
               filter_std_ratio=2.0,
-              debug=True,
+              debug=False,
               verbose=False
               )
        lbc.extract_skeleton()
@@ -55,7 +55,9 @@ else:
 print("first medial axis done")
 
 lbc.visualize()
-lbc.export_results(f'./output/{datetime.now()}')
+date_time = str(datetime.now())
+date_time = date_time.replace(".", "-").replace(":", "-")
+lbc.export_results(f'./output/{date_time}')
 
 """lbc.animate(init_rot=np.asarray([[1, 0, 0], [0, 0, 1], [0, 1, 0]]),
             steps=300,
