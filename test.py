@@ -18,7 +18,7 @@ def extract_medial_axis(point_cloud, init):
               down_sample=-1,
               filter_nb_neighbors=20,
               filter_std_ratio=2.0,
-              debug=False,
+              debug=True,
               verbose=False
               )
        lbc.extract_skeleton()
@@ -37,7 +37,7 @@ mesh = o3d.io.read_triangle_mesh(path_subtriangels2)
 pcd_upsampled = mesh.sample_points_uniformly(number_of_points=200000)
 
 init_con_att = np.array(
-[[3,0.5],[3,6], [3,2],[3,3]]
+[[3,0.5],[3,6], [3,2],[3,4]]
 
 )
 
