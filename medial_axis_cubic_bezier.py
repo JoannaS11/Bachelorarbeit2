@@ -3,7 +3,6 @@ import os
 from pc_skeletor import LBC
 from pc_skeletor import utility
 import numpy as np
-import bezier
 
 
 def extract_medial_axis(point_cloud):
