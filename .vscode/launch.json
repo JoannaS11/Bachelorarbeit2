@@ -15,7 +15,7 @@
             "name": "Test",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/test.py",
+            "program": "${workspaceFolder}/medial_axis_spheres.py",
             "console": "integratedTerminal"
         },
     ]

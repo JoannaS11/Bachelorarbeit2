@@ -15,7 +15,7 @@ def extract_medial_axis(point_cloud, init):
               max_attraction=1024,
               step_wise_contraction_amplification='auto',
               termination_ratio=0.003,
-              
+
               max_iteration_steps=20,
               down_sample=-1,
               filter_nb_neighbors=20,
@@ -44,13 +44,13 @@ mesh = o3d.io.read_triangle_mesh(path_subtriangles2)
 pcd_upsampled = mesh.sample_points_uniformly(number_of_points=200000)
 
 init_con_att = np.array(
-[[3,0.5], [3,6], [3,2], [3,4], [3,3]]
+[[3,0.5], [3,6], [3,2], [3,4], [3,3], [3,1]]
 
 )
 
-triangle_mesh = False
+triangle_mesh = True
 if triangle_mesh:
-       lbc = extract_medial_axis(mesh, init_con_att[3])
+       lbc = extract_medial_axis(mesh, init_con_att[2])
        
        print("first medial axis done")
        pcd = o3d.geometry.PointCloud()
