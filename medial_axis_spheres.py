@@ -17,7 +17,7 @@ if triangle_mesh:
     zylinder_normals = np.asarray(pcd.vertex_normals)
     zylinder_points = np.asarray(pcd.vertices)
 else:
-    pcd = o3d.io.read_point_cloud(path_colon)
+    pcd = o3d.io.read_point_cloud(path_subtriangles2)
     zyl_normals = np.asarray(pcd.normals)
     zyl_points = np.asarray(pcd.points)
 
@@ -26,21 +26,45 @@ else:
     colors = np.asarray(pcd.colors)
     colors[:] = [0,0,1]
     mini_residual = 100
-    midpoints = np.ndarray([np.shape(zyl_points)[0]//20 + 1,3])
+    midpoints = np.ndarray([np.shape(zyl_points)[0]//20,3])
     for line_start in range(20,np.shape(zyl_points)[0], 20):
         distance = np.ndarray(np.shape(zyl_points)[0])
+
+        tmp = np.cross((zyl_points[:]-zyl_points[line_start]), zyl_normals[line_start])
+        print(np.shape(tmp))
         for x in range(np.shape(zyl_points)[0]):
+            distance[x] = np.sqrt(tmp[x][0] **2+ tmp[x][1] **2+ tmp[x][2]**2) / np.sqrt(zyl_normals[line_start][0] **2+ zyl_normals[line_start][1] **2+ zyl_normals[line_start][2]**2)
+        #distance[:] = (tmp[:][0] **2+ tmp[:][1] **2+ tmp[:][2]**2) / np.sqrt(zyl_normals[line_start][0] **2+ zyl_normals[line_start][1] **2+ zyl_normals[line_start][2]**2)
+
+        """for x in range(np.shape(zyl_points)[0]):
             tmp = np.cross((zyl_points[x]-zyl_points[line_start]), zyl_normals[x])
-            distance[x] = np.sqrt(tmp[0] **2+ tmp[1] **2+ tmp[2]**2) / np.sqrt(zyl_normals[x][0] **2+ zyl_normals[x][1] **2+ zyl_normals[x][2]**2)
+            distance[x] = np.sqrt(tmp[0] **2+ tmp[1] **2+ tmp[2]**2) / np.sqrt(zyl_normals[x][0] **2+ zyl_normals[x][1] **2+ zyl_normals[x][2]**2)"""
         distance[line_start] = 100
         #print(distance)
-        pos_min = np.argwhere(abs(distance) < 0.05)
+        # get distance indices within threshold from line
+        pos_min = np.argwhere(abs(distance) < 0.1)
+
+        
+        # calculate distance from each of the points to startpoint        
+        points_min = zyl_points[pos_min[:]]
+        vector_min = points_min[:]-zyl_points[line_start]
+        distance_min = np.ndarray([np.shape(vector_min)[0], 1])
+        for i in range(np.shape(distance_min)[0]):
+            distance_min[i] = np.sqrt(np.dot(np.reshape(vector_min[i][0], [1,3]) , np.reshape(vector_min[i][0], [3,1])))
+        
+        # sort distances
+        sort_indices = np.argsort(distance_min)
+        pos_min = pos_min[sort_indices[:]]
+
         for indexes in pos_min:
+            # check that point is not behind the point
             if np.dot(zyl_points[indexes]-zyl_points[line_start], -zyl_normals[line_start]) < 0:
+                # check that normals look in contrary directions
                 if np.dot(zyl_normals[indexes], zyl_normals[line_start]) < 0:
                     print(f"indexes {indexes}")
                     #colors[indexes] = [1,1,0]
                     midpoints[line_start//20] = zyl_points[line_start] + (zyl_points[indexes] - zyl_points[line_start]) * 0.5
+                    break
         #colors[line_start] = [0,1,0]
         #print(f"pos min {pos_min}")
 
