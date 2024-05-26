@@ -6,7 +6,7 @@ from datetime import datetime
 #data
 working_directory = os.getcwd()
 print(working_directory)
-path_z = os.path.join(working_directory, "data/zylinder_compl-3.ply")
+path_z = os.path.join(working_directory, "data/zylinder_compl-4.ply")
 path_colon = os.path.join(os.getcwd(), "data/Colon.ply")
 path_subtriangles2 = os.path.join(os.getcwd(), "data/Colon_subtriangles_2.ply")
 
@@ -24,14 +24,18 @@ else:
     pcd.paint_uniform_color([1,0,0])
     #print(np.shape(np.asarray(pcd.colors)))
     colors = np.asarray(pcd.colors)
-    colors[:] = [0,0,0]
+    colors[:] = [1,1,0]
     mini_residual = 100
     midpoints = np.ndarray([np.shape(zyl_points)[0]//20+1,3])
-    for line_start in range(20,np.shape(zyl_points)[0], 20):
+    for line_start in range(0,np.shape(zyl_points)[0], 20):
+
+        if line_start % 100 == 0:
+            print(f"{line_start / np.shape(zyl_points)[0]} done")
+
         distance = np.ndarray(np.shape(zyl_points)[0])
 
         tmp = np.cross((zyl_points[:]-zyl_points[line_start]), zyl_normals[line_start])
-        print(np.shape(tmp))
+        #print(np.shape(tmp))
         for x in range(np.shape(zyl_points)[0]):
             distance[x] = np.sqrt(tmp[x][0] **2+ tmp[x][1] **2+ tmp[x][2]**2) / np.sqrt(zyl_normals[line_start][0] **2+ zyl_normals[line_start][1] **2+ zyl_normals[line_start][2]**2)
         #distance[:] = (tmp[:][0] **2+ tmp[:][1] **2+ tmp[:][2]**2) / np.sqrt(zyl_normals[line_start][0] **2+ zyl_normals[line_start][1] **2+ zyl_normals[line_start][2]**2)
@@ -42,8 +46,7 @@ else:
         distance[line_start] = 100
         #print(distance)
         # get distance indices within threshold from line
-        pos_min = np.argwhere(abs(distance) < 
-        eeee0.3)
+        pos_min = np.argwhere(abs(distance) < 0.1)
 
         
         # calculate distance from each of the points to startpoint        
@@ -55,7 +58,7 @@ else:
             distance_min[i] = np.sqrt(np.dot(np.reshape(vector_min[i][0], [1,3]) , np.reshape(vector_min[i][0], [3,1])))
         
         # sort distances
-        print(distance_min.shape)
+        #print(distance_min.shape)
         sort_indices = np.argsort(distance_min, axis = 0)
         pos_min = pos_min[sort_indices[:]]
         #print(pos_min)
@@ -65,28 +68,28 @@ else:
             if np.dot(zyl_points[indexes]-zyl_points[line_start], -zyl_normals[line_start]) < 0:
                 # check that normals look in contrary directions
                 if np.dot(zyl_normals[indexes], zyl_normals[line_start]) < 0:
-                    print(f"indexes {indexes}")
+                    #print(f"indexes {indexes}")
                     #colors[indexes] = [1,1,0]
-                    if distance_min[sort_indices[x]] < 0.2:
-                        continue
+                    """if distance_min[sort_indices[x]] < 0.2:
+                        continue"""
                     midpoints[line_start//20] = zyl_points[line_start] + (zyl_points[indexes] - zyl_points[line_start]) * 0.5
                     break
 
             x += 1
         #colors[line_start] = [0,1,0]
         #print(f"pos min {pos_min}")
-
     line = o3d.geometry.PointCloud()
     line.points = o3d.utility.Vector3dVector(midpoints)
     colors_2 = np.asarray(line.colors)
-    colors_2[:] = [1,0,0]
+    colors_2[:] = [0,0,0]
     #colors[pos_min] = [1,0,0]
     #colors[5] = [0,1,0]
     #colors[7] = [1,1,0]
     #line.paint_uniform_color([1,0,0])
-    line.colors = o3d.utility.Vector3dVector(colors_2)
+    #line.colors = o3d.utility.Vector3dVector(colors_2)
     
     pcd.colors = o3d.utility.Vector3dVector(colors)
+    line.colors = o3d.utility.Vector3dVector(colors_2)
    
     date_time = str(datetime.now())
     date_time = date_time.replace(".", "-").replace(":", "-")
