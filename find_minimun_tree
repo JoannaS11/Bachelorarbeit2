@@ -11,57 +11,61 @@ import math
 
 path_ = os.path.join(os.getcwd(), "./output_new/2024-05-27_08-22-28-505194_line_2.ply")
 path_1 = os.path.join(os.getcwd(), "./output_new/2024-05-27_07-48-47-198669_line_2.ply")
-pcd = o3d.io.read_point_cloud(path_)
+pcd = o3d.io.read_point_cloud(path_1)
 pcd_np = (np.asarray(pcd.points))
-adj_matr = np.zeros([np.shape(pcd_np)[0], np.shape(pcd_np)[0]])
-distance_all = np.zeros([np.shape(pcd_np)[0],1])
-x= 0
 
-def find_distance(start_node, index, distance_node):
+tree = dict()
+
+def find_distance(start_node, index):
     global adj_matr
-    global distance_all
-    global x
-    x += 1
+
     if np.sum(adj_matr[index]) != 0.000:
         return
     
     for i in range(np.shape(pcd_np)[0]):
         distance = math.dist(start_node,pcd_np[i])
-        
-        if distance < 0.5 and i != index:
-            if distance_all[i] == 0.0 or distance_all[i] > distance_node + 1:
-                distance_all[i] = distance_node + 1
-
+        #print(distance)
+        if distance < 0.25 and i != index:
             adj_matr[index, i] = distance
-            find_distance(pcd_np[i], i, distance_all[i])
-
+            find_distance(pcd_np[i], i)
+            
 
 path_colon = os.path.join(os.getcwd(), "data/Colon.ply")
 pcd_colon = o3d.io.read_point_cloud(path_colon)
+adj_matr = np.zeros([np.shape(pcd_np)[0], np.shape(pcd_np)[0]])
 
 pcd_colon.paint_uniform_color([1,1,0])
-distance_all[0] = -1
-find_distance(pcd_np[0], 0, 0)
-print(f"sx {x}")
-min = np.argmax(distance_all)
-print(min)
-print(distance_all[min])
-print(distance_all[1400:1480])
-#adj_matr = scipy.sparse.triu(adj_matr) 
-print(adj_matr)
-#dist_matrix, asdf = scipy.sparse.csgraph.dijkstra(adj_matr, directed=True, indices=None, return_predecessors=True, unweighted=False, limit=np.inf, min_only=False)
-#print(dist_matrix)
 
+find_distance(pcd_np[0], 0)
+min = np.argmax(adj_matr[0])
+
+dist_matrix, predecessor_array = scipy.sparse.csgraph.dijkstra(adj_matr,indices = 0, directed=False,unweighted=False, return_predecessors=True)
+dist_matrix[dist_matrix==np.inf] = -1
+max = np.argmax(dist_matrix)
+index = max
+path = [max]
+while predecessor_array[index] != 0:
+    index = predecessor_array[index]
+    path.append(index)
+
+
+print(path)
 
 
 col = np.zeros([np.shape(pcd_np)[0], 3])
-col = np.where(distance_all[:] >800, [0,1,0], [0,0,0])
+"""col = np.where(distance_all[:] < 400, [0,1,0], [0,0,0])
+col = np.where(distance_all[:] < 300, [0,1,0.2], col)
+col = np.where(distance_all[:] < 200, [0,1,0.5], col)"""
+#ol = np.where(distance_all[:] ==0, [0,1,0.7], [0,0,0])
 x = pcd.colors
 print(type(x))
+for i in path:
+    print(path)
+    col[i] = [1,0 ,0]
 y = np.asarray(x)
 print(type(y))
 print(type(col))
-col[min] = [1,0 ,0]
+col[max] = [1,0 ,0]
 col[0] = [0,0,1]
 #col[1:50] = [0,1,1]
 #col[1:250] = [0,0,0]

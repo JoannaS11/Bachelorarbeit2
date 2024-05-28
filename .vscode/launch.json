@@ -15,7 +15,7 @@
             "name": "Test",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/medial_axis_spheres.py",
+            "program": "${workspaceFolder}/find_minimun_tree.py",
             "console": "integratedTerminal"
         },
     ]
