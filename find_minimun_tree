@@ -81,21 +81,24 @@ date_time = date_time.replace(" ", "_")
 o3d.io.write_point_cloud(f"./output_new/{date_time}_{max_distance}_min_path.ply", line)
 
 pcd.paint_uniform_color([0, 1, 0])
-print(f" mid {np.shape(mid_line[:][0:2])} {np.shape(mid_line[:][2])}")
-points = scipy.interpolate.griddata(mid_line[:], np.ones(np.shape(mid_line)), mid_line[1:-1])#scipy.interpolate.NearestNDInterpolator(mid_line[:], np.ones(np.shape(mid_line)))
-print(type(points))
+"""
+#print(f" mid {np.shape(mid_line[:][0:2])} {np.shape(mid_line[:][2])}")
+#points = scipy.interpolate.griddata(mid_line[:], np.ones(np.shape(mid_line)), mid_line[1:-1])#scipy.interpolate.NearestNDInterpolator(mid_line[:], np.ones(np.shape(mid_line)))
+#print(type(points))
+#points = scipy.interpolate.NearestNDInterpolator(mid_line[:], np.ones(np.shape(mid_line)))
 
 
-#points = geomdl.fitting.interpolate_curve(mid_line.tolist(), 3)
-p = points#np.asarray(points.points)
+points = geomdl.fitting.interpolate_curve(mid_line.tolist(), 3)
+#p = points#
+p = np.asarray(points.points)
 #print(np.shape(p))
 p1 = o3d.geometry.PointCloud()
 #print((mid_line[0:20]))
 p1.points = o3d.utility.Vector3dVector(p)
 p1.paint_uniform_color([0,0,1])
-print(np.shape(p))
+print(np.shape(p))"""
 
-o3d.visualization.draw_geometries([pcd_colon, line, p1],
+o3d.visualization.draw_geometries([pcd_colon, pcd ,line],
 
        mesh_show_wireframe = True,
 
