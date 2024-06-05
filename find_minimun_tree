@@ -19,38 +19,49 @@ def find_distance(start_node, index, max_distance):
         if distance < max_distance and i != index:
             adj_matr[index, i] = distance
             find_distance(pcd_np[i], i, max_distance)
+
+def main():
+    # get and prepare Colon cloud for visualization
+    path_colon = os.path.join(os.getcwd(), "data", "Colon.ply")
+    pcd_colon = o3d.io.read_point_cloud(path_colon)
+    pcd_colon.paint_uniform_color([1,1,0])
             
 # get and prepare Colon cloud for visualization
-path_colon = os.path.join(os.getcwd(), "data/Colon.ply")
+path_colon = os.path.join(os.getcwd(), "data", "Colon.ply")
 pcd_colon = o3d.io.read_point_cloud(path_colon)
 pcd_colon.paint_uniform_color([1,1,0])
 
 # get path for mid pointcloud
-path_ = os.path.join(os.getcwd(), "./output_new/2024-05-27_08-22-28-505194_line_2.ply")
-path_1 = os.path.join(os.getcwd(), "./output_new/2024-05-27_07-48-47-198669_line_2.ply")
-pcd = o3d.io.read_point_cloud(path_1)
+path_ = os.path.join(os.getcwd(), "output_new", "2024-05-27_08-22-28-505194_line_2.ply")
+path_1 = os.path.join(os.getcwd(), "output_new", "2024-05-27_07-48-47-198669_line_2.ply")
+path_1 = os.path.join(os.getcwd(), "output_new", "2024-06-03_10-16-16-769887_line_2.ply")
+path_2 = os.path.join(os.getcwd(), "output_new", "2024-06-03_13-38-31-015286__0.2_0.1_1247_line_2.ply")
+path_zyl_simple = os.path.join(os.getcwd(), "output_new", "2024-06-04_12-26-08-844039___0.5_0.02_5_pcd_big_path_without_outlier.ply")
+pcd = o3d.io.read_point_cloud(path_zyl_simple)
 pcd_np = (np.asarray(pcd.points))
+print(np.shape(pcd_np))
 adj_matr = np.zeros([np.shape(pcd_np)[0], np.shape(pcd_np)[0]])
 
 
-max_distance = 0.25
+max_distance = 0.4
 find_distance(pcd_np[0], 0, max_distance)
 min = np.argmax(adj_matr[0])
-
-"""dist_matrix, predecessor_array = scipy.sparse.csgraph.dijkstra(adj_matr,indices = 0, directed=False,unweighted=False, return_predecessors=True)
+"""
+dist_matrix, predecessor_array = scipy.sparse.csgraph.dijkstra(adj_matr,indices = 0, directed=False,unweighted=False, return_predecessors=True)
 dist_matrix[dist_matrix==np.inf] = -1
 max = np.argmax(dist_matrix)
 index = max
 path = [max]
 while predecessor_array[index] != 0:
     index = predecessor_array[index]
-    path.append(index)"""
+    path.append(index)
+"""
 dist_matrix, predecessor_array = scipy.sparse.csgraph.dijkstra(adj_matr, directed=False,unweighted=False, return_predecessors=True)
 dist_matrix[dist_matrix==np.inf] = -1
 max = np.argmax(dist_matrix,axis = 0)
 max_2 = np.argmax(dist_matrix[max[:]])
 # j = zielpunkt, i = punkt vorher
-print(max[max_2])
+#print(max[max_2])
 #print(dist_matrix[:, max[:]])
 print(predecessor_array)
 #print(max % np.shape(dist_matrix)[0])

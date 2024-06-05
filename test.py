@@ -34,6 +34,7 @@ def extract_medial_axis(point_cloud, init):
 
 
 #data
+path_m = os.path.join(os.getcwd(), "./output_new/2024-05-27_08-12-32-205775_line_2.ply")
 path_z = os.path.join(os.getcwd(), "./data/zylinder.ply")
 path_colon = os.path.join(os.getcwd(), "./data/Colon.ply")
 path_subtriangles2 = os.path.join(os.getcwd(), "./data/Colon_subtriangles_2.ply")
@@ -44,7 +45,7 @@ mesh = o3d.io.read_triangle_mesh(path_subtriangles2)
 pcd_upsampled = mesh.sample_points_uniformly(number_of_points=200000)
 
 init_con_att = np.array(
-[[3,0.5], [3,6], [3,2], [3,4], [3,3], [3,1]]
+[[3,0.5], [3,6], [3,2], [3,4], [3,3], [3,1], [1,1]]
 
 )
 
@@ -58,7 +59,7 @@ if triangle_mesh:
        lbc.pcd = pcd
 else:
        #lbc = extract_medial_axis(pcd, init_con_att[0])       
-       lbc = extract_medial_axis(pcd_upsampled, init_con_att[2])
+       lbc = extract_medial_axis(pcd_upsampled, init_con_att[6])
        #lbc = extract_medial_axis(lbc.contracted_point_cloud, init_con_att[0])
 
 print("medial axis done")

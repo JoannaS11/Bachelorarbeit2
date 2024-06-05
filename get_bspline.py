@@ -6,41 +6,52 @@ import open3d as o3d
 import scipy
 import matplotlib as plt
 import scipy.interpolate
+from datetime import datetime
 
+# adjustable parameter
+sample_size = 1
 
+# prepare colon for visualization
 path_colon = os.path.join(os.getcwd(), "data/Colon.ply")
 pcd_colon = o3d.io.read_point_cloud(path_colon)
+pcd_colon.paint_uniform_color([1,1,0])
 
+# data paths
 path_ = os.path.join(os.getcwd(), "./output_new/2024-05-27_08-22-28-505194_line_2.ply")
 path_1 = os.path.join(os.getcwd(), "./output_new/2024-05-29_09-31-42-719176_0.25_min_path.ply")
+
+# read pointcloud and convert to array
 pcd = o3d.io.read_point_cloud(path_1)
-#pcd_np = np.ndarray.tolist(np.asarray(pcd.points))
+
 pcd_np = np.asarray(pcd.points)
-#print(pcd_np)
 
-# sort points
-line_pc_array = np.ndarray([1, 3])
-line_pc_array[0] = pcd_np[0]
-#line_pc_array = np.append_along_axis(line_pc_array,pcd_np[0])
-print(line_pc_array)
-for x in range(np.shape(pcd_np)[0]-1):
-    startpoint = pcd_np[x]
-    m = (pcd_np[x+1] - pcd_np[x]) / 20
-    for x in range(0, 20):
-        line_pc_array = np. r_[line_pc_array[:], np.reshape(startpoint + m * x, (1,3))[:]]
-
-print((line_pc_array[:10]))
-line_pc_array = np.ndarray.tolist(line_pc_array)
+# interpolate line and upsample
+line_pc_array = np.ndarray.tolist(pcd_np)#line_pc_array)
 print("hallo")
+x = geomdl.fitting.approximate_curve(line_pc_array, 2)
 x = geomdl.fitting.interpolate_curve(line_pc_array, 2)
+
+print(x[0.5])
+
+
 print(type(x))
 print("done")
+x.sample_size = sample_size * x.sample_size
 y = x.evalpts
 x_np = np.array(y)
+
+# create point cloud from curve
 line = o3d.geometry.PointCloud()    
 line.points = o3d.utility.Vector3dVector(x_np)
 line.paint_uniform_color([0,0,1])
-pcd_colon.paint_uniform_color([1,1,0])
+
+
+# save as ply file
+date_time = str(datetime.now())
+date_time = date_time.replace(".", "-").replace(":", "-")
+date_time = date_time.replace(" ", "_")
+o3d.io.write_point_cloud(os.path.join(os.getcwd(), "output_curve", f"{date_time}_curve_as_pointcloud-{sample_size}.ply"), line)
+
 print(f"{np.shape(x_np)}")
 o3d.visualization.draw_geometries([line, pcd_colon],
 
