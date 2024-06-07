@@ -18,13 +18,13 @@ def plot_mean_and_std(values):
     plt.axvline(mean_values - std_values, color = 'r',linestyle = '--', linewidth = 3)
     plt.show()
 
-def export_pcd_as_ply(pcd, output_folder, output_name):
+def export_pcd_as_ply(pcd, output_folder, output_name_without_ply):
     # get current date and time
     date_time = str(datetime.now())
     date_time = date_time.replace(".", "-").replace(":", "-")
     date_time = date_time.replace(" ", "_")
 
-    o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name}.ply"), pcd)
+    o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name_without_ply}.ply"), pcd)
 
 
 def get_big_line_pointcloud(pcd, zyl_points, zyl_normals, mini_residual, distance_point_to_line, distance_point_to_point):
