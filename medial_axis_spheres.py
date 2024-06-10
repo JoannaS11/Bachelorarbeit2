@@ -139,8 +139,8 @@ def main():
     pcd_big_line_1, pcd_big_line_2 = get_big_line_pointcloud(pcd, zyl_points, zyl_normals, mini_residual, distance_point_to_line, distance_point_to_point)
 
     # export as ply
-    export_pcd_as_ply(pcd_big_line_1, "output_new", f"__{distance_point_to_point}_{distance_point_to_line}_{mini_residual}_pcd_big_path")
-    export_pcd_as_ply(pcd_big_line_2, "output_new", f"__{distance_point_to_point}_{distance_point_to_line}_{mini_residual}_pcd_big_path_without_outlier")
+    export_pcd_as_ply(pcd_big_line_1, "output_new", f"_{distance_point_to_point}_{distance_point_to_line}_{mini_residual}_pcd_big_path")
+    export_pcd_as_ply(pcd_big_line_2, "output_new", f"_{distance_point_to_point}_{distance_point_to_line}_{mini_residual}_pcd_big_path_without_outlier")
 
     colors_2 = np.asarray(pcd_big_line_2.colors)
     colors_2[0:100] = [0,0,0]

@@ -94,7 +94,7 @@ def main():
     # data paths
     path_ = os.path.join(os.getcwd(), "output_new","2024-05-27_08-22-28-505194_line_2.ply")
     path_1 = os.path.join(os.getcwd(), "output_new", "2024-05-29_09-31-42-719176_0.25_min_path.ply")
-    path_zyl_simple = os.path.join(os.getcwd(), "output_new", "2024-06-04_11-14-53-584648_0.4_min_path.ply")
+    path_zyl_simple = os.path.join(os.getcwd(), "output_new", "2024-06-07_16-01-05-609625_0.4_min_path.ply")
 
     # read pointcloud and convert to array
     pcd = o3d.io.read_point_cloud(path_zyl_simple)
@@ -120,13 +120,11 @@ def main():
 
     # visualize
     o3d.visualization.draw_geometries([line_pcd, pcd_colon, p_pcd],
+        mesh_show_wireframe = True,
+        mesh_show_back_face = True,
+        point_show_normal = True)
 
-       mesh_show_wireframe = True,
-
-    mesh_show_back_face = True,
-    point_show_normal = True)
-
-    #visualize(pcd_colon)
+    visualize(pcd_colon)
 
 
 if __name__ == "__main__": main()  
