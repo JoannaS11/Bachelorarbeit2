@@ -83,9 +83,10 @@ def main():
     path_1 = os.path.join(os.getcwd(), "output_new", "2024-06-03_10-16-16-769887_line_2.ply")
     path_2 = os.path.join(os.getcwd(), "output_new", "2024-06-03_13-38-31-015286__0.2_0.1_1247_line_2.ply")
     path_zyl_simple = os.path.join(os.getcwd(), "output_new", "2024-06-07_15-41-24-609048___0.5_0.02_5_pcd_big_path_without_outlier.ply")
+    path_zyl_compl = os.path.join(os.getcwd(), "output_new", "2024-06-11_10-22-23-418216__0.5_0.02_9_pcd_big_path_without_outlier.ply")
 
     # read pcd
-    pcd = o3d.io.read_point_cloud(path_zyl_simple)
+    pcd = o3d.io.read_point_cloud(path_zyl_compl)
     pcd_np = np.asarray(pcd.points)
 
     # adjustable parameter

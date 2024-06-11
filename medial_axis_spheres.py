@@ -113,7 +113,7 @@ def main():
     path_subtriangles_2 = os.path.join(os.getcwd(), "data","Colon_subtriangles_2.ply")
 
     #load point clouds
-    path = path_z_simple
+    path = path_z_complex
     pcd_colon = o3d.io.read_point_cloud(path_colon)
     pcd = o3d.io.read_point_cloud(path)
     #pcd_1 = o3d.io.read_point_cloud(path_subtriangles_2)
@@ -127,7 +127,7 @@ def main():
     mini_residual = np.shape(zyl_points)[0] // 850
     distance_point_to_line = 0.02
     distance_point_to_point = 0.5
-    normals_inside = False
+    normals_inside = True
 
     # adapt normals
     if normals_inside:
