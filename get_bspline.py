@@ -4,11 +4,12 @@ import geomdl
 import os
 import open3d as o3d
 import scipy
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import scipy.interpolate
 from datetime import datetime
 from time import sleep
 import math
+
 import copy 
 
 def get_bSpline(pcd, sample_size):
@@ -84,7 +85,7 @@ def get_closest_point_on_spline(pcd, bSpline):
     half_line = np.zeros([np.shape(points)[0], 3])
     t_on_line = np.zeros([np.shape(points)[0]])
     #print(f" {np.linspace(0, 1, 20)} and {type(np.linspace(0, 1, 20))}")
-    start_points = bSpline.evaluate_list((np.linspace(0, 1, 20)))
+    start_points = bSpline.evaluate_list((np.linspace(0, 1, 40)))
     for i in range(np.shape(points)[0]):
         # approximate start value to be determined
         p_min = 0
@@ -95,9 +96,9 @@ def get_closest_point_on_spline(pcd, bSpline):
                 p_dist = dist
                 p_min = p
         p = points[i]
-        t_old = np.linspace(0, 1, 20)[p_min]
+        t_old = np.linspace(0, 1, 40)[p_min]
         #print(t_old)
-        for k in range(50):
+        for k in range(40):
             #print(t_old)
             point_on_spline = bSpline.derivatives(t_old, 2)
             #print(point_old_2)
@@ -108,7 +109,7 @@ def get_closest_point_on_spline(pcd, bSpline):
                 t_old = 0.0
                 break
             elif t > 1.00:
-                t_old = 1
+                t_old = 1.0
                 #print(i)
                 break
             #print(i)
@@ -123,19 +124,59 @@ def get_closest_point_on_spline(pcd, bSpline):
         t_on_line[i] = t_old
         #print(vector_to_line)
 
-        half_line[i] = p + 0.5 * vector_to_line[i]
+        #half_line[i] = p + 0.5 * vector_to_line[i]
         #print(half_line[i])
 
-    x = np.argwhere((t_on_line < 0.02))
-    x = np.argwhere(t_on_line[x[:]] > 0.0000)
+    x = np.argwhere(t_on_line < 0.5)
+    print(x)
+    #x = np.argwhere(t_on_line[x[:]] > 0.0000)
     #
     #print(t_on_line[0:1000])
-    #half_line[x[:]] = points[x[:]] + 0.1 * vector_to_line[x[:]]
-    half_line = points + 0.1 * vector_to_line
+    half_line[x[:]] = points[x[:]] + 0.5 * vector_to_line[x[:]]
+    plot_vectors(vector_to_line, points)
+    #half_line = points + 0.5 * vector_to_line
 
     
     
     return vector_to_line, t_on_line, half_line
+
+def plot_vectors(vector_to_line, pcd_colon):
+    fig = plt.figure()
+
+    ax = fig.add_subplot(111, projection='3d')
+
+    ax.quiver(pcd_colon[:,0], pcd_colon[:,1], pcd_colon[:,2], vector_to_line[:,0], vector_to_line[:,1], vector_to_line[:,2])
+
+    # Set the axis labels
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+
+    # Rotate the axes and update
+    for angle in range(0, 1):#90):
+        # Normalize the angle to the range [-180, 180] for display
+        angle_norm = (angle + 180) % 360 - 180
+
+        # Cycle through a full rotation of elevation, then azimuth, roll, and all
+        elev = azim = roll = 0
+        if angle <= 360:
+            elev = angle_norm
+        elif angle <= 360*2:
+            azim = angle_norm
+        elif angle <= 360*3:
+            roll = angle_norm
+        else:
+            elev = azim = roll = angle_norm
+
+        # Update the axis view and title
+        ax.view_init(90, azim, roll)
+        plt.title('Elevation: %d°, Azimuth: %d°, Roll: %d°' % (elev, azim, roll))
+
+        plt.draw()
+        #plt.pause(.001)
+
+
+    plt.show()
 
 
 def find_smallest_dis_to_point(pcd_colon, bspline, vector_to_line, t_on_line):
@@ -185,6 +226,61 @@ def find_smallest_dis_to_point(pcd_colon, bspline, vector_to_line, t_on_line):
     vis.destroy_window()
 
 def main():
+
+    """ plt.rcParams["figure.figsize"] = [7.50, 3.50]
+    plt.rcParams["figure.autolayout"] = True
+    x = np.linspace(-4 * np.pi, 4 * np.pi, 50)
+    y = np.linspace(-4 * np.pi, 4 * np.pi, 50)
+    z = x ** 2 + y ** 2
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    #ax.plot(x, y, z)
+    ax.quiver(0,0,0, x,y,z)
+    plt.show()
+
+
+    fig = plt.figure()
+    #ax = plt.axes(projection = '3d')
+    vector_to_line = np.array([[1,2,3],[3,5,4], [7,8,9]])
+    pcd_colon = np.zeros([3,3])
+    print(vector_to_line)
+    ax = fig.add_subplot(111, projection='3d')
+
+    ax.quiver(pcd_colon[:,0], pcd_colon[:,1], pcd_colon[:,2], vector_to_line[:,0], vector_to_line[:,1], vector_to_line[:,2])
+    # Set the axis labels
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+
+    # Rotate the axes and update
+    for angle in range(0, 360*4 + 1):
+        # Normalize the angle to the range [-180, 180] for display
+        angle_norm = (angle + 180) % 360 - 180
+
+        # Cycle through a full rotation of elevation, then azimuth, roll, and all
+        elev = azim = roll = 0
+        if angle <= 360:
+            elev = angle_norm
+        elif angle <= 360*2:
+            azim = angle_norm
+        elif angle <= 360*3:
+            roll = angle_norm
+        else:
+            elev = azim = roll = angle_norm
+
+        # Update the axis view and title
+        ax.view_init(elev, azim, roll)
+        plt.title('Elevation: %d°, Azimuth: %d°, Roll: %d°' % (elev, azim, roll))
+
+        plt.draw()
+        plt.pause(.001)
+
+    plt.show()
+
+
+    sleep(10)"""
+
+
     # adjustable parameter
     sample_size = 2
 
@@ -193,18 +289,19 @@ def main():
     path_z_compl_2= os.path.join(os.getcwd(), "data","zylinder_compl-2.ply")
     path_z_compl_4 = os.path.join(os.getcwd(), "data","zylinder_compl-4.ply")
     path_colon = os.path.join(os.getcwd(), "data/Colon.ply")
-    pcd_colon = o3d.io.read_point_cloud(path_z_compl_2)
+    pcd_colon = o3d.io.read_point_cloud(path_z_compl_4)
     pcd_colon.paint_uniform_color([1,1,0])
     
     # data paths
     path_ = os.path.join(os.getcwd(), "output_new","2024-05-27_08-22-28-505194_line_2.ply")
     path_1 = os.path.join(os.getcwd(), "output_new", "2024-05-28_16-13-50-420242_0.25_min_path.ply")
+    path_colon_min = os.path.join(os.getcwd(), "output_new", "2024-06-03_10-24-25-169883_0.4_min_path.ply")
     path_zyl_simple = os.path.join(os.getcwd(), "output_new", "2024-06-07_16-01-05-609625_0.4_min_path.ply")
     path_zyl_compl_2 = os.path.join(os.getcwd(), "output_new", "2024-06-11_10-45-54-282186_0.4_min_path.ply")
     path_zyl_compl_4 = os.path.join(os.getcwd(), "output_new", "2024-06-11_14-41-33-528331_0.4_min_path.ply")
 
     # read pointcloud and convert to array
-    pcd = o3d.io.read_point_cloud(path_zyl_compl_2)
+    pcd = o3d.io.read_point_cloud(path_zyl_compl_4)
 
     
     line_bSpline = get_bSpline(pcd, sample_size)
@@ -233,17 +330,17 @@ def main():
         point_show_normal = True)
     
     vector_to_line, t_on_line, half_line = get_closest_point_on_spline(pcd_colon, line_bSpline)
-    print(f"vecot to line {t_on_line[0:1000]}")
+    #print(f"vecot to line {t_on_line[0:1000]}")
 
     p_pcd = o3d.geometry.PointCloud()    
     p_pcd.points = o3d.utility.Vector3dVector(half_line)#p_np)
     p_pcd.paint_uniform_color([0,0,1])
     o3d.visualization.draw_geometries([line_pcd, pcd_colon, p_pcd],
-        mesh_show_wireframe = True,
-        mesh_show_back_face = True,
+        mesh_show_wireframe = False,
+        mesh_show_back_face = False,
         point_show_normal = True)
 
-    find_smallest_dis_to_point((pcd_colon), line_bSpline, vector_to_line, t_on_line)
+    #find_smallest_dis_to_point((pcd_colon), line_bSpline, vector_to_line, t_on_line)
     #visualize(pcd_colon)
 
 

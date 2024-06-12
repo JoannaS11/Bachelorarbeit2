@@ -61,7 +61,7 @@ def main():
     path_subtriangles_2 = os.path.join(os.getcwd(), "data","Colon_subtriangles_2.ply")
 
     #load point clouds
-    path = path_z_complex_4
+    path = path_intestine_short_texture_anim#path_z_complex_4
     pcd_colon = o3d.io.read_point_cloud(path_colon)
     pcd = o3d.io.read_point_cloud(path)
     #pcd_1 = o3d.io.read_point_cloud(path_subtriangles_2)
