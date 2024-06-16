@@ -9,6 +9,7 @@ import scipy.interpolate
 from datetime import datetime
 from time import sleep
 import math
+import plot_file
 
 import copy 
 
@@ -85,7 +86,7 @@ def get_closest_point_on_spline(pcd, bSpline):
     half_line = np.zeros([np.shape(points)[0], 3])
     t_on_line = np.zeros([np.shape(points)[0]])
     #print(f" {np.linspace(0, 1, 20)} and {type(np.linspace(0, 1, 20))}")
-    start_points = bSpline.evaluate_list((np.linspace(0, 1, 40)))
+    start_points = np.asarray(bSpline.evaluate_list((np.linspace(0, 1, 40))))
     for i in range(np.shape(points)[0]):
         # approximate start value to be determined
         p_min = 0
@@ -127,26 +128,27 @@ def get_closest_point_on_spline(pcd, bSpline):
         #half_line[i] = p + 0.5 * vector_to_line[i]
         #print(half_line[i])
 
-    x = np.argwhere(t_on_line < 0.5)
+    x = np.argwhere(t_on_line > 0.5)
     print(x)
     #x = np.argwhere(t_on_line[x[:]] > 0.0000)
     #
     #print(t_on_line[0:1000])
-    half_line[x[:]] = points[x[:]] + 0.5 * vector_to_line[x[:]]
-    plot_vectors(vector_to_line, points)
+    vector_to_line[x[:]] = 0
+    #[x[:]] = points[x[:]] + 0.1 * vector_to_line[x[:]]
+    plot_file.plot_vectors(vector_to_line, points, start_points)
     #half_line = points + 0.5 * vector_to_line
 
     
     
     return vector_to_line, t_on_line, half_line
 
-def plot_vectors(vector_to_line, pcd_colon):
+def plot_vectors(vector_to_line, pcd_colon, start_points):
     fig = plt.figure()
 
     ax = fig.add_subplot(111, projection='3d')
 
     ax.quiver(pcd_colon[:,0], pcd_colon[:,1], pcd_colon[:,2], vector_to_line[:,0], vector_to_line[:,1], vector_to_line[:,2])
-
+    ax.plot(*start_points, color = 'r')
     # Set the axis labels
     ax.set_xlabel('x')
     ax.set_ylabel('y')
