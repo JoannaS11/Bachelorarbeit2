@@ -2,21 +2,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_vectors(vector_to_line, pcd_colon, start_points):
+def plot_vectors(vector_to_line, pcd_colon, start_points,l):
     fig = plt.figure()
     print("hallo")
 
     ax = fig.add_subplot(111, projection='3d')
     width = 0.01
-    ax.quiver(pcd_colon[:,0], pcd_colon[:,1], pcd_colon[:,2], vector_to_line[:,0], vector_to_line[:,1], vector_to_line[:,2])
+    ax.quiver(pcd_colon[:,0], pcd_colon[:,1], pcd_colon[:,2], vector_to_line[:,0], vector_to_line[:,1], vector_to_line[:,2], color='g')
+    #ax.quiver(pcd_colon[1000:,0], pcd_colon[1000:,1], pcd_colon[1000:,2], vector_to_line[1000:,0], vector_to_line[1000:,1], vector_to_line[1000:,2], color='b')
     ax.plot(start_points[:,0], start_points[:,1], start_points[:,2], color = 'r')
+    ax.scatter(start_points[2,0], start_points[2,1], start_points[2,2], color = 'c')
+    ax.scatter(pcd_colon[759,0],pcd_colon[759,1], pcd_colon[759,2], color = 'b')
+    ax.scatter(l[0],l[1], l[2], color = 'b')
     # Set the axis labels
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
     print("here")
     # Rotate the axes and update
-    for angle in range(0, 1):#90):
+    """for angle in range(0, 1):#90):
         # Normalize the angle to the range [-180, 180] for display
         angle_norm = (angle + 180) % 360 - 180
 
@@ -36,7 +40,7 @@ def plot_vectors(vector_to_line, pcd_colon, start_points):
         plt.title('Elevation: %d°, Azimuth: %d°, Roll: %d°' % (elev, azim, roll))
 
         plt.draw()
-        #plt.pause(.001)
+        #plt.pause(.001)"""
 
 
     plt.show()

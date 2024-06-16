@@ -2,10 +2,11 @@ import medial_axis_spheres
 import find_minimun_tree
 import numpy as np
 import os
+from datetime import datetime
 import open3d as o3d
 
 
-def find_smaller_pcd(pcd, zyl_points, zyl_normals, mini_residual, distance_point_to_line, distance_point_to_point, normals_inside):
+def find_smaller_pcd(pcd, zyl_points, zyl_normals, mini_residual, distance_point_to_line, distance_point_to_point, normals_inside, dir_name):
     # adapt normals
     if normals_inside:
         pass
@@ -16,8 +17,8 @@ def find_smaller_pcd(pcd, zyl_points, zyl_normals, mini_residual, distance_point
     pcd_big_line_1, pcd_big_line_2 = medial_axis_spheres.get_big_line_pointcloud(pcd, zyl_points, zyl_normals, mini_residual, distance_point_to_line, distance_point_to_point)
 
     # export as ply
-    medial_axis_spheres.export_pcd_as_ply(pcd_big_line_1, "output_new", f"_{distance_point_to_point}_{distance_point_to_line}_{mini_residual}_pcd_big_path")
-    medial_axis_spheres.export_pcd_as_ply(pcd_big_line_2, "output_new", f"_{distance_point_to_point}_{distance_point_to_line}_{mini_residual}_pcd_big_path_without_outlier")
+    medial_axis_spheres.export_pcd_as_ply(pcd_big_line_1, "output_new", f"_{distance_point_to_point}_{distance_point_to_line}_{mini_residual}_pcd_big_path", dir_name)
+    medial_axis_spheres.export_pcd_as_ply(pcd_big_line_2, "output_new", f"_{distance_point_to_point}_{distance_point_to_line}_{mini_residual}_pcd_big_path_without_outlier", dir_name)
 
     colors_2 = np.asarray(pcd_big_line_2.colors)
     colors_2[0:100] = [0,0,0]
@@ -34,12 +35,12 @@ def find_smaller_pcd(pcd, zyl_points, zyl_normals, mini_residual, distance_point
     )
     return pcd_big_line_2
 
-def find_min_tree(pcd_big_line_2, pcd_np, max_distance):
+def find_min_tree(pcd_big_line_2, pcd_np, max_distance, dir_name):
     # find line pcd
     mid_line_pcd = find_minimun_tree.find_line(pcd_np, max_distance)
 
     # export mid line pcd
-    find_minimun_tree.export_pcd_as_ply(mid_line_pcd, "output_new", f"{max_distance}_min_path")
+    find_minimun_tree.export_pcd_as_ply(mid_line_pcd, "output_main",f"{max_distance}_min_path", dir_name)
 
     # color pcd
     mid_line_pcd.paint_uniform_color([1,0,0])
@@ -61,10 +62,19 @@ def main():
     path_subtriangles_2 = os.path.join(os.getcwd(), "data","Colon_subtriangles_2.ply")
 
     #load point clouds
-    path = path_intestine_short_texture_anim#path_z_complex_4
+    path = path_subtriangles_2
     pcd_colon = o3d.io.read_point_cloud(path_colon)
     pcd = o3d.io.read_point_cloud(path)
     #pcd_1 = o3d.io.read_point_cloud(path_subtriangles_2)
+
+    ################################# create directory to save results ###########################################
+    date_time = str(datetime.now())
+    date_time = date_time.replace(".", "-").replace(":", "-")
+    date_time = date_time.replace(" ", "_")
+    dir_name = f"{path}_{date_time}"
+    dir_name = dir_name.replace(".ply","_")
+    dir_name = dir_name.replace("data","output_main")
+    os.mkdir(dir_name)
 
     ################################ medial-axis-spheres ##########################################################
     # get points and normals
@@ -73,11 +83,11 @@ def main():
 
     #parameter to change
     mini_residual = np.shape(zyl_points)[0] // 850
-    distance_point_to_line = 0.02
-    distance_point_to_point = 0.5
+    distance_point_to_line = 0.5
+    min_distance_point_to_point = 0.2
     normals_inside = True
 
-    pcd_big_line_2 = find_smaller_pcd(pcd, zyl_points, zyl_normals, mini_residual, distance_point_to_line, distance_point_to_point, normals_inside)
+    pcd_big_line_2 = find_smaller_pcd(pcd, zyl_points, zyl_normals, mini_residual, distance_point_to_line, min_distance_point_to_point, normals_inside, dir_name)
 
     ########################## find minimum tree ###################################################################
 
@@ -86,7 +96,11 @@ def main():
     # adjustable parameter
     max_distance = 0.4
 
-    mid_line_pcd = find_min_tree(pcd_big_line_2, pcd_np, max_distance)
+    mid_line_pcd = find_min_tree(pcd_big_line_2, pcd_np, max_distance, dir_name)
+
+    ######################## centralize minimum tree ############################################################
+
+    ######################### get bSpline #######################################################################
 
 
 if __name__=="__main__": main()

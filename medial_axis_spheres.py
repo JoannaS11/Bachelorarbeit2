@@ -18,13 +18,15 @@ def plot_mean_and_std(values):
     plt.axvline(mean_values - std_values, color = 'r',linestyle = '--', linewidth = 3)
     plt.show()
 
-def export_pcd_as_ply(pcd, output_folder, output_name_without_ply):
+def export_pcd_as_ply(pcd, output_folder, output_name_without_ply, dir_name = None):
     # get current date and time
     date_time = str(datetime.now())
     date_time = date_time.replace(".", "-").replace(":", "-")
     date_time = date_time.replace(" ", "_")
-
-    o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name_without_ply}.ply"), pcd)
+    if dir_name != None:
+        o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, dir_name, f"{date_time}_{output_name_without_ply}.ply"), pcd)
+    else:
+        o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name_without_ply}.ply"), pcd)
 
 
 def get_big_line_pointcloud(pcd, zyl_points, zyl_normals, mini_residual, distance_point_to_line, distance_point_to_point):
@@ -43,7 +45,7 @@ def get_big_line_pointcloud(pcd, zyl_points, zyl_normals, mini_residual, distanc
         distance = np.ndarray(np.shape(zyl_points)[0])
         tmp = np.cross((zyl_points[:]-zyl_points[line_start]), zyl_normals[line_start])
         for x in range(np.shape(zyl_points)[0]):
-            distance[x] = np.sqrt(tmp[x][0] **2+ tmp[x][1] **2+ tmp[x][2]**2) / np.sqrt(zyl_normals[line_start][0] **2+ zyl_normals[line_start][1] **2+ zyl_normals[line_start][2]**2)
+            distance[x] = np.sqrt(tmp[x][0] **2+ tmp[x][1] **2+ tmp[x][2]**2) / np.linalg.norm(zyl_normals[line_start])#np.sqrt(zyl_normals[line_start][0] **2+ zyl_normals[line_start][1] **2+ zyl_normals[line_start][2]**2)
         
         # get distance indices within threshold from line
         distance[line_start] = 100

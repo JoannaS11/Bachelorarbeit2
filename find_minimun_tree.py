@@ -7,13 +7,16 @@ import scipy.interpolate
 import geomdl.fitting
 from datetime import datetime
 
-def export_pcd_as_ply(pcd, output_folder, output_name_without_ply):
+def export_pcd_as_ply(pcd, output_folder, output_name_without_ply, dir_name=None):
     # get current date and time
     date_time = str(datetime.now())
     date_time = date_time.replace(".", "-").replace(":", "-")
     date_time = date_time.replace(" ", "_")
     # export as ply
-    o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name_without_ply}.ply"), pcd)
+    if dir_name != None:
+        o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, dir_name, f"{date_time}_{output_name_without_ply}.ply"), pcd)
+    else:
+        o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name_without_ply}.ply"), pcd)
 
 
 def find_distance(start_node, index, max_distance):

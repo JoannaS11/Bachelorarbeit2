@@ -25,13 +25,16 @@ def get_bSpline(pcd, sample_size):
     return b_spline
 
 
-def export_pcd_as_ply(pcd, output_folder, output_name):
+def export_pcd_as_ply(pcd, output_folder, output_name_without_ply, dir_name = None):
     # get current date and time
     date_time = str(datetime.now())
     date_time = date_time.replace(".", "-").replace(":", "-")
     date_time = date_time.replace(" ", "_")
     # export as ply
-    o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name}.ply"), pcd)
+    if dir_name != None:
+        o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, dir_name, f"{date_time}_{output_name_without_ply}.ply"), pcd)
+    else:
+        o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name_without_ply}.ply"), pcd)
 
 
 def convert_bSpline_to_pcd(bSpline):
@@ -79,63 +82,79 @@ def get_closest_point_on_spline(pcd, bSpline):
     bSpline.evaluate()
     #print(f"splijne {len(bSpline)} and {bSpline.evaluate_single(0.501)}")
     points = np.asarray(pcd.points)
-    t_old = 0.1
+    #t_old = 0.1
     #p = points[4000]
     #print(p[1])
     vector_to_line = np.zeros([np.shape(points)[0], 3])
     half_line = np.zeros([np.shape(points)[0], 3])
     t_on_line = np.zeros([np.shape(points)[0]])
     #print(f" {np.linspace(0, 1, 20)} and {type(np.linspace(0, 1, 20))}")
-    start_points = np.asarray(bSpline.evaluate_list((np.linspace(0, 1, 40))))
+    start_points = np.asarray(bSpline.evaluate_list(np.linspace(0, 1, 40)))
+    print(start_points)
     for i in range(np.shape(points)[0]):
         # approximate start value to be determined
         p_min = 0
-        p_dist = 100
-        for p in range(np.shape(start_points)[0]):
-            dist = math.dist(points[i], start_points[p])
+        p_dist = 1000
+        p = points[i]
+        for po in range(np.shape(start_points)[0]):
+            dist = math.dist(p, start_points[po])
+            if i == 757 or i == 759:
+                print(f"i: {i} p_dist{p_dist} and dist {dist} all")
             if dist < p_dist:
                 p_dist = dist
-                p_min = p
-        p = points[i]
+                p_min = po
+                if i == 757 or i == 759:
+                    print(f"i: {i} p_dist {p_dist} and p_min {p_min} who mad it")
+        
         t_old = np.linspace(0, 1, 40)[p_min]
+        #print(f"told 2 {np.linspace(0, 1, 40)[2]}")
+        """if i < 800 and i > 700:
+            print(f"i {i}")
+            print(f"t_old {t_old}")"""
         #print(t_old)
-        for k in range(40):
+        for k in range(30):
             #print(t_old)
             point_on_spline = bSpline.derivatives(t_old, 2)
             #print(point_old_2)
             f_t = (point_on_spline[0][0] - p[0]) * point_on_spline[1][0] + (point_on_spline[0][1] - p[1]) * point_on_spline[1][1] + (point_on_spline[0][2]- p[2]) * point_on_spline[1][2] 
-            f__t = point_on_spline[1][0] * point_on_spline[1][0] + point_on_spline[1][1] * point_on_spline[1][1] + point_on_spline[1][2] * point_on_spline[1][2] + (point_on_spline[0][0]- p[0]) * point_on_spline[2][0] + (point_on_spline[0][1]- p[1]) * point_on_spline[2][1] + (point_on_spline[0][2]- p[2]) * point_on_spline[2][2]
-            t = t_old - f_t / f__t       
+            f__t = point_on_spline[1][0] * point_on_spline[1][0] + point_on_spline[1][1] * point_on_spline[1][1] + point_on_spline[1][2] * point_on_spline[1][2]#+ (point_on_spline[0][0]- p[0]) * point_on_spline[2][0] + (point_on_spline[0][1]- p[1]) * point_on_spline[2][1]#+ point_on_spline[1][2] * point_on_spline[1][2] + (point_on_spline[0][0]- p[0]) * point_on_spline[2][0] + (point_on_spline[0][1]- p[1]) * point_on_spline[2][1] + (point_on_spline[0][2]- p[2]) * point_on_spline[2][2]
+            t = t_old - f_t / f__t    
+   
             if t < 0.00:
                 t_old = 0.0
-                break
+                #break
             elif t > 1.00:
                 t_old = 1.0
                 #print(i)
-                break
-            #print(i)
-            """if np.abs(t - t_old) < 0.000010:
+                #break
+                #print(i)
+                """if np.abs(t - t_old) < 0.000010:
                 t_old = t
                 break"""
- 
-            t_old = t                                                                       
-        
+            else:
+                t_old = t  
+                                                                                 
 
+            if i ==759:# and i > 700:  
+                print(t_old)
         vector_to_line[i] = bSpline.evaluate_single(t_old) - p
         t_on_line[i] = t_old
+        #
+        # sleep(0.5)
         #print(vector_to_line)
 
-        #half_line[i] = p + 0.5 * vector_to_line[i]
+        half_line[i] = p + 0.3 * vector_to_line[i]
         #print(half_line[i])
 
     x = np.argwhere(t_on_line > 0.5)
-    print(x)
+    #print(x)
     #x = np.argwhere(t_on_line[x[:]] > 0.0000)
     #
     #print(t_on_line[0:1000])
-    vector_to_line[x[:]] = 0
+    #vector_to_line[x[:]] = 0
     #[x[:]] = points[x[:]] + 0.1 * vector_to_line[x[:]]
-    plot_file.plot_vectors(vector_to_line, points, start_points)
+    l = bSpline.evaluate_single(0.042383170524102884)
+    plot_file.plot_vectors(vector_to_line, points, start_points,l)
     #half_line = points + 0.5 * vector_to_line
 
     
@@ -291,19 +310,19 @@ def main():
     path_z_compl_2= os.path.join(os.getcwd(), "data","zylinder_compl-2.ply")
     path_z_compl_4 = os.path.join(os.getcwd(), "data","zylinder_compl-4.ply")
     path_colon = os.path.join(os.getcwd(), "data/Colon.ply")
-    pcd_colon = o3d.io.read_point_cloud(path_z_compl_4)
+    pcd_colon = o3d.io.read_point_cloud(path_colon)
     pcd_colon.paint_uniform_color([1,1,0])
     
     # data paths
     path_ = os.path.join(os.getcwd(), "output_new","2024-05-27_08-22-28-505194_line_2.ply")
     path_1 = os.path.join(os.getcwd(), "output_new", "2024-05-28_16-13-50-420242_0.25_min_path.ply")
-    path_colon_min = os.path.join(os.getcwd(), "output_new", "2024-06-03_10-24-25-169883_0.4_min_path.ply")
+    path_colon_min = os.path.join(os.getcwd(), "output_new", "2024-06-03_10-23-22-088632_0.425_min_path.ply")#"2024-06-03_10-24-25-169883_0.4_min_path.ply")
     path_zyl_simple = os.path.join(os.getcwd(), "output_new", "2024-06-07_16-01-05-609625_0.4_min_path.ply")
     path_zyl_compl_2 = os.path.join(os.getcwd(), "output_new", "2024-06-11_10-45-54-282186_0.4_min_path.ply")
     path_zyl_compl_4 = os.path.join(os.getcwd(), "output_new", "2024-06-11_14-41-33-528331_0.4_min_path.ply")
 
     # read pointcloud and convert to array
-    pcd = o3d.io.read_point_cloud(path_zyl_compl_4)
+    pcd = o3d.io.read_point_cloud(path_colon_min)
 
     
     line_bSpline = get_bSpline(pcd, sample_size)
@@ -342,8 +361,8 @@ def main():
         mesh_show_back_face = False,
         point_show_normal = True)
 
-    #find_smallest_dis_to_point((pcd_colon), line_bSpline, vector_to_line, t_on_line)
-    #visualize(pcd_colon)
+    find_smallest_dis_to_point((pcd_colon), line_bSpline, vector_to_line, t_on_line)
+    visualize(pcd_colon)
 
 
 if __name__ == "__main__": main()  
