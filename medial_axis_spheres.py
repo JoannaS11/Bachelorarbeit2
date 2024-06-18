@@ -45,7 +45,7 @@ def get_big_line_pointcloud(pcd, zyl_points, zyl_normals, mini_residual, distanc
         distance = np.ndarray(np.shape(zyl_points)[0])
         tmp = np.cross((zyl_points[:]-zyl_points[line_start]), zyl_normals[line_start])
         for x in range(np.shape(zyl_points)[0]):
-            distance[x] = np.sqrt(tmp[x][0] **2+ tmp[x][1] **2+ tmp[x][2]**2) / np.linalg.norm(zyl_normals[line_start])#np.sqrt(zyl_normals[line_start][0] **2+ zyl_normals[line_start][1] **2+ zyl_normals[line_start][2]**2)
+            distance[x] = np.sqrt(tmp[x][0] **2+ tmp[x][1] **2+ tmp[x][2]**2) / np.sqrt(zyl_normals[line_start][0] **2+ zyl_normals[line_start][1] **2+ zyl_normals[line_start][2]**2)
         
         # get distance indices within threshold from line
         distance[line_start] = 100

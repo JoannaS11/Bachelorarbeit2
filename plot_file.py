@@ -13,7 +13,7 @@ def plot_vectors(vector_to_line, pcd_colon, start_points,l):
     ax.plot(start_points[:,0], start_points[:,1], start_points[:,2], color = 'r')
     ax.scatter(start_points[2,0], start_points[2,1], start_points[2,2], color = 'c')
     ax.scatter(pcd_colon[759,0],pcd_colon[759,1], pcd_colon[759,2], color = 'b')
-    ax.scatter(l[0],l[1], l[2], color = 'b')
+    #ax.scatter(l[0],l[1], l[2], color = 'b')
     # Set the axis labels
     ax.set_xlabel('x')
     ax.set_ylabel('y')

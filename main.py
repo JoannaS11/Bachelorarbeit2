@@ -58,12 +58,13 @@ def main():
     path_z_complex_2 = os.path.join(os.getcwd(), "data","zylinder_compl-2.ply")
     path_z_simple = os.path.join(os.getcwd(), "data","zylinder_simple.ply")
     path_colon = os.path.join(os.getcwd(), "data","Colon.ply")
+    path_colon_seg = os.path.join(os.getcwd(), "data","colon_segments.ply")
     path_intestine_short_texture_anim = os.path.join(os.getcwd(), "data","intestine_short_texture_anim.ply")
     path_subtriangles_2 = os.path.join(os.getcwd(), "data","Colon_subtriangles_2.ply")
 
     #load point clouds
-    path = path_subtriangles_2
-    pcd_colon = o3d.io.read_point_cloud(path_colon)
+    path = path_colon_seg
+    pcd_colon = o3d.io.read_point_cloud(path_colon_seg)
     pcd = o3d.io.read_point_cloud(path)
     #pcd_1 = o3d.io.read_point_cloud(path_subtriangles_2)
 
@@ -83,9 +84,9 @@ def main():
 
     #parameter to change
     mini_residual = np.shape(zyl_points)[0] // 850
-    distance_point_to_line = 0.5
-    min_distance_point_to_point = 0.2
-    normals_inside = True
+    distance_point_to_line = 0.02
+    min_distance_point_to_point = 0.005
+    normals_inside = False
 
     pcd_big_line_2 = find_smaller_pcd(pcd, zyl_points, zyl_normals, mini_residual, distance_point_to_line, min_distance_point_to_point, normals_inside, dir_name)
 
@@ -94,7 +95,7 @@ def main():
     pcd_np = np.asarray(pcd_big_line_2.points)
 
     # adjustable parameter
-    max_distance = 0.4
+    max_distance = 0.2
 
     mid_line_pcd = find_min_tree(pcd_big_line_2, pcd_np, max_distance, dir_name)
 
