@@ -257,6 +257,9 @@ def find_points_to_pull(vector_to_line_distances, t_on_line, bSpline):
                 else: 
                     t_old = t"""  
 
+
+
+
     #return pull_points
 
 
@@ -330,7 +333,7 @@ def main():
     path_zyl_simple = os.path.join(os.getcwd(), "output_new", "2024-06-07_16-01-05-609625_0.4_min_path.ply")
     path_zyl_compl_2 = os.path.join(os.getcwd(), "output_new", "2024-06-11_10-45-54-282186_0.4_min_path.ply")
     path_zyl_compl_4 = os.path.join(os.getcwd(), "output_new","output_new", "2024-06-11_14-41-33-528331_0.4_min_path.ply")
-    path_zyl_seg = os.path.join(os.getcwd(),"output_main", "colon_segments__2024-06-17_11-32-43-398080", "2024-06-17_11-33-10-961239_0.2_min_path.ply")
+    path_zyl_seg = os.path.join(os.getcwd(),"output_main", "colon_segments__2024-06-17_11-31-52-383769", "2024-06-17_11-32-19-744015_0.3_min_path.ply")
 
     # read pointcloud and convert to array
     pcd = o3d.io.read_point_cloud(path_zyl_seg)

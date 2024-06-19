@@ -82,11 +82,20 @@ def main():
     zyl_normals = np.asarray(pcd.normals)
     zyl_points = np.asarray(pcd.points)
 
+    # visualize to see direction of normals
+    o3d.visualization.draw_geometries([pcd],
+        mesh_show_wireframe = True,
+        mesh_show_back_face = True,
+        point_show_normal = True
+    )
+
+    normals_inside = input("Are normals pointing to inside? yes: insert True, no: insert False:  ")
+    #normals_inside = True
     #parameter to change
     mini_residual = np.shape(zyl_points)[0] // 850
     distance_point_to_line = 0.07
     min_distance_point_to_point = 0.3
-    normals_inside = True
+    
 
     pcd_big_line_2 = find_smaller_pcd(pcd, zyl_points, zyl_normals, mini_residual, distance_point_to_line, min_distance_point_to_point, normals_inside, dir_name)
 
