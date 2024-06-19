@@ -353,7 +353,7 @@ def main():
     # convert Spline to pcd and export
     line_pcd = convert_bSpline_to_pcd(line_bSpline)
     line_pcd.paint_uniform_color([1,0,0])
-    export_pcd_as_ply(line_pcd, "output_curve", f"curve_as_pointcloud-{sample_size}")
+    #export_pcd_as_ply(line_pcd, "output_curve", f"curve_as_pointcloud-{sample_size}")
 
     colors_line = np.asarray(pcd_colon.colors)
     #colors_line[4000] = [1,0,0]

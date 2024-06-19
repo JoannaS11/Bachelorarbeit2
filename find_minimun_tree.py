@@ -22,7 +22,8 @@ def export_pcd_as_ply(pcd, output_folder, output_name_without_ply, dir_name=None
 def find_distance(start_node, index, max_distance):
     global adj_matr
     global pcd_np
-    if np.sum(adj_matr[index]) != 0.000:
+
+    if np.sum(adj_matr[index]) != 0:
         return
     
     for i in range(np.shape(pcd_np)[0]):
