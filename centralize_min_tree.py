@@ -78,9 +78,8 @@ def centralize_min_tree(min_path, pcd_colon, pcd_colon_normals, distance_point_t
 
 def export_pcd_as_ply(pcd, output_folder, output_name_without_ply, dir_name = None):
     # get current date and time
-    date_time = str(datetime.now())
-    date_time = date_time.replace(".", "-").replace(":", "-")
-    date_time = date_time.replace(" ", "_")
+    now = datetime.now()
+    date_time = now.strftime("%d-%m-%Y_%H-%M-%S")
     output_name_without_ply = output_name_without_ply.replace(".", "-")
     if dir_name != None:
         o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, dir_name, f"{output_name_without_ply}__at_{date_time}.ply"), pcd)

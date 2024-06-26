@@ -1,6 +1,6 @@
 import geomdl.fitting
 import numpy as np
-import geomdl
+import geomdl.exchange
 import os
 import open3d as o3d
 import scipy
@@ -26,16 +26,13 @@ def get_bSpline(pcd, sample_size):
     return b_spline
 
 
-def export_pcd_as_ply(pcd, output_folder, output_name_without_ply, dir_name = None):
+def export_pcd_as_ply(pcd, output_name_without_ply, folder):#output_folder, dir_name = None):
     # get current date and time
-    date_time = str(datetime.now())
-    date_time = date_time.replace(".", "-").replace(":", "-")
-    date_time = date_time.replace(" ", "_")
+    now = datetime.now()
+    date_time = now.strftime("%d-%m-%Y_%H-%M-%S")
     # export as ply
-    if dir_name != None:
-        o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, dir_name, f"{date_time}_{output_name_without_ply}.ply"), pcd)
-    else:
-        o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name_without_ply}.ply"), pcd)
+    name = f"{date_time}_{output_name_without_ply}.ply"
+    o3d.io.write_point_cloud(os.path.join(os.getcwd(), *folder, name), pcd)
 
 
 def convert_bSpline_to_pcd(bSpline):
@@ -178,17 +175,6 @@ def find_min_distances(vector_to_line_distances, t_on_line, bSpline, pcd_colon, 
     ind = np.argsort(t_vec_combined[:,0] )
     t_vec_combined = t_vec_combined[ind]
     local_mins = create_bins_find_local_mins(t_vec_combined, bin_size)
-    """p_pcd = o3d.geometry.PointCloud()    
-    l = o3d.utility.Vector3dVector(local_mins)#p_np)
-    p_pcd.points = l
-    p_pcd.paint_uniform_color([0,0,1])
-    o3d.visualization.draw_geometries([pcd_colon, p_pcd],
-        mesh_show_wireframe = False,
-        mesh_show_back_face = False,
-        point_show_normal = True)
-"""
-    #find_points_to_pull(t_vec_combined,vector_to_line_distances, t_on_line, bSpline)
-
     plot_vectors(t_vec_combined[:,0], t_vec_combined[:,1], 0)
 
     #simulate_motion(bSpline, pcd_colon, t_vec_combined, min_distances, vector_to_line, t_on_line)
@@ -433,16 +419,15 @@ def find_smallest_dis_to_point(pcd_colon, bspline, vector_to_line, t_on_line, ev
     vis.run()
     vis.destroy_window()
 
-def export_spline_as_json(b_spline, output_folder, dir_name, output_name_without_json):
+def export_spline_as_json(b_spline, output_name_without_json, folder):
     # get current date and time
-    date_time = str(datetime.now())
-    date_time = date_time.replace(".", "-").replace(":", "-")
-    date_time = date_time.replace(" ", "_")
+    now = datetime.now()
+    date_time = now.strftime("%d-%m-%Y_%H-%M-%S")
     # export as ply
-    if dir_name != None:
-        geomdl.exchange.export_json( b_spline, os.path.join(os.getcwd(), output_folder, dir_name, f"{date_time}_{output_name_without_json}.ply"))
-    else:
-        geomdl.exchange.export_json(b_spline, os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name_without_json}.ply"))
+    name = f"{date_time}_{output_name_without_json}.json"
+    geomdl.exchange.export_json(b_spline, os.path.join(os.getcwd(), *folder, name))
+
+    return name
 
 def main():
 
@@ -462,6 +447,7 @@ def main():
     pcd_colon = o3d.io.read_point_cloud(path_z_more_seg)
     pcd_colon.paint_uniform_color([1,1,0])
 
+    data = "colon_seg_more_compl"
 
     pcd_colon_1 = o3d.io.read_point_cloud(path_z_more_seg)
     pcd_colon_1.paint_uniform_color([1,1,0])
@@ -473,11 +459,12 @@ def main():
     path_zyl_simple = os.path.join(os.getcwd(), "output_new", "2024-06-07_16-01-05-609625_0.4_min_path.ply")
     path_zyl_compl_2 = os.path.join(os.getcwd(), "output_new", "2024-06-11_10-45-54-282186_0.4_min_path.ply")
     path_zyl_compl_4 = os.path.join(os.getcwd(), "output_new","output_new", "2024-06-11_14-41-33-528331_0.4_min_path.ply")
-    path_zyl_seg = os.path.join(os.getcwd(),"output_main", "colon_segments__2024-06-17_11-31-52-383769", "2024-06-17_11-32-19-744015_0.3_min_path.ply")
-    path_zyl_seg_compl = os.path.join(os.getcwd(),"output_main", "colon_segments__2024-06-17_11-31-52-383769", "2024-06-17_11-32-19-744015_0.3_min_path.ply")
-    path_zyl_seg_more_compl = os.path.join(os.getcwd(),"output_main", "colon_segments_more_complicated__2024-06-25_10-19-21-923511", "2024-06-25_10-19-58-397080_0.2_min_path.ply")
+    path_zyl_seg = os.path.join(os.getcwd(),"output_main", "colon_segments__2024-06-17_11-31-52", "2024-06-17_11-32-19-744015_0.3_min_path.ply")
+    path_zyl_seg_compl = os.path.join(os.getcwd(),"output_main", "colon_segments__2024-06-17_11-31-52", "2024-06-17_11-32-19-744015_0.3_min_path.ply")
+    path_zyl_seg_more_compl = os.path.join(os.getcwd(),"output_main", "colon_segments_more_complicated__2024-06-25_10-19-21", "2024-06-25_10-19-58-397080_0.2_min_path.ply")
     # read pointcloud and convert to array
     pcd = o3d.io.read_point_cloud(path_zyl_seg_more_compl)
+    print((path_1[1]))
 
     o3d.visualization.draw_geometries([pcd_colon],
         mesh_show_wireframe = True,
@@ -489,6 +476,7 @@ def main():
 
 
     line_bSpline = get_bSpline(pcd, sample_size)
+    export_spline_as_json(line_bSpline, f"{sample_size}_bSpline_medial_axis_{data}", ["output_curve"])
 
     length_spline = get_spline_length(line_bSpline)
     #p = line_bSpline.evaluate_single(get_closest_point_on_spline(pcd_colon, line_bSpline))
@@ -502,7 +490,8 @@ def main():
     # convert Spline to pcd and export
     line_pcd = convert_bSpline_to_pcd(line_bSpline)
     line_pcd.paint_uniform_color([1,0,0])
-    #export_pcd_as_ply(line_pcd, "output_curve", f"curve_as_pointcloud-{sample_size}")
+    outputfolder = ["output_curve"]
+    export_pcd_as_ply(line_pcd, f"curve_as_pointcloud-{sample_size}", outputfolder)
 
     colors_line = np.asarray(pcd_colon.colors)
     #colors_line[4000] = [1,0,0]

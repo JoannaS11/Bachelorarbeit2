@@ -20,9 +20,8 @@ def plot_mean_and_std(values):
 
 def export_pcd_as_ply(pcd, output_folder, output_name_without_ply, dir_name = None):
     # get current date and time
-    date_time = str(datetime.now())
-    date_time = date_time.replace(".", "-").replace(":", "-")
-    date_time = date_time.replace(" ", "_")
+    now = datetime.now()
+    date_time = now.strftime("%d-%m-%Y_%H-%M-%S")
     if dir_name != None:
         o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, dir_name, f"{date_time}_{output_name_without_ply}.ply"), pcd)
     else:

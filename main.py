@@ -70,9 +70,8 @@ def main():
     #pcd_1 = o3d.io.read_point_cloud(path_subtriangles_2)
 
     ################################# create directory to save results ###########################################
-    date_time = str(datetime.now())
-    date_time = date_time.replace(".", "-").replace(":", "-")
-    date_time = date_time.replace(" ", "_")
+    now = datetime.now()
+    date_time = now.strftime("%d-%m-%Y_%H-%M-%S")
     dir_name = f"{path}_{date_time}"
     dir_name = dir_name.replace(".ply","_")
     dir_name = dir_name.replace("data","output_main")
