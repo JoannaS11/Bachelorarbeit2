@@ -10,6 +10,7 @@ from datetime import datetime
 from time import sleep
 import math
 import plot_file
+from scipy.signal import argrelmin
 
 import copy 
 
@@ -160,7 +161,7 @@ def plot_vectors(pcd_colon, vector_to_line,  start_points):
 
     plt.show()
 
-def find_min_distances(vector_to_line_distances, t_on_line, bSpline):
+def find_min_distances(vector_to_line_distances, t_on_line, bSpline, pcd_colon, bin_size):
     # if a t appears several times in t_on_line, just save the min distance for this t
     t_vec_combined = np.c_[t_on_line, vector_to_line_distances]
     u, c = np.unique(t_on_line, return_counts=True)
@@ -176,20 +177,45 @@ def find_min_distances(vector_to_line_distances, t_on_line, bSpline):
     # sort by t
     ind = np.argsort(t_vec_combined[:,0] )
     t_vec_combined = t_vec_combined[ind]
-    create_bins_find_local_mins(t_vec_combined)
+    local_mins = create_bins_find_local_mins(t_vec_combined, bin_size)
+    """p_pcd = o3d.geometry.PointCloud()    
+    l = o3d.utility.Vector3dVector(local_mins)#p_np)
+    p_pcd.points = l
+    p_pcd.paint_uniform_color([0,0,1])
+    o3d.visualization.draw_geometries([pcd_colon, p_pcd],
+        mesh_show_wireframe = False,
+        mesh_show_back_face = False,
+        point_show_normal = True)
+"""
     #find_points_to_pull(t_vec_combined,vector_to_line_distances, t_on_line, bSpline)
 
     plot_vectors(t_vec_combined[:,0], t_vec_combined[:,1], 0)
 
-def create_bins_find_local_mins(t_vec_combined):
-    bin_size = 0.01
+    #simulate_motion(bSpline, pcd_colon, t_vec_combined, min_distances, vector_to_line, t_on_line)
+
+    return local_mins
+
+def get_spline_length(b_spline):
+    ctr_points = np.asarray(b_spline.ctrlpts)
+    ctr_size = b_spline.ctrlpts_size
+    appr_length_bspline = 0
+    for i in range(ctr_size-1):
+        appr_length_bspline += math.dist(ctr_points[i,:], ctr_points[i+1,:])
+
+    average_length_vector = appr_length_bspline / ctr_size
+    print(appr_length_bspline)
+    
+    return appr_length_bspline
+
+def create_bins_find_local_mins(t_vec_combined, bin_size):
+    #bin_size = 0.01
     min_bin_arg = np.zeros([int(1/bin_size)])
     for b_s in range(int(1/bin_size)):
         bin_arg = np.argwhere(((t_vec_combined[:,0] >= bin_size * b_s) & (t_vec_combined[:,0] <= (b_s * bin_size+ bin_size))))
         min_bin = np.argmin(t_vec_combined[bin_arg[:],1])
         min_t = (t_vec_combined[bin_arg[:], 0]) [min_bin]
         min_bin_arg[b_s] = np.argwhere(t_vec_combined[:, 0] == min_t)
-        print(f"bin_arg {bin_arg}")
+        #print(f"bin_arg {bin_arg}")
 
     print(f"min bin arg {min_bin_arg}")
     fig = plt.figure()
@@ -201,20 +227,26 @@ def create_bins_find_local_mins(t_vec_combined):
     ax.set_ylabel('y')
 
     plt.show()
+    min_bins = t_vec_combined[min_bin_arg_1]
+    y = t_vec_combined[min_bin_arg_1,1]
+    arg = argrelmin(y,order=2)#np.shape(min_bin_arg)[0] // 8 )
 
-
-
-    line_pc_array = np.ndarray.tolist(t_vec_combined[min_bin_arg_1[:],:])
+    """line_pc_array = np.ndarray.tolist(t_vec_combined[min_bin_arg_1[:],:])
 
     b_spline = geomdl.fitting.interpolate_curve(line_pc_array, 2)
+    b_spline.sample_size = b_spline.sample_size * 10
+    x = np.asarray(b_spline.evalpts)
+    print(f"x {np.shape(min_bins[arg[:],1])}")
     local_mins = np.zeros([int(1/bin_size)])
     for b_s in range(int(1/bin_size)):
-        t_old = b_s * bin_size
-        for k in range(10):
+        t_old = 5 * bin_size
+        #b_s * 5#bin_size
+        #print(f"t_old {t_old}")
+        for k in range(50):
             point_on_spline = b_spline.derivatives(t_old, 2)
             f_t = (point_on_spline[0][0]) * point_on_spline[1][0] + (point_on_spline[0][1]) * point_on_spline[1][1]# + (point_on_spline[0][2]- p[2]) * point_on_spline[1][2] 
             f__t = point_on_spline[1][0] * point_on_spline[1][0] + point_on_spline[1][1] * point_on_spline[1][1]# + point_on_spline[1][2] * point_on_spline[1][2]#+ (point_on_spline[0][0]- p[0]) * point_on_spline[2][0] + (point_on_spline[0][1]- p[1]) * point_on_spline[2][1]#+ point_on_spline[1][2] * point_on_spline[1][2] + (point_on_spline[0][0]- p[0]) * point_on_spline[2][0] + (point_on_spline[0][1]- p[1]) * point_on_spline[2][1] + (point_on_spline[0][2]- p[2]) * point_on_spline[2][2]
-            t_old = t_old - point_on_spline[1][0] / point_on_spline[2][0]#f_t / f__t  
+            t_old = t_old - point_on_spline[1][1] / point_on_spline[2][1] * (point_on_spline[1][1] / point_on_spline[2][1])#ff_t / f__t  
 
             if t_old < 0.00:
                 t_old = 0.0
@@ -229,16 +261,20 @@ def create_bins_find_local_mins(t_vec_combined):
     
     local_mins = np.round(local_mins[:], decimals = 5)
     local_mins = np.unique(local_mins)
-
+    print(f"local mins {local_mins}")
+"""
     fig = plt.figure()
     ax = fig.add_subplot()
     min_bin_arg_1 = min_bin_arg.astype(int)
     ax.scatter(t_vec_combined[:,0], t_vec_combined[:,1], color = 'y')
-    ax.scatter(local_mins, np.full(np.shape(local_mins), [0.14]), color = 'g')
+    z = min_bins[arg[:]]
     ax.scatter(np.linspace(0, 1, int(1/bin_size)), np.full(int(1/bin_size), [0.25]), color = 'c')
     ax.scatter(t_vec_combined[min_bin_arg_1[:],0], t_vec_combined[min_bin_arg_1[:],1], color= 'r')
+    ax.scatter(min_bins[arg[:],0], min_bins[arg[:],1], color='m')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
+
+    
 
     plt.show()
     """fig = plt.figure()
@@ -250,13 +286,95 @@ def create_bins_find_local_mins(t_vec_combined):
     ax.set_ylabel('y')
 
     plt.show()"""
-    print(local_mins)
+    #print(local_mins)
 
-
+    return z
             
     
     #b_spline.sample_size = sample_size * b_spline.sample_size
 
+"""b_Spline: medial axis as bSpline
+   pcd_colon: pointcloud of object
+   t_vec_combined: array[t, distance]: shortest distance from pcd_colon points to medial axis, t = point on line
+   min_distances: array[t, min_dist]: t at min distance
+   vector_to_line: vector from pcd points to medial axis
+   t_on_line: t to vector_to_line
+"""
+def simulate_motion(b_Spline, pcd_colon, min_distances, vector_to_line, t_on_line):
+    vis = o3d.visualization.Visualizer()
+    vis.create_window()
+    vis.add_geometry(pcd_colon)
+    points = copy.deepcopy(np.asarray(pcd_colon.points))
+    # copy by reference
+    moving_part = np.asarray(pcd_colon.points)
+    for min_dist_ in range(np.shape(min_distances)[0]*6):
+        min_dist = min_dist_% np.shape(min_distances)[0]
+
+
+        t_smallest_distance_arg = np.argwhere(t_on_line == min_distances[min_dist, 0])
+        contraction_point = np.asarray(b_Spline.evaluate_single(min_distances[min_dist, 0]))
+        half_point = (points[t_smallest_distance_arg[0], :] + 0.5 * vector_to_line[t_smallest_distance_arg[0], :])[0]
+        #print(f"cont {contraction_point}  abd half {half_point}")
+        dist_half_contr_point = math.dist(contraction_point, half_point)
+
+        if min_dist == 0:
+            oral_half = 0
+        else:
+            oral_half = (min_distances[min_dist, 0] + min_distances[min_dist - 1, 0]) / 2
+            
+            if min_dist == 1:
+                oral_half_old = 0
+            else:
+                oral_half_old = (min_distances[min_dist-1, 0] + min_distances[min_dist - 2, 0]) / 2
+
+            aboral_half_old = (min_distances[min_dist-1, 0] + min_distances[min_dist, 0]) / 2
+
+            t_contr_oral_arg_old = np.argwhere((t_on_line > oral_half_old) & (t_on_line <= min_distances[min_dist-1, 0]))
+            t_contr_aboral_arg_old = np.argwhere((t_on_line > min_distances[min_dist-1, 0]) & (t_on_line < aboral_half_old))
+
+            multi_factor_oral_old = 1 - (np.abs(min_distances[min_dist - 1, 0] - t_on_line[t_contr_oral_arg_old])) / np.abs(min_distances[min_dist-1, 0] - oral_half_old)
+            multi_factor_aboral_old = 1 - (np.abs(min_distances[min_dist - 1, 0] - t_on_line[t_contr_aboral_arg_old])) / np.abs(min_distances[min_dist-1, 0] - aboral_half_old)
+        
+        if min_dist == np.shape(min_distances)[0] - 1:
+            aboral_half = 1
+        else:
+            aboral_half = (min_distances[min_dist, 0] + min_distances[min_dist + 1, 0]) / 2
+
+        t_contr_oral_arg = np.argwhere((t_on_line > oral_half) & (t_on_line <= min_distances[min_dist, 0]))
+        t_contr_aboral_arg = np.argwhere((t_on_line > min_distances[min_dist, 0]) & (t_on_line < aboral_half))
+
+        multi_factor_oral = 1 - (np.abs(min_distances[min_dist, 0] - t_on_line[t_contr_oral_arg])) / np.abs(min_distances[min_dist, 0] - oral_half)
+        multi_factor_aboral = 1 - (np.abs(min_distances[min_dist, 0] - t_on_line[t_contr_aboral_arg])) / np.abs(min_distances[min_dist, 0] - aboral_half)
+
+        while math.dist(contraction_point, moving_part[t_smallest_distance_arg[0]][0]) > dist_half_contr_point:
+            moving_part[t_contr_oral_arg[:,0]] += 0.01 * multi_factor_oral * vector_to_line[t_contr_oral_arg[:,0]]
+            moving_part[t_contr_aboral_arg[:,0]] += 0.01 * multi_factor_aboral * vector_to_line[t_contr_aboral_arg[:,0]]
+            
+            if min_dist != 0:
+                moving_part[t_contr_oral_arg_old[:,0]] -= 0.01 * multi_factor_oral_old* vector_to_line[t_contr_oral_arg_old[:,0]]
+                moving_part[t_contr_aboral_arg_old[:,0]] -= 0.01 * multi_factor_aboral_old* vector_to_line[t_contr_aboral_arg_old[:,0]]
+
+            vis.poll_events()
+            vis.update_geometry(pcd_colon)
+            vis.update_renderer()
+            sleep(0.03)
+
+        if min_dist == np.shape(min_distances)[0] - 1:
+            orig_point = (points[t_smallest_distance_arg[0], :])[0]
+            dist_orig_contr_point = math.dist(contraction_point, orig_point)
+
+            while math.dist(contraction_point, moving_part[t_smallest_distance_arg[0]][0]) < dist_orig_contr_point:
+
+                moving_part[t_contr_oral_arg[:,0]] -= 0.01 * multi_factor_oral * vector_to_line[t_contr_oral_arg[:,0]]
+                moving_part[t_contr_aboral_arg[:,0]] -= 0.01 * multi_factor_aboral * vector_to_line[t_contr_aboral_arg[:,0]]
+                
+                vis.poll_events()
+                vis.update_geometry(pcd_colon)
+                vis.update_renderer()
+                sleep(0.03)
+
+    vis.run()
+    vis.destroy_window()
 
 def find_points_to_pull(t_vec_combined, vector_to_line_distances, t_on_line, bSpline):
     t_sort_indices = np.argsort(t_on_line)
@@ -290,7 +408,7 @@ def find_points_to_pull(t_vec_combined, vector_to_line_distances, t_on_line, bSp
     plt.show()
 
 
-def find_smallest_dis_to_point(pcd_colon, bspline, vector_to_line, t_on_line):
+def find_smallest_dis_to_point(pcd_colon, bspline, vector_to_line, t_on_line, eval_points):
     vis = o3d.visualization.Visualizer()
     vis.create_window()
     vis.add_geometry(pcd_colon)
@@ -298,9 +416,9 @@ def find_smallest_dis_to_point(pcd_colon, bspline, vector_to_line, t_on_line):
     z = 0
     # copy by reference
     half_line = np.asarray(pcd_colon.points)
-    for i in range(500):
-        dist_to_z = np.power(np.abs(1 - np.abs((z % 1.0) - t_on_line[:])), 4)
-        dist_to_z = np.power(np.abs(1 - np.abs((z % 1.0) - t_on_line[:])), 4)
+    for i in range(np.shape(eval_points)[0]):
+        dist_to_z = np.power(np.abs(1 - np.abs((eval_points[i] % 1.0) - t_on_line[:])), 4)
+        dist_to_z = np.power(np.abs(1 - np.abs((eval_points[i] % 1.0) - t_on_line[:])), 4)
 
         half_line[:, 0] = points[:, 0] + np.multiply(dist_to_z, vector_to_line[:, 0])
         half_line[:, 1] = points[:, 1] + np.multiply(dist_to_z, vector_to_line[:, 1])
@@ -309,11 +427,22 @@ def find_smallest_dis_to_point(pcd_colon, bspline, vector_to_line, t_on_line):
         vis.poll_events()
         vis.update_geometry(pcd_colon)
         vis.update_renderer()
-        sleep(0.1)
+        sleep(1)
         z+=0.01
 
     vis.run()
     vis.destroy_window()
+
+def export_spline_as_json(b_spline, output_folder, dir_name, output_name_without_json):
+    # get current date and time
+    date_time = str(datetime.now())
+    date_time = date_time.replace(".", "-").replace(":", "-")
+    date_time = date_time.replace(" ", "_")
+    # export as ply
+    if dir_name != None:
+        geomdl.exchange.export_json( b_spline, os.path.join(os.getcwd(), output_folder, dir_name, f"{date_time}_{output_name_without_json}.ply"))
+    else:
+        geomdl.exchange.export_json(b_spline, os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name_without_json}.ply"))
 
 def main():
 
@@ -329,8 +458,13 @@ def main():
     path_colon = os.path.join(os.getcwd(), "data", "Colon.ply")
     path_z_seg = os.path.join(os.getcwd(), "data", "colon_segments.ply")
     path_colon_sub = os.path.join(os.getcwd(), "data", "Colon_subtriangles_2.ply")
-    pcd_colon = o3d.io.read_point_cloud(path_z_seg)
+    path_z_more_seg = os.path.join(os.getcwd(), "data", "colon_segments_more_complicated.ply") 
+    pcd_colon = o3d.io.read_point_cloud(path_z_more_seg)
     pcd_colon.paint_uniform_color([1,1,0])
+
+
+    pcd_colon_1 = o3d.io.read_point_cloud(path_z_more_seg)
+    pcd_colon_1.paint_uniform_color([1,1,0])
     
     # data paths
     path_ = os.path.join(os.getcwd(), "output_new","2024-05-27_08-22-28-505194_line_2.ply")
@@ -340,9 +474,10 @@ def main():
     path_zyl_compl_2 = os.path.join(os.getcwd(), "output_new", "2024-06-11_10-45-54-282186_0.4_min_path.ply")
     path_zyl_compl_4 = os.path.join(os.getcwd(), "output_new","output_new", "2024-06-11_14-41-33-528331_0.4_min_path.ply")
     path_zyl_seg = os.path.join(os.getcwd(),"output_main", "colon_segments__2024-06-17_11-31-52-383769", "2024-06-17_11-32-19-744015_0.3_min_path.ply")
-
+    path_zyl_seg_compl = os.path.join(os.getcwd(),"output_main", "colon_segments__2024-06-17_11-31-52-383769", "2024-06-17_11-32-19-744015_0.3_min_path.ply")
+    path_zyl_seg_more_compl = os.path.join(os.getcwd(),"output_main", "colon_segments_more_complicated__2024-06-25_10-19-21-923511", "2024-06-25_10-19-58-397080_0.2_min_path.ply")
     # read pointcloud and convert to array
-    pcd = o3d.io.read_point_cloud(path_zyl_seg)
+    pcd = o3d.io.read_point_cloud(path_zyl_seg_more_compl)
 
     o3d.visualization.draw_geometries([pcd_colon],
         mesh_show_wireframe = True,
@@ -355,7 +490,7 @@ def main():
 
     line_bSpline = get_bSpline(pcd, sample_size)
 
-    
+    length_spline = get_spline_length(line_bSpline)
     #p = line_bSpline.evaluate_single(get_closest_point_on_spline(pcd_colon, line_bSpline))
 
     # create point cloud from curve
@@ -380,18 +515,27 @@ def main():
     
     vector_to_line, t_on_line, half_line, vector_to_line_distances = get_closest_point_on_spline(pcd_colon, line_bSpline, normals_to_inside)
     #print(f"vecot to line {t_on_line[0:1000]}")
-    find_min_distances(vector_to_line_distances, t_on_line, line_bSpline)
+    bin_size = 0.2 / length_spline
+    local_mins = find_min_distances(vector_to_line_distances, t_on_line, line_bSpline, pcd_colon, bin_size)
     #find_points_to_pull(vector_to_line_distances, t_on_line, line_bSpline)
 
-    p_pcd = o3d.geometry.PointCloud()    
+    simulate_motion(line_bSpline, pcd_colon, local_mins, vector_to_line, t_on_line)
+
+    p_pcd = o3d.geometry.PointCloud()  
+    print(type(half_line))  
     p_pcd.points = o3d.utility.Vector3dVector(half_line)#p_np)
     p_pcd.paint_uniform_color([0,0,1])
-    o3d.visualization.draw_geometries([line_pcd, pcd_colon, p_pcd],
+
+    p_p= o3d.geometry.PointCloud()    
+    p_p.points = o3d.utility.Vector3dVector(line_bSpline.evaluate_list(local_mins[:,0]))#p_np)
+    p_p.paint_uniform_color([0,0,1])
+
+    o3d.visualization.draw_geometries([line_pcd, pcd_colon_1,p_p],
         mesh_show_wireframe = False,
         mesh_show_back_face = False,
         point_show_normal = True)
 
-    find_smallest_dis_to_point((pcd_colon), line_bSpline, vector_to_line, t_on_line)
+    find_smallest_dis_to_point((pcd_colon), line_bSpline, vector_to_line, t_on_line, local_mins[:,0])
     #visualize(pcd_colon)
 
 
