@@ -6,7 +6,8 @@ from datetime import datetime
 import open3d as o3d
 import shutil
 import json
-import get_bspline
+import find_bSpline
+import find_min_distances_to_spline
 
 
 def export_pcd_as_ply(pcd, path, output_name_without_ply):
@@ -80,7 +81,7 @@ def main():
     path_subtriangles_2 = "Colon_subtriangles_2.ply"
     path_anim_haustren = "4_colon_haustren_anim_text2.ply"
 
-    object_name = path_anim_haustren
+    object_name = path_colon_seg
     path = os.path.join(current_dir, "data", object_name)
 
     #load point clouds
@@ -177,10 +178,10 @@ def main():
         input_liste["sample_size_bSpline"] = sample_size
 
         # create b_spline and export
-        medial_axis_bspline = get_bspline.get_bSpline(mid_line_pcd, sample_size)
-        file_name = get_bspline.export_spline_as_json(medial_axis_bspline, f"{sample_size}_bSpline_medial_axis_{data_name}", [dir_json])
+        medial_axis_bspline = find_bSpline.get_bSpline(mid_line_pcd, sample_size)
+        file_name = find_bSpline.export_spline_as_json(medial_axis_bspline, f"{sample_size}_bSpline_medial_axis_{data_name}", [dir_json])
 
-        length_spline = get_bspline.get_spline_length(medial_axis_bspline)
+        length_spline = find_bSpline.get_spline_length(medial_axis_bspline)
         # add file name to json file
         input_liste['medial_axis_spline']= [file_name]
         input_liste['length_spline'] = length_spline
@@ -191,7 +192,7 @@ def main():
 
         ############################ distances from points to spline ###########################################
         # get distance of points to mid_line & return all arrays
-        vector_to_line, t_on_line, half_line, vector_to_line_distances = get_bspline.get_closest_point_on_spline(pcd_data, medial_axis_bspline, normals_to_inside)
+        vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline(pcd_data, medial_axis_bspline, normals_to_inside)
 
         # create dir if it doesn't already exist
         folder_name = "motion_arrays"
@@ -220,7 +221,7 @@ def main():
         t_on_line_path = input_liste["t_on_line"][1:]
 
         bin_size = 0.2 / length_spline
-        local_mins = get_bspline.find_min_distances(vector_to_line_distances, t_on_line, medial_axis_bspline, pcd_data, bin_size)
+        local_mins = find_min_distances_to_spline.find_min_distances(vector_to_line_distances, t_on_line, medial_axis_bspline, pcd_data, bin_size)
         
         # export as npz
         now = datetime.now()

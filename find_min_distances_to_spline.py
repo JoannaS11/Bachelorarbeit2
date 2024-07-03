@@ -3,7 +3,10 @@ import matplotlib.pyplot as plt
 import math
 from scipy.signal import argrelmin
 
-def find_min_distances(vector_to_line_distances, t_on_line, bSpline, pcd_colon, bin_size, plot_on=True):
+def find_min_distances(vector_to_line_distances, t_on_line, bSpline, pcd_colon, bin_size, plot_on=True):   
+    # if a t appears several times in t_on_line, just save the min distance for this t
+    t_vec_combined = np.c_[t_on_line, vector_to_line_distances]
+
     if plot_on:
         """
             plot direct distances from points to spline
@@ -15,9 +18,7 @@ def find_min_distances(vector_to_line_distances, t_on_line, bSpline, pcd_colon, 
         ax.scatter(t_vec_combined[:,0], t_vec_combined[:,1], color= 'r')
         ax.set_xlabel('t')
         ax.set_ylabel('distances')
-    
-    # if a t appears several times in t_on_line, just save the min distance for this t
-    t_vec_combined = np.c_[t_on_line, vector_to_line_distances]
+
     u, c = np.unique(t_on_line, return_counts=True)
     multiple_arg = np.argwhere(c != 1)
     t_multiple_values = u[multiple_arg]

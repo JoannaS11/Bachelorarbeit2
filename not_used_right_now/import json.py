@@ -1,5 +1,5 @@
 import json
-import get_bspline
+import not_used_right_now.get_bspline as get_bspline
 import os
 import open3d as o3d
 import numpy as np

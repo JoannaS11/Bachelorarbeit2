@@ -1,8 +1,7 @@
 import json
-
 import geomdl.BSpline
 import geomdl.exchange
-import get_bspline
+import f_simulate_motion
 import os
 import open3d as o3d
 import numpy as np
@@ -67,7 +66,7 @@ def main():
     path_anim_hausten = os.path.join(current_dir,"output_main", "4_colon_haustren_anim_text2__03-07-2024_08-16-41", "4_colon_haustren_anim_text2__03-07-2024_08-16-41_json.json")
 
 
-    json_file_path = path_anim_hausten
+    json_file_path = path_colon_sub
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 
@@ -104,7 +103,7 @@ def main():
         plot_midline_as_pcd(pcd_data, medial_axis_points, min_distances, medial_axis_bspline)
 
         # simulate motion
-        get_bspline.simulate_motion(
+        f_simulate_motion.simulate_motion(
             medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
         )
 

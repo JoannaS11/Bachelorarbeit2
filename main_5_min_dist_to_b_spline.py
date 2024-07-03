@@ -1,7 +1,7 @@
 import json
 import geomdl.BSpline
 import geomdl.exchange
-import get_bspline
+import find_min_distances_to_spline
 import os
 import open3d as o3d
 import numpy as np
@@ -22,7 +22,7 @@ def main():
 
 
 
-    json_file_path = path_anim_hausten
+    json_file_path = path_seg
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
 
@@ -50,7 +50,7 @@ def main():
 
         # calculate min distances from points to spline
         bin_size = length_spline / 500
-        local_mins = get_bspline.find_min_distances(vector_to_line_distances, t_on_line, medial_axis_bspline, pcd_data, bin_size)
+        local_mins = find_min_distances_to_spline.find_min_distances(vector_to_line_distances, t_on_line, medial_axis_bspline, pcd_data, bin_size)
         
         # export as npz
         now = datetime.now()
