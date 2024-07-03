@@ -1,0 +1,47 @@
+{
+    "dir": [
+        "output_main",
+        "zylinder_compl-2__02-07-2024_11-03-02"
+    ],
+    "data": [
+        "data",
+        "zylinder_compl-2.ply"
+    ],
+    "additional_data": [],
+    "medial_axis_big_pcd": [
+        "02-07-2024_11-03-14__0.5_0.02_1_pcd_data_big_path_without_outlier.ply"
+    ],
+    "medial_axis_pcd": [
+        "02-07-2024_11-03-24_0.4_min_path.ply"
+    ],
+    "medial_axis_spline": [
+        "02-07-2024_11-03-25_2_bSpline_medial_axis_zylinder_compl-2.json"
+    ],
+    "t_on_line": [
+        "t_on_line",
+        "motion_arrays",
+        "02-07-2024_11-03-37_motion_info_arrays.npz"
+    ],
+    "vector_to_line": [
+        "vector_to_line",
+        "motion_arrays",
+        "02-07-2024_11-03-37_motion_info_arrays.npz"
+    ],
+    "vector_to_line_distances": [
+        "vector_to_line_distances",
+        "motion_arrays",
+        "02-07-2024_11-03-37_motion_info_arrays.npz"
+    ],
+    "min_distances_values": [
+        "local_mins",
+        "motion_arrays",
+        "02-07-2024_11-03-51_min_distances.npz"
+    ],
+    "length_spline": 16.901935420587993,
+    "normals_to_inside": false,
+    "mini_residual": 1,
+    "min_distance_point_to_point": 0.5,
+    "distance_point_to_line": 0.02,
+    "max_distance_min_tree": 0.4,
+    "sample_size_bSpline": 2
+}

@@ -1,0 +1,33 @@
+{
+    "dir": [
+        "output_main",
+        "zylinder_simple__02-07-2024_16-31-08"
+    ],
+    "data": [
+        "data",
+        "zylinder_simple.ply"
+    ],
+    "additional_data": [],
+    "medial_axis_big_pcd": [],
+    "medial_axis_pcd": [],
+    "medial_axis_spline": [],
+    "t_on_line": [
+        "t_on_line"
+    ],
+    "vector_to_line": [
+        "vector_to_line"
+    ],
+    "vector_to_line_distances": [
+        "vector_to_line_distances"
+    ],
+    "min_distances_values": [
+        "local_mins"
+    ],
+    "length_spline": 0,
+    "normals_to_inside": false,
+    "mini_residual": 0,
+    "min_distance_point_to_point": 0,
+    "distance_point_to_line": 0,
+    "max_distance_min_tree": 0,
+    "sample_size_bSpline": 0
+}

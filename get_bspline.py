@@ -126,7 +126,7 @@ def get_closest_point_on_spline(pcd, bSpline, normals_to_inside):
                 if np.dot(vector / np.linalg.norm(vector), normals[i] / np.linalg.norm(normals[i])) < 1: # 45 ° in both directions
                     t_on_line[i] = t_old
                     vector_to_line[i] = vector
-                    if i % 20 == 0:
+                    if i % np.round(np.shape(points)[0] * 0.01) == 0:
                         print(f"{np.round(i / np.shape(points)[0], decimals=3) * 100} % done")
                     break
 
@@ -134,13 +134,13 @@ def get_closest_point_on_spline(pcd, bSpline, normals_to_inside):
         #print("here")
 
     l = bSpline.evaluate_single(0.042383170524102884)
-    plot_file.plot_vectors(vector_to_line, points, start_points,l)
+    #plot_file.plot_vectors(vector_to_line, points, start_points,l)
     #half_line = points + 0.5 * vector_to_line
     vector_to_line_distances = np.zeros(np.shape(vector_to_line)[0])
     
     vector_to_line_distances[:] = np.abs(np.linalg.norm(vector_to_line[:], axis=1))
     #print(f"vector_to line_dis {np.shape(vector_to_line_distances)} nicht shape {vector_to_line_distances[0:300]}")
-    plot_vectors(t_on_line, vector_to_line_distances, 0)
+    #plot_vectors(t_on_line, vector_to_line_distances, 0)
     return vector_to_line, t_on_line, half_line, vector_to_line_distances
 
 
@@ -175,7 +175,7 @@ def find_min_distances(vector_to_line_distances, t_on_line, bSpline, pcd_colon, 
     ind = np.argsort(t_vec_combined[:,0] )
     t_vec_combined = t_vec_combined[ind]
     local_mins = create_bins_find_local_mins(t_vec_combined, bin_size)
-    plot_vectors(t_vec_combined[:,0], t_vec_combined[:,1], 0)
+    #plot_vectors(t_vec_combined[:,0], t_vec_combined[:,1], 0)
 
     #simulate_motion(bSpline, pcd_colon, t_vec_combined, min_distances, vector_to_line, t_on_line)
 
@@ -198,21 +198,23 @@ def create_bins_find_local_mins(t_vec_combined, bin_size):
     min_bin_arg = np.zeros([int(1/bin_size)])
     for b_s in range(int(1/bin_size)):
         bin_arg = np.argwhere(((t_vec_combined[:,0] >= bin_size * b_s) & (t_vec_combined[:,0] <= (b_s * bin_size+ bin_size))))
+        if len(bin_arg) == 0:
+            continue
         min_bin = np.argmin(t_vec_combined[bin_arg[:],1])
         min_t = (t_vec_combined[bin_arg[:], 0]) [min_bin]
         min_bin_arg[b_s] = np.argwhere(t_vec_combined[:, 0] == min_t)
         #print(f"bin_arg {bin_arg}")
 
     print(f"min bin arg {min_bin_arg}")
-    fig = plt.figure()
-    ax = fig.add_subplot()
+    #fig = plt.figure()
+    #ax = fig.add_subplot()
     min_bin_arg_1 = min_bin_arg.astype(int)
-    ax.scatter(t_vec_combined[:,0], t_vec_combined[:,1], color = 'y')
-    ax.scatter(t_vec_combined[min_bin_arg_1[:],0], t_vec_combined[min_bin_arg_1[:],1], color= 'r')
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
+    #ax.scatter(t_vec_combined[:,0], t_vec_combined[:,1], color = 'y')
+    #ax.scatter(t_vec_combined[min_bin_arg_1[:],0], t_vec_combined[min_bin_arg_1[:],1], color= 'r')
+    #ax.set_xlabel('x')
+    #ax.set_ylabel('y')
 
-    plt.show()
+    #plt.show()
     min_bins = t_vec_combined[min_bin_arg_1]
     y = t_vec_combined[min_bin_arg_1,1]
     arg = argrelmin(y,order=2)#np.shape(min_bin_arg)[0] // 8 )
@@ -249,20 +251,20 @@ def create_bins_find_local_mins(t_vec_combined, bin_size):
     local_mins = np.unique(local_mins)
     print(f"local mins {local_mins}")
 """
-    fig = plt.figure()
-    ax = fig.add_subplot()
+    #fig = plt.figure()
+    #ax = fig.add_subplot()
     min_bin_arg_1 = min_bin_arg.astype(int)
-    ax.scatter(t_vec_combined[:,0], t_vec_combined[:,1], color = 'y')
+    #ax.scatter(t_vec_combined[:,0], t_vec_combined[:,1], color = 'y')
     z = min_bins[arg[:]]
-    ax.scatter(np.linspace(0, 1, int(1/bin_size)), np.full(int(1/bin_size), [0.25]), color = 'c')
-    ax.scatter(t_vec_combined[min_bin_arg_1[:],0], t_vec_combined[min_bin_arg_1[:],1], color= 'r')
-    ax.scatter(min_bins[arg[:],0], min_bins[arg[:],1], color='m')
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
+    #ax.scatter(np.linspace(0, 1, int(1/bin_size)), np.full(int(1/bin_size), [0.25]), color = 'c')
+    #ax.scatter(t_vec_combined[min_bin_arg_1[:],0], t_vec_combined[min_bin_arg_1[:],1], color= 'r')
+    #ax.scatter(min_bins[arg[:],0], min_bins[arg[:],1], color='m')
+    #ax.set_xlabel('x')
+    #ax.set_ylabel('y')
 
     
 
-    plt.show()
+    #plt.show()
     """fig = plt.figure()
     ax = fig.add_subplot()
     min_bin_arg_1 = min_bin_arg.astype(int)
@@ -428,10 +430,12 @@ def export_spline_as_json(b_spline, output_name_without_json, folder):
     geomdl.exchange.export_json(b_spline, os.path.join(os.getcwd(), *folder, name))
 
     return name
+    
 
 def main():
+   pass
 
-    # adjustable parameter
+   """ # adjustable parameter
     sample_size = 2
     normals_to_inside = True
 
@@ -483,9 +487,9 @@ def main():
 
     # create point cloud from curve
     #print(p)
-    """p_pcd = o3d.geometry.PointCloud()    
+    p_pcd = o3d.geometry.PointCloud()    
     p_pcd.points = o3d.utility.Vector3dVector(p)#p_np)
-    p_pcd.paint_uniform_color([1,0,1])"""
+    p_pcd.paint_uniform_color([1,0,1])
 
     # convert Spline to pcd and export
     line_pcd = convert_bSpline_to_pcd(line_bSpline)
@@ -526,6 +530,6 @@ def main():
 
     find_smallest_dis_to_point((pcd_colon), line_bSpline, vector_to_line, t_on_line, local_mins[:,0])
     #visualize(pcd_colon)
-
+"""
 
 if __name__ == "__main__": main()  

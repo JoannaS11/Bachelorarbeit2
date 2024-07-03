@@ -36,8 +36,7 @@ def get_big_line_pointcloud(pcd, zyl_points, zyl_normals, mini_residual, distanc
     # iterate over every mini_residual point of pcd
     for line_start in range(0,np.shape(zyl_points)[0], mini_residual):
         
-        # 
-        if line_start % (mini_residual * 5) == 0:
+        if line_start % (mini_residual*10) == 0:
             print(f"{np.round(line_start / np.shape(zyl_points)[0], decimals=3) * 100} % done")
 
         # calculate distance from points to line(startpoint + normal)

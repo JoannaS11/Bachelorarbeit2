@@ -1,0 +1,47 @@
+{
+    "dir": [
+        "output_main",
+        "colon_segments_more_complicated__02-07-2024_11-09-37"
+    ],
+    "data": [
+        "data",
+        "colon_segments_more_complicated.ply"
+    ],
+    "additional_data": [],
+    "medial_axis_big_pcd": [
+        "02-07-2024_11-10-06__0.02_0.02_11_pcd_data_big_path_without_outlier.ply"
+    ],
+    "medial_axis_pcd": [
+        "02-07-2024_11-13-09_0.3_min_path.ply"
+    ],
+    "medial_axis_spline": [
+        "02-07-2024_11-13-12_2_bSpline_medial_axis_colon_segments_more_complicated.json"
+    ],
+    "t_on_line": [
+        "t_on_line",
+        "motion_arrays",
+        "02-07-2024_11-13-46_motion_info_arrays.npz"
+    ],
+    "vector_to_line": [
+        "vector_to_line",
+        "motion_arrays",
+        "02-07-2024_11-13-46_motion_info_arrays.npz"
+    ],
+    "vector_to_line_distances": [
+        "vector_to_line_distances",
+        "motion_arrays",
+        "02-07-2024_11-13-46_motion_info_arrays.npz"
+    ],
+    "min_distances_values": [
+        "local_mins",
+        "motion_arrays",
+        "02-07-2024_11-13-50_min_distances.npz"
+    ],
+    "length_spline": 6.11936308988181,
+    "normals_to_inside": false,
+    "mini_residual": 11,
+    "min_distance_point_to_point": 0.02,
+    "distance_point_to_line": 0.02,
+    "max_distance_min_tree": 0.3,
+    "sample_size_bSpline": 2
+}
