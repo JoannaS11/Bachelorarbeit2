@@ -66,9 +66,10 @@ def main():
     path_anim_hausten = os.path.join(current_dir,"output_main", "4_colon_haustren_anim_text2__03-07-2024_08-16-41", "4_colon_haustren_anim_text2__03-07-2024_08-16-41_json.json")
     path_colon_sub_08_07 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__08-07-2024_15-47-05","Colon_subtriangles_2__08-07-2024_15-47-05_json.json")
     path_seg_compl_8 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__08-07-2024_13-18-56", "colon_segments_more_complicated__08-07-2024_13-18-56_json.json")
+    path_seg_compl_8_15_15 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__09-07-2024_15-14-03", "colon_segments_more_complicated__09-07-2024_15-14-03_json.json")
     path_colon_sub_09_07 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__09-07-2024_15-17-15", "Colon_subtriangles_2__09-07-2024_15-17-15_json.json")
 
-    json_file_path = path_anim_hausten
+    json_file_path = path_seg_compl_8_15_15
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 
