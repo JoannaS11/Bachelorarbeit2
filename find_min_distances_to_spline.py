@@ -18,6 +18,7 @@ def find_min_distances(vector_to_line_distances, t_on_line, bSpline, pcd_colon, 
         ax.scatter(t_vec_combined[:,0], t_vec_combined[:,1], color= 'r')
         ax.set_xlabel('t')
         ax.set_ylabel('distances')
+        plt.show()
 
     u, c = np.unique(t_on_line, return_counts=True)
     multiple_arg = np.argwhere(c != 1)
@@ -57,6 +58,7 @@ def create_bins_find_local_mins(t_vec_combined, bin_size, plot_on=True):
     arg = argrelmin(min_distances_vector,order=2)
     min_bin_arg_int = min_bin_arg.astype(int)
     z = min_bins[arg[:]] # [min_t_values, min_distance_values]
+    print("here")
 
     if plot_on:
         """
@@ -70,6 +72,7 @@ def create_bins_find_local_mins(t_vec_combined, bin_size, plot_on=True):
         ax.scatter(min_bins[arg[:],0], min_bins[arg[:],1], color='m')
         ax.set_xlabel('t')
         ax.set_ylabel('distances')
+        plt.show()
 
     return z # [min_t_values, min_distance_values]
 

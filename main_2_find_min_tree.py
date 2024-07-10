@@ -41,9 +41,11 @@ def main():
     path_seg_compl = os.path.join(current_dir,"output_main","colon_segments_more_complicated__02-07-2024_11-09-37","colon_segments_more_complicated_02-07-2024_11-09-37_json.json")
     path_in_sh_tex = os.path.join(current_dir,"output_main","intestine_short_texture_anim__02-07-2024_13-24-24","intestine_short_texture_anim__02-07-2024_13-24-24_json.json")
     path_anim_hausten = os.path.join(current_dir,"output_main", "4_colon_haustren_anim_text2__03-07-2024_08-16-41", "4_colon_haustren_anim_text2__03-07-2024_08-16-41_json.json")
+    path_seg_compl_8 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__08-07-2024_13-18-56", "colon_segments_more_complicated__08-07-2024_13-18-56_json.json")
+    path_anim_haustren_9 = os.path.join(current_dir,"output_main", "4_colon_haustren_anim_text2__09-07-2024_09-50-53", "4_colon_haustren_anim_text2__09-07-2024_09-50-53_json.json" )
+    path_sub_09_07 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__09-07-2024_15-17-15", "Colon_subtriangles_2__09-07-2024_15-17-15_json.json")
 
-
-    json_file_path = path_anim_hausten
+    json_file_path = path_sub_09_07
 
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
@@ -56,11 +58,11 @@ def main():
         pcd_np = np.asarray(medial_axis_big_pcd.points)
 
         # adjustable parameter
-        max_distance = 0.03
-        input_liste["max_distance_min_tree"] = max_distance
+        mean_distance_point_to_point = input_liste["mean_distance_point_to_point"]
 
-        mid_line_pcd, mid_line_pcd_path = find_min_tree(medial_axis_big_pcd, pcd_np, max_distance, dir_path)
+        mid_line_pcd, mid_line_pcd_path = find_min_tree(medial_axis_big_pcd, pcd_np, mean_distance_point_to_point, dir_path)
         input_liste["medial_axis_pcd"] = [mid_line_pcd_path]
+        input_liste["max_distance_min_tree"] = mean_distance_point_to_point
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 

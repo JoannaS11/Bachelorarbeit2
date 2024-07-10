@@ -19,7 +19,7 @@ def export_pcd_as_ply(pcd, path, output_name_without_ply):
     return name
 
 
-def find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, distance_point_to_point, distance_point_to_line, normals_inside, dir_name):
+def find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, normals_inside, dir_name):
     # adapt normals
     if normals_inside:
         pass
@@ -27,11 +27,11 @@ def find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, dist
         zyl_normals = -zyl_normals
 
     # get big line pointclouds
-    pcd_big_line_1, pcd_big_line_2 = medial_axis_spheres.get_big_line_pointcloud(pcd_data, zyl_points, zyl_normals, mini_residual, distance_point_to_line, distance_point_to_point)
+    pcd_big_line_1, pcd_big_line_2, mean_distance_point_point, mean_distance_point_to_line = medial_axis_spheres.get_big_line_pointcloud(pcd_data, zyl_points, zyl_normals, mini_residual)
 
     # export as ply
-    filename = f"_{distance_point_to_point}_{distance_point_to_line}_{mini_residual}_pcd_data_big_path_without_outlier"
-    export_pcd_as_ply(pcd_big_line_1, dir_name, f"_{distance_point_to_point}_{distance_point_to_line}_{mini_residual}_pcd_data_big_path")
+    filename = f"_{mean_distance_point_point}_{mean_distance_point_to_line}_{mini_residual}_pcd_data_big_path_without_outlier"
+    export_pcd_as_ply(pcd_big_line_1, dir_name, f"_{mean_distance_point_point}_{mean_distance_point_to_line}_{mini_residual}_pcd_data_big_path")
     name = export_pcd_as_ply(pcd_big_line_2, dir_name, filename)
 
     """colors_2 = np.asarray(pcd_big_line_2.colors)
@@ -47,7 +47,8 @@ def find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, dist
         mesh_show_back_face = True,
         point_show_normal = True
     )"""
-    return pcd_big_line_2, name
+    return pcd_big_line_2, name, mean_distance_point_point, mean_distance_point_to_line
+
 
 def find_min_tree(pcd_big_line_2, pcd_data_np, max_distance, dir_name):
     # find line pcd_data
@@ -81,7 +82,7 @@ def main():
     path_subtriangles_2 = "Colon_subtriangles_2.ply"
     path_anim_haustren = "4_colon_haustren_anim_text2.ply"
 
-    object_name = path_colon_seg
+    object_name = path_subtriangles_2
     path = os.path.join(current_dir, "data", object_name)
 
     #load point clouds
@@ -139,15 +140,14 @@ def main():
         # TODO
         mini_residual = np.shape(zyl_points)[0] // 850
         input_liste["mini_residual"] = mini_residual
-        min_distance_point_to_point = 0.005
-        input_liste["min_distance_point_to_point"] = min_distance_point_to_point
-        distance_point_to_line = 0.01
-        input_liste["distance_point_to_line"] = distance_point_to_line
+        
         
         
 
-        pcd_big_line_2, pcd_big_line_2_path = find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, min_distance_point_to_point, distance_point_to_line,  normals_to_inside, dir_name)
+        pcd_big_line_2, pcd_big_line_2_path, mean_distance_point_point, max_distance_point_to_line = find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, normals_to_inside, dir_name)
         input_liste["medial_axis_big_pcd"] = [pcd_big_line_2_path]
+        input_liste["mean_distance_point_to_point"] = mean_distance_point_point
+        input_liste["distance_point_to_line"] = max_distance_point_to_line
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 
@@ -159,6 +159,7 @@ def main():
 
         # adjustable parameter
         max_distance = 0.4
+        max_distance = input_liste["mean_distance_point_to_point"]
         input_liste["max_distance_min_tree"] = max_distance
 
         mid_line_pcd, mid_line_pcd_path = find_min_tree(pcd_big_line_2, pcd_np, max_distance, dir_name)

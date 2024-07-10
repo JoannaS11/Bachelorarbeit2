@@ -9,7 +9,7 @@ import scipy.interpolate
 from datetime import datetime
 from time import sleep
 import math
-import not_used_right_now.plot_file as plot_file
+#import not_used_right_now.plot_file as plot_file
 from scipy.signal import argrelmin
 
 import copy 
@@ -20,10 +20,31 @@ def get_bSpline(pcd, sample_size):
     # interpolate line and upsample
     line_pc_array = np.ndarray.tolist(pcd_np)
 
-    b_spline = geomdl.fitting.interpolate_curve(line_pc_array, 2)
+    #b_spline = geomdl.fitting.interpolate_curve(line_pc_array, 2)
+    b_spline_1 = geomdl.fitting.interpolate_curve(line_pc_array, 3)
+    b_spline = geomdl.fitting.interpolate_curve(b_spline_1.evalpts, 1)
+    plot_bSpline(b_spline, b_spline_1)
     b_spline.sample_size = sample_size * b_spline.sample_size
 
     return b_spline
+
+
+def convert_array_to_pcd(np_array, color = [0, 0, 1]):
+    pcd = o3d.geometry.PointCloud()
+    #np_array = np.asarray(np_array)
+    pcd.points = o3d.utility.Vector3dVector(np_array)
+    pcd.paint_uniform_color(color)
+
+    return pcd
+
+def plot_bSpline(line_bSpline1, line_2):
+    line_pcd = convert_array_to_pcd(np.asarray(line_bSpline1.evalpts), [0,1,0])
+    line_2_pcd = convert_array_to_pcd(np.asarray(line_2.evalpts), [1,0,0])
+    o3d.visualization.draw_geometries(
+        [line_pcd, line_2_pcd],
+        mesh_show_wireframe=True,
+        mesh_show_back_face=True,
+    )
 
 
 def export_pcd_as_ply(pcd, output_name_without_ply, folder):#output_folder, dir_name = None):

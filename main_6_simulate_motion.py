@@ -57,16 +57,18 @@ def plot_midline_as_pcd(pcd_data, midline, min_distances, b_spline):
 def main():
     current_dir = os.getcwd()
     # json file paths
-    path_colon_sub = os.path.join(current_dir,"output_main","Colon_subtriangles_2__02-07-2024_11-22-47","Colon_subtriangles_2_02-07-2024_11-22-47_json.json")
+    path_colon_sub = os.path.join(current_dir,"output_main","Colon_subtriangles_2__02-07-2024_11-22-47","Colon_subtriangles_2_02-07-2024_11-22-47_json.json")#gut
     path_zyl_compl_4 = os.path.join(current_dir,"output_main","zylinder_compl-4__02-07-2024_10-40-05","zylinder_compl-4_02-07-2024_10-40-05_json.json")
     path_zyl_compl_2 = os.path.join(current_dir,"output_main","zylinder_compl-2__02-07-2024_11-03-02","zylinder_compl-2_02-07-2024_11-03-02_json.json")
     path_seg = os.path.join(current_dir,"output_main","colon_segments__02-07-2024_11-06-21","colon_segments_02-07-2024_11-06-21_json.json")
-    path_seg_compl = os.path.join(current_dir,"output_main","colon_segments_more_complicated__02-07-2024_11-09-37","colon_segments_more_complicated_02-07-2024_11-09-37_json.json")
+    path_seg_compl = os.path.join(current_dir,"output_main","colon_segments_more_complicated__02-07-2024_11-09-37","colon_segments_more_complicated_02-07-2024_11-09-37_json.json")#gut
     path_in_sh_tex = os.path.join(current_dir,"output_main","intestine_short_texture_anim__02-07-2024_13-24-24","intestine_short_texture_anim__02-07-2024_13-24-24_json.json")
     path_anim_hausten = os.path.join(current_dir,"output_main", "4_colon_haustren_anim_text2__03-07-2024_08-16-41", "4_colon_haustren_anim_text2__03-07-2024_08-16-41_json.json")
+    path_colon_sub_08_07 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__08-07-2024_15-47-05","Colon_subtriangles_2__08-07-2024_15-47-05_json.json")
+    path_seg_compl_8 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__08-07-2024_13-18-56", "colon_segments_more_complicated__08-07-2024_13-18-56_json.json")
+    path_colon_sub_09_07 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__09-07-2024_15-17-15", "Colon_subtriangles_2__09-07-2024_15-17-15_json.json")
 
-
-    json_file_path = path_colon_sub
+    json_file_path = path_anim_hausten
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 

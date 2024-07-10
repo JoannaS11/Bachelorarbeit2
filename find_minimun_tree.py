@@ -6,6 +6,7 @@ import math
 import scipy.interpolate
 import geomdl.fitting
 from datetime import datetime
+from sklearn.neighbors import NearestNeighbors
 
 def export_pcd_as_ply(pcd, output_folder, output_name_without_ply, dir_name=None):
     # get current date and time
@@ -18,7 +19,7 @@ def export_pcd_as_ply(pcd, output_folder, output_name_without_ply, dir_name=None
         o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name_without_ply}.ply"), pcd)
 
 
-def find_distance(start_node, index, max_distance):
+def find_distance(start_node, index, max_distance, mean_thickness):
     global adj_matr
     global pcd_np
 
@@ -27,18 +28,26 @@ def find_distance(start_node, index, max_distance):
     
     for i in range(np.shape(pcd_np)[0]):
         distance = math.dist(start_node,pcd_np[i])
-        if distance < max_distance and i != index:
-            adj_matr[index, i] = distance
-            find_distance(pcd_np[i], i, max_distance)
+        if distance < 0.4 and i != index:#0.8 * mean_thickness and i != index:
+            adj_matr[index, i] = distance #* (0.3 + distance)
+            find_distance(pcd_np[i], i, max_distance, mean_thickness)
 
-def find_line(pcd_np_, max_distance):
+
+def find_line(pcd_np_, mean_thickness):
     #print(pcd_np)
     global pcd_np
     pcd_np = pcd_np_
     global adj_matr
     adj_matr = np.zeros([np.shape(pcd_np)[0], np.shape(pcd_np)[0]])
 
-    find_distance(pcd_np[0], 0, max_distance)
+    nbrs = NearestNeighbors(n_neighbors=10, algorithm='ball_tree').fit(pcd_np)
+
+    distances, indices = nbrs.kneighbors(pcd_np)
+    print(distances)
+    max_distance_between_points = np.sum(distances) / (np.shape(distances)[0] * (np.shape(distances)[1]-1))
+    print(max_distance_between_points)
+
+    find_distance(pcd_np[0], 0, max_distance_between_points, mean_thickness) #max_distance_between_points)
 
     dist_matrix, predecessor_array = scipy.sparse.csgraph.dijkstra(adj_matr,indices = 0, directed=False,unweighted=False, return_predecessors=True)
     dist_matrix[dist_matrix==np.inf] = -1

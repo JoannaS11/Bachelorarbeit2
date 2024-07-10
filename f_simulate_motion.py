@@ -5,6 +5,14 @@ from time import sleep
 import math
 import copy 
 
+def sigmoid_function(x):
+    # x [0,1]: 
+    # sigmoid: auf x Werte zw.0 und 1 skaliert, um 0.5 in x Ri verschoben
+    y = 1 / (1 + np.exp(-14 * (x - 0.5)))
+    return y
+
+#def linear_funcation(x)
+
 def simulate_motion(b_Spline, pcd_colon, min_distances, vector_to_line, t_on_line):
     # create window and add colon_data
     vis = o3d.visualization.Visualizer()
@@ -21,7 +29,7 @@ def simulate_motion(b_Spline, pcd_colon, min_distances, vector_to_line, t_on_lin
 
         t_smallest_distance_arg = np.argwhere(t_on_line == min_distances[min_dist, 0])
         contraction_point = np.asarray(b_Spline.evaluate_single(min_distances[min_dist, 0]))
-        half_point = (points[t_smallest_distance_arg[0], :] + 0.5 * vector_to_line[t_smallest_distance_arg[0], :])[0]
+        half_point = (points[t_smallest_distance_arg[0], :] + 0.7 * vector_to_line[t_smallest_distance_arg[0], :])[0]
         dist_half_contr_point = math.dist(contraction_point, half_point)
 
         # calculate mid_point between two mins on spline in oral direction
@@ -48,6 +56,9 @@ def simulate_motion(b_Spline, pcd_colon, min_distances, vector_to_line, t_on_lin
             multi_factor_oral_old = 1 - (np.abs(min_distances[min_dist - 1, 0] - t_on_line[t_contr_oral_arg_old])) / np.abs(min_distances[min_dist-1, 0] - oral_half_old)
             multi_factor_aboral_old = 1 - (np.abs(min_distances[min_dist - 1, 0] - t_on_line[t_contr_aboral_arg_old])) / np.abs(min_distances[min_dist-1, 0] - aboral_half_old)
         
+            multi_factor_oral_old = sigmoid_function(multi_factor_oral_old)
+            multi_factor_aboral_old = sigmoid_function(multi_factor_aboral_old)
+
         # calculate mid_point between two mins on spline in aboral direction
         if min_dist == np.shape(min_distances)[0] - 1:
             # last min doesn't have a next min
@@ -62,6 +73,9 @@ def simulate_motion(b_Spline, pcd_colon, min_distances, vector_to_line, t_on_lin
         # calculate linear fading factor for aboral and oral direction for previous min
         multi_factor_oral = 1 - (np.abs(min_distances[min_dist, 0] - t_on_line[t_contr_oral_arg])) / np.abs(min_distances[min_dist, 0] - oral_half)
         multi_factor_aboral = 1 - (np.abs(min_distances[min_dist, 0] - t_on_line[t_contr_aboral_arg])) / np.abs(min_distances[min_dist, 0] - aboral_half)
+
+        multi_factor_oral = sigmoid_function(multi_factor_oral)
+        multi_factor_aboral = sigmoid_function(multi_factor_aboral)
 
         # contract at min point until shortest distance was contracted to half its length
         while math.dist(contraction_point, moving_part[t_smallest_distance_arg[0]][0]) > dist_half_contr_point:
