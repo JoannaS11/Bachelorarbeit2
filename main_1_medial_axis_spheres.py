@@ -42,7 +42,7 @@ def find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, norm
         mesh_show_back_face = True,
         point_show_normal = True
     )
-    return pcd_big_line, name, mean_distance_point_point, mean_distance_point_to_line
+    return pcd_big_line_1, name, mean_distance_point_point, mean_distance_point_to_line
 
 def main():
     current_dir = os.getcwd()
@@ -58,7 +58,7 @@ def main():
     path_subtriangles_2 = "Colon_subtriangles_2.ply"
     path_anim_haustren = "4_colon_haustren_anim_text2.ply"
 
-    object_name = path_anim_haustren
+    object_name = path_subtriangles_2
     path = os.path.join(current_dir, "data", object_name)
 
     #load point clouds

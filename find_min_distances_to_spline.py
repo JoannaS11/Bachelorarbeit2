@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import math
 from scipy.signal import argrelmin
 
-def find_min_distances(vector_to_line_distances, t_on_line, bSpline, pcd_colon, bin_size, plot_on=True):   
+def find_min_distances(vector_to_line_distances, t_on_line, bSpline, pcd_colon, bin_size, length_spline, plot_on=True):   
     # if a t appears several times in t_on_line, just save the min distance for this t
     t_vec_combined = np.c_[t_on_line, vector_to_line_distances]
 
@@ -34,15 +34,17 @@ def find_min_distances(vector_to_line_distances, t_on_line, bSpline, pcd_colon, 
     t_vec_combined = t_vec_combined[ind]
 
     # find local mins if subdivision in bins
-    local_mins = create_bins_find_local_mins(t_vec_combined, bin_size, plot_on)
+    local_mins = create_bins_find_local_mins(t_vec_combined, bin_size, length_spline, plot_on)
 
     return local_mins # [min_t_values, min_distance_values]
 
-def create_bins_find_local_mins(t_vec_combined, bin_size, plot_on=True):
+def create_bins_find_local_mins(t_vec_combined, bin_size, length_spline, plot_on=True):
     min_bin_arg = np.zeros([int(1/bin_size)])
 
+    print(bin_size)
     # combine distances to bins where only min is saved
     for b_s in range(int(1/bin_size)):
+        print(f"b_WS {b_s}")
         bin_arg = np.argwhere(((t_vec_combined[:,0] >= bin_size * b_s) & (t_vec_combined[:,0] <= (b_s * bin_size+ bin_size))))
         if len(bin_arg) == 0:
             continue
@@ -58,7 +60,7 @@ def create_bins_find_local_mins(t_vec_combined, bin_size, plot_on=True):
     arg = argrelmin(min_distances_vector,order=2)
     min_bin_arg_int = min_bin_arg.astype(int)
     z = min_bins[arg[:]] # [min_t_values, min_distance_values]
-    print("here")
+    print(f"min_bin {min_bins}")
 
     if plot_on:
         """
@@ -143,6 +145,8 @@ def get_closest_point_on_spline(pcd, bSpline, normals_to_inside, plot_on=True):
 
     vector_to_line_distances = np.zeros(np.shape(vector_to_line)[0])
     vector_to_line_distances[:] = np.abs(np.linalg.norm(vector_to_line[:], axis=1))
+    x = np.argwhere(vector_to_line == 0)
+    print(f"niczht x { x}")
 
     """
         vector_to_line: vector from pcd points to spline

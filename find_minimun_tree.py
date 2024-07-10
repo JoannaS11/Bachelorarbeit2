@@ -28,7 +28,7 @@ def find_distance(start_node, index, max_distance, mean_thickness):
     
     for i in range(np.shape(pcd_np)[0]):
         distance = math.dist(start_node,pcd_np[i])
-        if distance < 0.4 and i != index:#0.8 * mean_thickness and i != index:
+        if distance < 0.5 * mean_thickness and i != index:
             adj_matr[index, i] = distance #* (0.3 + distance)
             find_distance(pcd_np[i], i, max_distance, mean_thickness)
 

@@ -35,7 +35,7 @@ def plot_midline_distances(pcd_data, midline, min_distances):
 
 
 def plot_midline_as_pcd(pcd_data, midline, min_distances, b_spline):
-    midline_pcd = convert_array_to_pcd(np.asarray(midline), [0, 1, 1])
+    midline_pcd = convert_array_to_pcd(np.asarray(midline), [0, 0, 0])
     min_points = b_spline.evaluate_list(min_distances[:, 0])
     min_distances_pcd = convert_array_to_pcd(np.asarray(min_points), [1, 0, 0])
 
@@ -52,7 +52,7 @@ def plot_midline_as_pcd(pcd_data, midline, min_distances, b_spline):
         mesh_show_wireframe=True,
         mesh_show_back_face=True,
     )
-
+6
 
 def main():
     current_dir = os.getcwd()
@@ -66,10 +66,13 @@ def main():
     path_anim_hausten = os.path.join(current_dir,"output_main", "4_colon_haustren_anim_text2__03-07-2024_08-16-41", "4_colon_haustren_anim_text2__03-07-2024_08-16-41_json.json")
     path_colon_sub_08_07 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__08-07-2024_15-47-05","Colon_subtriangles_2__08-07-2024_15-47-05_json.json")
     path_seg_compl_8 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__08-07-2024_13-18-56", "colon_segments_more_complicated__08-07-2024_13-18-56_json.json")
-    path_seg_compl_8_15_15 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__09-07-2024_15-14-03", "colon_segments_more_complicated__09-07-2024_15-14-03_json.json")
+    path_seg_compl_9_15_15 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__09-07-2024_15-14-03", "colon_segments_more_complicated__09-07-2024_15-14-03_json.json")
     path_colon_sub_09_07 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__09-07-2024_15-17-15", "Colon_subtriangles_2__09-07-2024_15-17-15_json.json")
+    path_seg_compl_10_9_39 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__10-07-2024_09-37-50", "colon_segments_more_complicated__10-07-2024_09-37-50_json.json")
+    path_sub_10_09_45 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__10-07-2024_09-45-17", "Colon_subtriangles_2__10-07-2024_09-45-17_json.json")
 
-    json_file_path = path_seg_compl_8_15_15
+
+    json_file_path = path_sub_10_09_45
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 
