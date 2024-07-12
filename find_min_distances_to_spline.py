@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from scipy.signal import argrelmin
+from tqdm.autonotebook import tqdm
 
 def find_min_distances(vector_to_line_distances, t_on_line, bSpline, pcd_colon, bin_size, length_spline, plot_on=True):   
     # if a t appears several times in t_on_line, just save the min distance for this t
@@ -91,7 +92,7 @@ def get_closest_point_on_spline(pcd, bSpline, normals_to_inside, plot_on=True):
     # get start point on spline
     start_points = np.asarray(bSpline.evaluate_list(np.linspace(0, 1, 40)))
 
-    for i in range(np.shape(points)[0]):
+    for i in tqdm(range(np.shape(points)[0])):
         # approximate start value to be determined
         p = points[i]
 

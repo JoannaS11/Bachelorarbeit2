@@ -8,7 +8,7 @@ import copy
 def sigmoid_function(x):
     # x [0,1]: 
     # sigmoid: auf x Werte zw.0 und 1 skaliert, um 0.5 in x Ri verschoben
-    y = 1 / (1 + np.exp(-14 * (x - 0.5)))
+    y = 1 / (1 + np.exp(-14 * (x - 0.5)))#min(max(np.tanh(5*(x-0.5))[0], 0), 1)#
     return y
 
 def reverse_direction(b_spline):
@@ -27,7 +27,7 @@ def simulate_motion(b_Spline, pcd_colon, min_distances, vector_to_line, t_on_lin
 
     vis = o3d.visualization.Visualizer()
     vis.create_window()
-    setup_camera()
+    #setup_camera()
     vis.add_geometry(pcd_colon)
     # copy by value
     points = copy.deepcopy(np.asarray(pcd_colon.points))

@@ -49,29 +49,33 @@ def find_line(pcd_np_, mean_thickness):
 
     find_distance(pcd_np[0], 0, max_distance_between_points, mean_thickness) #max_distance_between_points)
 
-    dist_matrix, predecessor_array = scipy.sparse.csgraph.dijkstra(adj_matr,indices = 0, directed=False,unweighted=False, return_predecessors=True)
+    """dist_matrix, predecessor_array = scipy.sparse.csgraph.dijkstra(adj_matr,indices = 0, directed=False,unweighted=False, return_predecessors=True)
     dist_matrix[dist_matrix==np.inf] = -1
     max = np.argmax(dist_matrix)
     index = max
     path_indexes = [max]
     while predecessor_array[index] != 0:
         index = predecessor_array[index]
-        path_indexes.append(index)
+        path_indexes.append(index)"""
 
-    """dist_matrix, predecessor_array = scipy.sparse.csgraph.dijkstra(adj_matr, directed=False,unweighted=False, return_predecessors=True)
+    dist_matrix, predecessor_array = scipy.sparse.csgraph.dijkstra(adj_matr, directed=False,unweighted=False, return_predecessors=True)
     dist_matrix[dist_matrix==np.inf] = -1
     max = np.argmax(dist_matrix,axis = 0)
-    dist_2 = dist_matrix[:, max[:]]
+    dist_2 = np.zeros(np.shape(dist_matrix)[0])
+    for i in range(np.shape(dist_matrix)[0]):
+        dist_2[i] = dist_matrix[i, max[i]]
+    print(f" dist matrix {np.shape(dist_matrix)} and mand max shape{np.shape(max)} and {max} dist 2 {np.shape(dist_2)}")
     max_2 = np.argmax(dist_2)#matrix[max[:]])
+    print(f" dist matrix {np.shape(dist_matrix)} and max_2 {max_2}   and max shape{np.shape(max)} and {max} dist 2 {np.shape(dist_2) } adn dist2 {dist_2}")
     # j = zielpunkt, i = punkt vorher
     start_index = max_2
-    end_index = dist_matrix[max_2]
+    end_index = max[max_2]
 
     index = end_index
     path_indexes = [end_index]
     while predecessor_array[start_index, index] != start_index:
         index = predecessor_array[start_index, index]
-        path_indexes.append(index)"""
+        path_indexes.append(index)
 
     
     mid_line = np.flip(pcd_np[path_indexes[:]], axis=0)
