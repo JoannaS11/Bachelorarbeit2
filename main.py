@@ -27,12 +27,12 @@ def find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, norm
         zyl_normals = -zyl_normals
 
     # get big line pointclouds
-    pcd_big_line_1, pcd_big_line_2, mean_distance_point_point, mean_distance_point_to_line = medial_axis_spheres.get_big_line_pointcloud(pcd_data, zyl_points, zyl_normals, mini_residual)
+    pcd_big_line_with, pcd_big_line_without, mean_distance_point_point, mean_distance_point_to_line = medial_axis_spheres.get_big_line_pointcloud(pcd_data, zyl_points, zyl_normals, mini_residual)
 
     # export as ply
     filename = f"_{mean_distance_point_point}_{mean_distance_point_to_line}_{mini_residual}_pcd_data_big_path_without_outlier"
-    export_pcd_as_ply(pcd_big_line_1, dir_name, f"_{mean_distance_point_point}_{mean_distance_point_to_line}_{mini_residual}_pcd_data_big_path")
-    name = export_pcd_as_ply(pcd_big_line_2, dir_name, filename)
+    name_with = export_pcd_as_ply(pcd_big_line_with, dir_name, f"_{mean_distance_point_point}_{mean_distance_point_to_line}_{mini_residual}_pcd_data_big_path")
+    name_without = export_pcd_as_ply(pcd_big_line_without, dir_name, filename)
 
     """colors_2 = np.asarray(pcd_big_line_2.colors)
     colors_2[0:100] = [0,0,0]
@@ -47,12 +47,12 @@ def find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, norm
         mesh_show_back_face = True,
         point_show_normal = True
     )"""
-    return pcd_big_line_2, name, mean_distance_point_point, mean_distance_point_to_line
+    return pcd_big_line_with, name_with, pcd_big_line_without, name_without, mean_distance_point_point, mean_distance_point_to_line
 
 
-def find_min_tree(pcd_big_line_2, pcd_data_np, max_distance, dir_name):
+def find_min_tree(pcd_big_line_2, pcd_data_np, pcd_data_np_without_outlier, max_distance, dir_name):
     # find line pcd_data
-    mid_line_pcd = find_minimun_tree.find_line(pcd_data_np, max_distance)
+    mid_line_pcd, partial_factor_min_tree = find_minimun_tree.find_line(pcd_data_np, pcd_data_np_without_outlier, max_distance)
 
     # export mid line pcd_data
     filename = f"{max_distance}_min_path"
@@ -65,7 +65,7 @@ def find_min_tree(pcd_big_line_2, pcd_data_np, max_distance, dir_name):
     # visualize
     #o3d.visualization.draw_geometries([pcd_big_line_2, mid_line_pcd], mesh_show_wireframe = True, mesh_show_back_face = True, point_show_normal = True)
 
-    return mid_line_pcd, name
+    return mid_line_pcd, name, partial_factor_min_tree
 
 
 def main():
@@ -82,7 +82,7 @@ def main():
     path_subtriangles_2 = "Colon_subtriangles_2.ply"
     path_anim_haustren = "4_colon_haustren_anim_text2.ply"
 
-    object_name = path_subtriangles_2
+    object_name = path_colon_seg_compl
     path = os.path.join(current_dir, "data", object_name)
 
     #load point clouds
@@ -137,15 +137,12 @@ def main():
         json.dump(input_liste, input_file, indent=4)
 
         #parameter to change
-        # TODO
-        mini_residual = np.shape(zyl_points)[0] // 850
+        mini_residual = int(np.max([2, np.shape(zyl_points)[0] // 850]))
         input_liste["mini_residual"] = mini_residual
-        
-        
-        
 
-        pcd_big_line_2, pcd_big_line_2_path, mean_distance_point_point, max_distance_point_to_line = find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, normals_to_inside, dir_name)
-        input_liste["medial_axis_big_pcd"] = [pcd_big_line_2_path]
+        pcd_big_line, pcd_big_line_path,pcd_big_line_without, pcd_big_line_without_path, mean_distance_point_point, max_distance_point_to_line = find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, normals_to_inside, dir_name)
+        input_liste["medial_axis_big_pcd"] = [pcd_big_line_path]
+        input_liste["medial_axis_big_pcd_without_outlier"] = [pcd_big_line_without_path]
         input_liste["mean_distance_point_to_point"] = mean_distance_point_point
         input_liste["distance_point_to_line"] = max_distance_point_to_line
         input_file.seek(0)
@@ -155,15 +152,14 @@ def main():
 
     ########################## find minimum tree ###################################################################
         """ can break if pointcloud is not centralized enough!!! ->reaches max recursion depth in comparison"""
-        pcd_np = np.asarray(pcd_big_line_2.points)
 
         # adjustable parameter
-        max_distance = 0.4
+        #max_distance = 0.4
         max_distance = input_liste["mean_distance_point_to_point"]
-        input_liste["max_distance_min_tree"] = max_distance
-
-        mid_line_pcd, mid_line_pcd_path = find_min_tree(pcd_big_line_2, pcd_np, max_distance, dir_name)
+       
+        mid_line_pcd, mid_line_pcd_path, partial_factor_min_tree = find_min_tree(pcd_big_line, np.asarray(pcd_big_line.points), np.asarray(pcd_big_line_without.points), max_distance, dir_name)
         input_liste["medial_axis_pcd"] = [mid_line_pcd_path]
+        input_liste["max_distance_min_tree"] = partial_factor_min_tree * max_distance
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 
@@ -221,8 +217,8 @@ def main():
         # calculate min distances from points to spline
         t_on_line_path = input_liste["t_on_line"][1:]
 
-        bin_size = 0.2 / length_spline
-        local_mins = find_min_distances_to_spline.find_min_distances(vector_to_line_distances, t_on_line, medial_axis_bspline, pcd_data, bin_size)
+        bin_size = 1 / 300
+        local_mins = find_min_distances_to_spline.find_min_distances(vector_to_line_distances, t_on_line, medial_axis_bspline, pcd_data, bin_size, length_spline, plot_on=False)
         
         # export as npz
         now = datetime.now()

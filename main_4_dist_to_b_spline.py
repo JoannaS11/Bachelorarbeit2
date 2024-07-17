@@ -156,10 +156,11 @@ def plot_3d(vector_to_line, pcd_data, mid_line):
     print("hallo")
 
     ax = fig.add_subplot(111, projection='3d')
-    ax.quiver(pcd_data[:50000,0], pcd_data[:50000,1], pcd_data[:50000,2], vector_to_line[:50000,0], vector_to_line[:50000,1], vector_to_line[:50000,2], color='g')
+    ax.view_init(elev=0, azim=90, roll=0)
+    ax.quiver(pcd_data[:,0], pcd_data[:,1], pcd_data[:,2], vector_to_line[:,0], vector_to_line[:,1], vector_to_line[:,2], color='g')
     #ax.quiver(pcd_colon[1000:,0], pcd_colon[1000:,1], pcd_colon[1000:,2], vector_to_line[1000:,0], vector_to_line[1000:,1], vector_to_line[1000:,2], color='b')
     #ax.plot(start_points[:,0], start_points[:,1], start_points[:,2], color = 'r')
-    ax.scatter(mid_line[:50000,0], mid_line[:50000,1], mid_line[:50000,2], color = 'c')
+    ax.scatter(mid_line[:,0], mid_line[:,1], mid_line[:,2], color = 'c')
     #ax.scatter(pcd_colon[759,0],pcd_colon[759,1], pcd_colon[759,2], color = 'b')
     #ax.scatter(l[0],l[1], l[2], color = 'b')
     # Set the axis labels
@@ -168,10 +169,10 @@ def plot_3d(vector_to_line, pcd_data, mid_line):
     ax.set_zlabel('z')
     plt.show()
 
-    fig = plt.figure()
+    #fig = plt.figure()
     print("hallo")
 
-    ax = fig.add_subplot(111, projection='3d')
+    """ax = fig.add_subplot(111, projection='3d')
     ax.quiver(pcd_data[50000:100000,0], pcd_data[50000:100000,1], pcd_data[50000:100000,2], vector_to_line[50000:100000,0], vector_to_line[50000:100000,1], vector_to_line[50000:100000,2], color='g')
     #ax.quiver(pcd_colon[1000:,0], pcd_colon[1000:,1], pcd_colon[1000:,2], vector_to_line[1000:,0], vector_to_line[1000:,1], vector_to_line[1000:,2], color='b')
     #ax.plot(start_points[:,0], start_points[:,1], start_points[:,2], color = 'r')
@@ -197,7 +198,7 @@ def plot_3d(vector_to_line, pcd_data, mid_line):
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
-    plt.show()
+    plt.show()"""
 
 def convert_array_to_pcd(np_array, color = [0, 0, 1]):
     pcd = o3d.geometry.PointCloud()

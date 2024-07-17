@@ -45,7 +45,7 @@ def create_bins_find_local_mins(t_vec_combined, bin_size, length_spline, plot_on
     print(bin_size)
     # combine distances to bins where only min is saved
     for b_s in range(int(1/bin_size)):
-        print(f"b_WS {b_s}")
+        #print(f"b_WS {b_s}")
         bin_arg = np.argwhere(((t_vec_combined[:,0] >= bin_size * b_s) & (t_vec_combined[:,0] <= (b_s * bin_size+ bin_size))))
         if len(bin_arg) == 0:
             continue
@@ -61,7 +61,7 @@ def create_bins_find_local_mins(t_vec_combined, bin_size, length_spline, plot_on
     arg = argrelmin(min_distances_vector,order=2)
     min_bin_arg_int = min_bin_arg.astype(int)
     z = min_bins[arg[:]] # [min_t_values, min_distance_values]
-    print(f"min_bin {min_bins}")
+    #print(f"min_bin {min_bins}")
 
     if plot_on:
         """
@@ -92,7 +92,7 @@ def get_closest_point_on_spline(pcd, bSpline, normals_to_inside, plot_on=True):
     # get start point on spline
     start_points = np.asarray(bSpline.evaluate_list(np.linspace(0, 1, 40)))
 
-    for i in tqdm(range(np.shape(points)[0])):
+    for i in tqdm(range(np.shape(points)[0]), desc="Find Dist to line: "):
         # approximate start value to be determined
         p = points[i]
 
@@ -103,8 +103,9 @@ def get_closest_point_on_spline(pcd, bSpline, normals_to_inside, plot_on=True):
 
         # sort those distances
         max_dist_sorted = np.argsort(dist) 
-
+        #print(max_dist_sorted)
         # 
+        print("new point")
         for s_p in range(0, np.shape(start_points)[0], 1):
             # use closest start_point
             t_old = np.linspace(0, 1, 40)[max_dist_sorted[s_p]]
@@ -122,32 +123,39 @@ def get_closest_point_on_spline(pcd, bSpline, normals_to_inside, plot_on=True):
                     t_old = 1.0
                 else: 
                     t_old = t  
+                print(t_old)
+
+            
 
             # vector from point to closest point on spline
             vector = bSpline.evaluate_single(t_old) - p
-            if normals_to_inside:
+            t_on_line[i] = t_old
+            vector_to_line[i] = vector
+            break
+
+            """if normals_to_inside:
                 # check if normal and vector look in  approximately the same direction -> disabled
-                if np.dot(vector / np.linalg.norm(vector), normals[i] / np.linalg.norm(normals[i])) > - 1: # 45 ° in both directions
+                if np.dot(vector / np.linalg.norm(vector), normals[i] / np.linalg.norm(normals[i])) > - 0.7: # 45 ° in both directions
                     # save all values and go to next point
                     t_on_line[i] = t_old
                     vector_to_line[i] = vector
-                    if i % 200 == 0:
-                        print(f"{np.round(i / np.shape(points)[0], decimals=3) * 100} % done")
+                    #if i % 200 == 0:
+                        #print(f"{np.round(i / np.shape(points)[0], decimals=3) * 100} % done")
                     break
             else:
                 # check if normal and vector look in  approximately the opposite direction -> disabled
-                if np.dot(vector / np.linalg.norm(vector), normals[i] / np.linalg.norm(normals[i])) < 1: # 45 ° in both directions
+                if np.dot(vector / np.linalg.norm(vector), normals[i] / np.linalg.norm(normals[i])) < 0.7: # 45 ° in both directions
                     # save all values and go to next point
                     t_on_line[i] = t_old
                     vector_to_line[i] = vector
-                    if i % np.round(np.shape(points)[0] * 0.01) == 0:
-                        print(f"{np.round(i / np.shape(points)[0], decimals=3) * 100} % done")
+                    #if i % np.round(np.shape(points)[0] * 0.01) == 0:
+                        #print(f"{np.round(i / np.shape(points)[0], decimals=3) * 100} % done")
                     break
-
+"""
     vector_to_line_distances = np.zeros(np.shape(vector_to_line)[0])
     vector_to_line_distances[:] = np.abs(np.linalg.norm(vector_to_line[:], axis=1))
     x = np.argwhere(vector_to_line == 0)
-    print(f"niczht x { x}")
+    #print(f"niczht x { vector_to_line_distances}")
 
     """
         vector_to_line: vector from pcd points to spline

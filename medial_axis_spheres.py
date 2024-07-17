@@ -5,6 +5,7 @@ from datetime import datetime
 import math
 import matplotlib.pyplot as plt
 from sklearn.neighbors import NearestNeighbors
+from tqdm.autonotebook import tqdm
 import copy
 
 def plot_mean_and_std(values):
@@ -38,13 +39,13 @@ def get_big_line_pointcloud(pcd, zyl_points, zyl_normals, mini_residual):
 
     distances, indices = nbrs.kneighbors(zyl_points)
     mean_distance_point_to_line = np.sum(distances) / (np.shape(distances)[0] * 3)
-    print(f" mean dist poin {mean_distance_point_to_line} and distance shape {np.shape(distances)} abd dist {distances}")
+    #print(f" mean dist poin {mean_distance_point_to_line} and distance shape {np.shape(distances)} abd dist {distances}")
 
     # iterate over every mini_residual point of pcd
-    for line_start in range(0,np.shape(zyl_points)[0], mini_residual):
+    for line_start in tqdm(range(0,np.shape(zyl_points)[0], mini_residual), desc="Find big line pcd:"):
         
-        if line_start % (mini_residual*10) == 0:
-            print(f"{np.round(line_start / np.shape(zyl_points)[0], decimals=3) * 100} % done")
+        """if line_start % (mini_residual*10) == 0:
+            print(f"{np.round(line_start / np.shape(zyl_points)[0], decimals=3) * 100} % done")"""
 
         # calculate distance from points to line(startpoint + normal)
         distance = np.ndarray(np.shape(zyl_points)[0])
@@ -85,7 +86,7 @@ def get_big_line_pointcloud(pcd, zyl_points, zyl_normals, mini_residual):
     mid_p_dist = np.delete(mid_p_dist, mid_p_dist_arg_999, axis=0)
     midpoints = np.delete(midpoints, mid_p_dist_arg_999, axis=0)
 
-    plot_mean_and_std(mid_p_dist)
+    #plot_mean_and_std(mid_p_dist)
     
     
     # discard too small and too big distances

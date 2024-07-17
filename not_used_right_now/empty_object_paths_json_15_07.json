@@ -3,7 +3,6 @@
     "data": [],
     "additional_data": [],
     "medial_axis_big_pcd": [],
-    "medial_axis_big_pcd_without_outlier":[],
     "medial_axis_pcd": [],
     "medial_axis_spline": [],
     "t_on_line": [

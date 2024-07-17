@@ -44,6 +44,8 @@ def find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, norm
     )
     return pcd_big_line_1, name, mean_distance_point_point, mean_distance_point_to_line
 
+#def plot_line_pcds(pcd_big_line_2, pcd_data):
+
 def main():
     current_dir = os.getcwd()
     template_json = os.path.join(current_dir, "output_main", "empty_object_paths_json.json")
@@ -58,7 +60,7 @@ def main():
     path_subtriangles_2 = "Colon_subtriangles_2.ply"
     path_anim_haustren = "4_colon_haustren_anim_text2.ply"
 
-    object_name = path_subtriangles_2
+    object_name = path_colon_seg_compl
     path = os.path.join(current_dir, "data", object_name)
 
     #load point clouds
@@ -112,7 +114,7 @@ def main():
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 
-        mini_residual = np.shape(zyl_points)[0] // 850
+        mini_residual = int(np.max([2, np.shape(zyl_points)[0] // 850]))
         input_liste["mini_residual"] = mini_residual
         
         
@@ -123,8 +125,10 @@ def main():
         input_liste["mean_distance_point_to_point"] = mean_distance_point_point
         input_liste["distance_point_to_line"] = max_distance_point_to_line
 
+        #plot_line_pcds(pcd_big_line_2, pcd_data)
 
         input_file.seek(0)
+        print(input_liste)
         json.dump(input_liste, input_file, indent=4)
 
 if __name__=="__main__": main()

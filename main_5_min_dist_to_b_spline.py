@@ -26,7 +26,7 @@ def main():
 
 
 
-    json_file_path = path_seg_compl_10_9_39
+    json_file_path = path_sub_10_09_45
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
 

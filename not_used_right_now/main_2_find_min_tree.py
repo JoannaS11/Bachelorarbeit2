@@ -15,7 +15,7 @@ def export_pcd_as_ply(pcd, path, output_name_without_ply):
 
 def find_min_tree(medial_axis_big_pcd, pcd_data_np, max_distance, path, plot_on=True):
     # find line pcd_data
-    mid_line_pcd, partial_factor_min_tree = find_minimun_tree.find_line(pcd_data_np, max_distance)
+    mid_line_pcd = find_minimun_tree.find_line(pcd_data_np, max_distance)
 
     # export mid line pcd_data
     filename = f"{max_distance}_min_path"
@@ -29,7 +29,7 @@ def find_min_tree(medial_axis_big_pcd, pcd_data_np, max_distance, path, plot_on=
         # visualize
         o3d.visualization.draw_geometries([medial_axis_big_pcd, mid_line_pcd], mesh_show_wireframe = True, mesh_show_back_face = True, point_show_normal = True)
 
-    return mid_line_pcd, name, partial_factor_min_tree
+    return mid_line_pcd, name
 
 def main():
     current_dir = os.getcwd()
@@ -63,9 +63,9 @@ def main():
         mean_distance_point_to_point = input_liste["mean_distance_point_to_point"]
         print(mean_distance_point_to_point)
 
-        mid_line_pcd, mid_line_pcd_path, partial_factor_min_tree = find_min_tree(medial_axis_big_pcd, pcd_np, mean_distance_point_to_point, dir_path)
+        mid_line_pcd, mid_line_pcd_path = find_min_tree(medial_axis_big_pcd, pcd_np, mean_distance_point_to_point, dir_path)
         input_liste["medial_axis_pcd"] = [mid_line_pcd_path]
-        input_liste["max_distance_min_tree"] = mean_distance_point_to_point * partial_factor_min_tree
+        input_liste["max_distance_min_tree"] = mean_distance_point_to_point * 0.5
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 
