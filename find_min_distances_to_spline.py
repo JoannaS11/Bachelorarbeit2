@@ -105,33 +105,39 @@ def get_closest_point_on_spline(pcd, bSpline, normals_to_inside, plot_on=True):
         max_dist_sorted = np.argsort(dist) 
         #print(max_dist_sorted)
         # 
-        print("new point")
-        for s_p in range(0, np.shape(start_points)[0], 1):
+        #print("new point")
+        limit = np.min([6, np.shape(start_points)[0]])
+        length_vector = np.inf
+        for s_p in range(0, limit):
             # use closest start_point
+            
             t_old = np.linspace(0, 1, 40)[max_dist_sorted[s_p]]
-            for k in range(30):
+            #print("new point")
+            #print(f"start point {t_old}")
+            for k in range(10):
                 # Newton minimization method to find closest point to spline
                 point_on_spline = bSpline.derivatives(t_old, 2)
                 f_t = (point_on_spline[0][0] - p[0]) * point_on_spline[1][0] + (point_on_spline[0][1] - p[1]) * point_on_spline[1][1] + (point_on_spline[0][2]- p[2]) * point_on_spline[1][2] 
-                f__t = point_on_spline[1][0] * point_on_spline[1][0] + point_on_spline[1][1] * point_on_spline[1][1] + point_on_spline[1][2] * point_on_spline[1][2]#+ (point_on_spline[0][0]- p[0]) * point_on_spline[2][0] + (point_on_spline[0][1]- p[1]) * point_on_spline[2][1]#+ point_on_spline[1][2] * point_on_spline[1][2] + (point_on_spline[0][0]- p[0]) * point_on_spline[2][0] + (point_on_spline[0][1]- p[1]) * point_on_spline[2][1] + (point_on_spline[0][2]- p[2]) * point_on_spline[2][2]
+                f__t = point_on_spline[1][0] * point_on_spline[1][0] + point_on_spline[1][1] * point_on_spline[1][1] + (point_on_spline[0][0]- p[0]) * point_on_spline[2][0] +(point_on_spline[0][2]- p[2]) * point_on_spline[2][2] + (point_on_spline[0][1]- p[1]) * point_on_spline[2][1] + (point_on_spline[0][2]- p[2]) * point_on_spline[2][2]
                 t = t_old - f_t / f__t    
-    
+                #print(f_t / f__t)
                 # clamp between 0 and 1
                 if t < 0.00:
                     t_old = 0.0
                 elif t > 1.00:
                     t_old = 1.0
                 else: 
-                    t_old = t  
-                print(t_old)
-
-            
+                    t_old = t.round(decimals=6)  
+                #print(t_old)
 
             # vector from point to closest point on spline
             vector = bSpline.evaluate_single(t_old) - p
-            t_on_line[i] = t_old
-            vector_to_line[i] = vector
-            break
+            if length_vector > np.linalg.norm(vector):
+                #print(f"vector: {vector} and told {t_old}")
+                #print("save Point")
+                length_vector = np.linalg.norm(vector)
+                t_on_line[i] = t_old
+                vector_to_line[i] = vector
 
             """if normals_to_inside:
                 # check if normal and vector look in  approximately the same direction -> disabled

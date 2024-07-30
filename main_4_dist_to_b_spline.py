@@ -157,7 +157,7 @@ def plot_3d(vector_to_line, pcd_data, mid_line):
 
     ax = fig.add_subplot(111, projection='3d')
     ax.view_init(elev=0, azim=90, roll=0)
-    ax.quiver(pcd_data[:,0], pcd_data[:,1], pcd_data[:,2], vector_to_line[:,0], vector_to_line[:,1], vector_to_line[:,2], color='g')
+    ax.quiver(pcd_data[:20,0], pcd_data[:20,1], pcd_data[:20,2], vector_to_line[:20,0], vector_to_line[:20,1], vector_to_line[:20,2], color='g')
     #ax.quiver(pcd_colon[1000:,0], pcd_colon[1000:,1], pcd_colon[1000:,2], vector_to_line[1000:,0], vector_to_line[1000:,1], vector_to_line[1000:,2], color='b')
     #ax.plot(start_points[:,0], start_points[:,1], start_points[:,2], color = 'r')
     ax.scatter(mid_line[:,0], mid_line[:,1], mid_line[:,2], color = 'c')
@@ -222,10 +222,13 @@ def main():
     path_seg_compl_10_9_39 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__10-07-2024_09-37-50", "colon_segments_more_complicated__10-07-2024_09-37-50_json.json")
     
     path_sub_10_7_9_45 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__10-07-2024_09-45-17", "Colon_subtriangles_2__10-07-2024_09-45-17_json.json")
+    path_seg_compl_29_07_16_01 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__29-07-2024_16-15-42", "colon_segments_more_complicated__29-07-2024_16-15-42_json.json")
 
-    json_file_path = path_sub_10_7_9_45
+
+    json_file_path = path_seg_compl_29_07_16_01
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
+
 
         # extract data from json file
         dir_json = os.path.join (*input_liste["dir"])
@@ -234,7 +237,7 @@ def main():
         medial_axis_bspline_path = os.path.join(current_dir, *input_liste["dir"],*input_liste["medial_axis_spline"])
         data_name = input_liste["data"][-1]
         data_name = data_name.replace(".ply", "")
-        print(medial_axis_bspline_path)
+        #print(medial_axis_bspline_path)
 
         # read point clouds
         pcd_data = o3d.io.read_point_cloud(data_path)

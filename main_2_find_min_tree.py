@@ -13,9 +13,9 @@ def export_pcd_as_ply(pcd, path, output_name_without_ply):
     o3d.io.write_point_cloud(os.path.join(path, f"{date_time}_{output_name_without_ply}.ply"), pcd)
     return name
 
-def find_min_tree(medial_axis_big_pcd, pcd_data_np, max_distance, path, plot_on=True):
+def find_min_tree(medial_axis_big_pcd, pcd_data_np, pcd_data_without_outlier, max_distance, path, plot_on=True):
     # find line pcd_data
-    mid_line_pcd, partial_factor_min_tree = find_minimun_tree.find_line(pcd_data_np, max_distance)
+    mid_line_pcd, partial_factor_min_tree = find_minimun_tree.find_line(pcd_data_np, pcd_data_without_outlier, max_distance)
 
     # export mid line pcd_data
     filename = f"{max_distance}_min_path"
@@ -47,23 +47,28 @@ def main():
     path_seg_compl_10_9_39 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__10-07-2024_09-37-50", "colon_segments_more_complicated__10-07-2024_09-37-50_json.json")
     path_sub_10_09_45 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__10-07-2024_09-45-17", "Colon_subtriangles_2__10-07-2024_09-45-17_json.json")
     path_seg_compl_15_10_55 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__15-07-2024_10-53-06", "colon_segments_more_complicated__15-07-2024_10-53-06_json.json")
+    path_seg_compl_29_07_16_01 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__29-07-2024_16-15-42", "colon_segments_more_complicated__29-07-2024_16-15-42_json.json")
 
-    json_file_path = path_seg_compl_15_10_55
+    json_file_path = path_seg_compl_29_07_16_01
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
         """ can break if pointcloud is not centralized enough!!! ->reaches max recursion depth in comparison"""
         medial_axis_big_pcd_path = os.path.join(current_dir, *input_liste["dir"], *input_liste["medial_axis_big_pcd"])
+        medial_axis_big_pcd_path_without = os.path.join(current_dir, *input_liste["dir"], *input_liste["medial_axis_big_pcd_without_outlier"])
         dir_path = os.path.join(current_dir, *input_liste["dir"])
 
         medial_axis_big_pcd = o3d.io.read_point_cloud(medial_axis_big_pcd_path)
 
         pcd_np = np.asarray(medial_axis_big_pcd.points)
 
+        medial_axis_big_without_pcd = o3d.io.read_point_cloud(medial_axis_big_pcd_path_without)
+        pcd_without_np = np.asarray(medial_axis_big_without_pcd.points)
+
         # adjustable parameter
         mean_distance_point_to_point = input_liste["mean_distance_point_to_point"]
         print(mean_distance_point_to_point)
 
-        mid_line_pcd, mid_line_pcd_path, partial_factor_min_tree = find_min_tree(medial_axis_big_pcd, pcd_np, mean_distance_point_to_point, dir_path)
+        mid_line_pcd, mid_line_pcd_path, partial_factor_min_tree = find_min_tree(medial_axis_big_pcd, pcd_np, pcd_without_np, mean_distance_point_to_point, dir_path)
         input_liste["medial_axis_pcd"] = [mid_line_pcd_path]
         input_liste["max_distance_min_tree"] = mean_distance_point_to_point * partial_factor_min_tree
         input_file.seek(0)

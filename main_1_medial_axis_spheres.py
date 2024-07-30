@@ -22,27 +22,28 @@ def find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, norm
         zyl_normals = -zyl_normals
 
     # get big line pointclouds
-    pcd_big_line_1, pcd_big_line_2, mean_distance_point_point, mean_distance_point_to_line = medial_axis_spheres.get_big_line_pointcloud(pcd_data, zyl_points, zyl_normals, mini_residual)
+    pcd_big_line_with, pcd_big_line_without, mean_distance_point_point, mean_distance_point_to_line = medial_axis_spheres.get_big_line_pointcloud(pcd_data, zyl_points, zyl_normals, mini_residual)
 
     # export as ply
     filename = f"_{mean_distance_point_point}_{mean_distance_point_to_line}_{mini_residual}_pcd_data_big_path_without_outlier"
-    export_pcd_as_ply(pcd_big_line_1, dir_name, f"_{mean_distance_point_point}_{mean_distance_point_to_line}_{mini_residual}_pcd_data_big_path")
-    name = export_pcd_as_ply(pcd_big_line_2, dir_name, filename)
+    export_pcd_as_ply(pcd_big_line_with, dir_name, f"_{mean_distance_point_point}_{mean_distance_point_to_line}_{mini_residual}_pcd_data_big_path")
+    name_with = export_pcd_as_ply(pcd_big_line_with, dir_name, f"_{mean_distance_point_point}_{mean_distance_point_to_line}_{mini_residual}_pcd_data_big_path")
+    name_without = export_pcd_as_ply(pcd_big_line_without, dir_name, filename)
 
-    colors_2 = np.asarray(pcd_big_line_2.colors)
+    colors_2 = np.asarray(pcd_big_line_with.colors)
     colors_2[0:100] = [0,0,0]
     colors_2[100:] = [1,0,1]
 
-    pcd_big_line_2.colors = o3d.utility.Vector3dVector(colors_2)
+    pcd_big_line_with.colors = o3d.utility.Vector3dVector(colors_2)
     pcd_data.paint_uniform_color([1,1,0])
 
     # visualize
-    o3d.visualization.draw_geometries([pcd_data, pcd_big_line_2],
+    o3d.visualization.draw_geometries([pcd_data, pcd_big_line_with],
         mesh_show_wireframe = True,
         mesh_show_back_face = True,
         point_show_normal = True
     )
-    return pcd_big_line_1, name, mean_distance_point_point, mean_distance_point_to_line
+    return pcd_big_line_with, name_with, pcd_big_line_without, name_without, mean_distance_point_point, mean_distance_point_to_line
 
 #def plot_line_pcds(pcd_big_line_2, pcd_data):
 
@@ -120,8 +121,9 @@ def main():
         
         
 
-        pcd_big_line_2, pcd_big_line_2_path, mean_distance_point_point, max_distance_point_to_line = find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, normals_to_inside, dir_name)
-        input_liste["medial_axis_big_pcd"] = [pcd_big_line_2_path]
+        pcd_big_line, pcd_big_line_path,pcd_big_line_without, pcd_big_line_without_path, mean_distance_point_point, max_distance_point_to_line = find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, normals_to_inside, dir_name)
+        input_liste["medial_axis_big_pcd"] = [pcd_big_line_path]
+        input_liste["medial_axis_big_pcd_without_outlier"] = [pcd_big_line_without_path]
         input_liste["mean_distance_point_to_point"] = mean_distance_point_point
         input_liste["distance_point_to_line"] = max_distance_point_to_line
 

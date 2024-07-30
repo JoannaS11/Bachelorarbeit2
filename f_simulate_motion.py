@@ -55,10 +55,191 @@ def setup_camera(vis, b_spline):
 
 #def linear_funcation(x)
 
+
+
+def convert_array_to_pcd(np_array, color):
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(np_array)
+        pcd.paint_uniform_color(color)
+
+        return pcd
+
+def divide_pcd_in_segments(pcd_data_np, min_distances, t_on_line, vector_to_line):
+        color = [0.5, 0, 0.5]
+        parts_list = {}
+        t_list = {}
+        vector_to_line_list = {}
+        for i in range(np.shape(min_distances)[0]):
+            if i == 0:
+                t_smaller_arg = np.argwhere(t_on_line < min_distances[i,0])
+                t_bigger_arg = np.argwhere (((t_on_line <= min_distances[i,0] + 0.5 * (min_distances[i + 1,0]- min_distances[i,0])) & (t_on_line >= min_distances[i,0])))
+                part = pcd_data_np[np.r_[t_smaller_arg, t_bigger_arg]]
+                part_pcd = convert_array_to_pcd(np.reshape(part, [np.shape(part)[0], np.shape(part)[-1]]), color)
+            elif i == np.shape(min_distances)[0]-1:
+                t_smaller_arg = np.argwhere(((t_on_line > min_distances[i,0] - 0.5 * (min_distances[i,0]- min_distances[i-1,0])) & (t_on_line < min_distances[i,0])))
+                t_bigger_arg = np.argwhere ((t_on_line >= min_distances[i,0]))
+                part = pcd_data_np[np.r_[t_smaller_arg, t_bigger_arg]]
+                part_pcd = convert_array_to_pcd(np.reshape(part, [np.shape(part)[0], np.shape(part)[-1]]), color)
+            else:
+                t_smaller_arg = np.argwhere(((t_on_line > (min_distances[i,0] - 0.5 * (min_distances[i,0]- min_distances[i-1,0]))) & (t_on_line < min_distances[i,0])))
+                t_bigger_arg = np.argwhere (((t_on_line <= min_distances[i,0] + 0.5 * (min_distances[i + 1,0] - min_distances[i,0])) & (t_on_line >= min_distances[i,0])))
+                part = pcd_data_np[np.r_[t_smaller_arg, t_bigger_arg]]
+                part_pcd = convert_array_to_pcd(np.reshape(part, [np.shape(part)[0], np.shape(part)[-1]]), color)
+            
+            parts_list[i] = part_pcd
+            t_list[i] = t_on_line[np.r_[t_smaller_arg, t_bigger_arg]]
+            vector_to_line_list[i] = vector_to_line[np.r_[t_smaller_arg, t_bigger_arg]]
+            vector_to_line_list[i] = np.reshape(vector_to_line_list[i], [np.shape(vector_to_line_list[i])[0], np.shape(vector_to_line_list[i])[-1]])
+        
+        return parts_list, t_list, vector_to_line_list
+    
+"""def move_fct(segments_tOnLine, t_list,  min_distances, vector_to_line_list,bSpline, vis):
+        motion_function = constant_value
+        segment_old_pcd = None
+
+        for min_dist_ in range(np.shape(min_distances)[0]*6): 
+            min_dist = min_dist_% np.shape(min_distances)[0]
+
+            vis[0].add_geometry(segments_tOnLine[min_dist])
+
+            # save input in local variable
+            segment_pcd = segments_tOnLine[min_dist]
+            segment = np.asarray(segment_pcd.points)
+            t_segment = t_list[min_dist]
+            vector_to_line = vector_to_line_list[min_dist]
+
+
+            t_min_arg = np.argwhere(t_segment == min_distances[min_dist])[0,0]
+            t_min = min_distances[min_dist, 0]
+            min_point_data = copy.deepcopy(segment[t_min_arg])
+            half_distance = 0.5 * (bSpline.evaluate_single(t_min) - min_point_data)
+
+
+            t_smaller_arg = np.argwhere(t_segment < t_min)[:,0]
+            t_bigger_arg = np.argwhere(t_segment >= t_min)[:,0]
+            
+            # calculate multipying factor for current segment
+            multi_factor_oral_where = 1 - (np.abs(min_distances[min_dist, 0] - t_segment[t_smaller_arg,0])) / np.abs(t_min - min(t_segment))
+            multi_factor_aboral_where = 1 - (np.abs(min_distances[min_dist, 0] - t_segment[t_bigger_arg,0])) / np.abs(t_min - max(t_segment))
+            multi_factor_oral = motion_function(multi_factor_oral_where)
+            multi_factor_aboral = motion_function(multi_factor_aboral_where)
+
+            if min_dist != 0:
+                vector_to_line_old = vector_to_line_list[min_dist-1]
+                t_min_old = min_distances[min_dist - 1, 0]
+
+                t_smaller_old_arg = np.argwhere(t_list[min_dist-1] < t_min)[:,0]
+                t_bigger_old_arg = np.argwhere(t_list[min_dist-1] >= t_min)[:,0]
+
+                multi_factor_oral_old_where = 1 - (np.abs(min_distances[min_dist-1, 0] - t_list[min_dist-1][t_smaller_old_arg,0])) / np.abs(t_min_old - min(t_list[min_dist-1]))
+                multi_factor_aboral_old_where = 1 - (np.abs(min_distances[min_dist-1, 0] - t_list[min_dist-1][t_bigger_old_arg,0])) / np.abs(t_min_old - max(t_list[min_dist-1]))
+
+                multi_factor_old_oral = motion_function(multi_factor_oral_old_where)
+                multi_factor_old_aboral = motion_function(multi_factor_aboral_old_where)
+
+
+            # contract at min point until shortest distance was contracted to half its length
+            while math.dist(segment[t_min_arg], min_point_data) < np.linalg.norm(half_distance):#math.dist(min_point_data, half_distance):
+                #print(f" dist {math.dist(segment[t_min_arg], min_point_data)} and norm {np.linalg.norm(half_distance)}")
+                vis[0].poll_events()
+                #vis = setup_camera(vis, b_Spline)
+                segment[t_smaller_arg[:]] += 0.01 * multi_factor_oral * vector_to_line[t_smaller_arg[:]]
+                segment[t_bigger_arg[:]] += 0.01 * multi_factor_aboral * vector_to_line[t_bigger_arg[:]]
+                
+                # decontract last one at the same time
+                if min_dist != 0:
+                    segment_old[t_smaller_old_arg[:]] -= 0.01 * multi_factor_old_oral * vector_to_line_old[t_smaller_old_arg[:]]
+                    segment_old[t_bigger_old_arg[:]] -= 0.01 * multi_factor_old_aboral * vector_to_line_old[t_bigger_old_arg[:]]
+                    vis.update_geometry(segment_old_pcd)
+
+                vis[0].poll_events()
+                vis[0].update_geometry(segment_pcd)
+                vis[0].update_renderer()
+                sleep(0.01)
+            
+            segment_old = segment
+            segmeng_old_pcd = segment_pcd
+
+            # after last min point decontract at last min point to get in start condition
+            if min_dist == np.shape(min_distances)[0] - 1:
+
+                while math.dist(min_point_data, segment[t_min_arg]) < 0:
+
+                    segment[t_smaller_arg[:]] -= 0.01 * multi_factor_oral * vector_to_line[t_bigger_arg[:]]
+                    segment[t_bigger_arg[:]] -= 0.01 * multi_factor_aboral * vector_to_line[t_smaller_arg[:]]
+                    
+                    vis[0].poll_events()
+                    vis[0].update_geometry(segment_pcd)
+                    vis[0].update_renderer()
+                    sleep(0.01)
+
+            if min_dist == np.shape(min_distances)[0]-1:
+                pass
+
+        #setup_camera()
+        #vis.add_geometry(pcd_colon)
+        # copy by value
+        #points = copy.deepcopy(np.asarray(pcd_colon.points))
+        # copy by reference
+        #moving_part = np.asarray(pcd_colon.points)
+
+
+        # iterate over min distances
+
+
+def parallel_movement(pcd_data_np, min_distances, t_on_line, vector_to_line, bSpline):
+        parts_pcd, t_list, vector_to_line_list = divide_pcd_in_segments(pcd_data_np, min_distances, t_on_line, vector_to_line)
+
+        vis = [o3d.visualization.Visualizer()]
+        vis[0].create_window()
+        vis[0].add_geometry(convert_array_to_pcd(np.asarray(bSpline.evalpts), [0,0,0]))
+
+        no_of_threads = np.shape(min_distances)[0] // 3
+        threads={}
+        print(f"No of threads: {no_of_threads}")
+
+        for i in range(no_of_threads):
+            threads["string{0}".format(i)] = threading.Thread(target=move_fct, args = (parts_pcd, t_list, min_distances, vector_to_line_list, bSpline,vis))#, vis))
+
+        for x in threads:
+            threads[x].start()
+
+        for l in threads:
+            threads[l].join()
+
+        vis[0].run()
+        vis[0].destroy_window()"""
+
+"""def parallel_movement(pcd_data_np, min_distances, t_on_line, vector_to_line, bSpline):
+        parts_pcd, t_list, vector_to_line_list = divide_pcd_in_segments(pcd_data_np, min_distances, t_on_line, vector_to_line)
+
+        vis = o3d.visualization.Visualizer()
+        vis.create_window()
+        vis.add_geometry(convert_array_to_pcd(np.asarray(bSpline.evalpts), [0,0,0]))
+
+        no_of_threads = np.shape(min_distances)[0] // 3
+        threads={}
+        print(f"No of threads: {no_of_threads}")
+        stride = 3
+        for i in range(no_of_threads):
+            threads["string{0}".format(i)] = threading.Thread(target=move_fct, args = (parts_pcd, t_list, min_distances, vector_to_line_list, bSpline, stride * i))#, vis))
+
+        for x in threads:
+            threads[x].start()
+
+        for l in threads:
+            threads[l].join()
+
+        vis.run()
+        vis.destroy_window()"""
+
+
 def simulate_motion(b_Spline, pcd_colon, min_distances, vector_to_line, t_on_line):
+
+    #parallel_movement(np.asarray(pcd_colon.points), min_distances, t_on_line, vector_to_line, b_Spline)
     # create window and add colon_data
     
-    motion_function = sigmoid_function#constant_value
+    motion_function = sigmoid_function
 
 
     vis = o3d.visualization.Visualizer()

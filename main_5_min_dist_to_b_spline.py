@@ -7,8 +7,27 @@ import open3d as o3d
 import numpy as np
 import geomdl
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 
+def visualize_vectors(pcd_data, vector_to_line, mid_line):
+    fig = plt.figure()
+    print("hallo")
+
+    ax = fig.add_subplot(111, projection='3d')
+    ax.view_init(elev=0, azim=90, roll=0)
+
+    ax.quiver(pcd_data[8000:9000,0], pcd_data[8000:9000,1], pcd_data[8000:9000,2], vector_to_line[8000:9000,0], vector_to_line[8000:9000,1], vector_to_line[8000:9000,2], color='g', linewidth=1)
+    #ax.quiver(pcd_colon[1000:,0], pcd_colon[1000:,1], pcd_colon[1000:,2], vector_to_line[1000:,0], vector_to_line[1000:,1], vector_to_line[1000:,2], color='b')
+    #ax.plot(start_points[:,0], start_points[:,1], start_points[:,2], color = 'r')
+    ax.scatter(mid_line[:,0], mid_line[:,1], mid_line[:,2], color = 'c')
+    #ax.scatter(pcd_colon[759,0],pcd_colon[759,1], pcd_colon[759,2], color = 'b')
+    #ax.scatter(l[0],l[1], l[2], color = 'b')
+    # Set the axis labels
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+    plt.show()
 
 def main():
     current_dir = os.getcwd()
@@ -23,10 +42,11 @@ def main():
     path_sub_09_07 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__09-07-2024_15-17-15", "Colon_subtriangles_2__09-07-2024_15-17-15_json.json")
     path_seg_compl_10_9_39 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__10-07-2024_09-37-50", "colon_segments_more_complicated__10-07-2024_09-37-50_json.json")
     path_sub_10_09_45 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__10-07-2024_09-45-17", "Colon_subtriangles_2__10-07-2024_09-45-17_json.json")
+    path_seg_compl_29_07_16_01 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__29-07-2024_16-15-42", "colon_segments_more_complicated__29-07-2024_16-15-42_json.json")
 
 
 
-    json_file_path = path_sub_10_09_45
+    json_file_path = path_seg_compl_29_07_16_01
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
 
@@ -49,6 +69,13 @@ def main():
         motion_arrays = np.load(os.path.join(current_dir, dir_json, *t_on_line_path))
         t_on_line = motion_arrays['t_on_line']
         vector_to_line_distances = motion_arrays['vector_to_line_distances']
+
+        ###debugging ####
+        vector_to_line = motion_arrays['vector_to_line']
+    
+        visualize_vectors(np.asarray(pcd_data.points), vector_to_line, np.asarray(medial_axis_bspline.evalpts))
+
+        #########
         
         print("after import")
 
