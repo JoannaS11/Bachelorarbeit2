@@ -2,6 +2,7 @@ import json
 import geomdl.BSpline
 import geomdl.exchange
 import f_simulate_motion
+import f_simulate_motion_multiple
 import os
 import open3d as o3d
 import numpy as np
@@ -122,7 +123,7 @@ def main():
     path_seg_compl_29_07_16_15 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__29-07-2024_16-15-42", "colon_segments_more_complicated__29-07-2024_16-15-42_json.json")
 
 
-    json_file_path = path_seg_compl_29_07_16_15
+    json_file_path = path_anim_hausten_17_9_52
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 
@@ -164,7 +165,10 @@ def main():
         plot_in_segments(np.asarray(pcd_data.points), t_on_line, min_distances, medial_axis_bspline)
         # simulate motion
         #f_simulate_motion.tread_run(medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line)
-        f_simulate_motion.simulate_motion(
+        """f_simulate_motion.simulate_motion(
+            medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
+        )"""
+        f_simulate_motion_multiple.simulate_motion_parallel(
             medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
         )
 
