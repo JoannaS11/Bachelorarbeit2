@@ -167,12 +167,12 @@ def simulate_motion_parallel(b_Spline, pcd_colon, min_distances, vector_to_line,
         factor = np.reshape(factor, [np.shape(factor)[0], 1])
         # while loop
         while math.dist(contraction_point, moving_part[t_smallest_distance_arg[0]][0]) > dist_half_contr_point:
-            moving_part += 0.1 * factor * vector_to_line
+            moving_part += 0.01 * factor * vector_to_line
 
             vis.poll_events()
             vis.update_geometry(pcd_colon)
             vis.update_renderer()
-            sleep(0.1)
+            sleep(0.01)
         # after while loop: f = -f
         if reverse:
             reverse = False

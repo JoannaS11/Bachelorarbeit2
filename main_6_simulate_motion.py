@@ -90,7 +90,6 @@ def plot_midline_as_pcd(pcd_data, midline, min_distances, b_spline):
         mesh_show_wireframe=True,
         mesh_show_back_face=True,
     )
-6
 
 def main():
     current_dir = os.getcwd()
