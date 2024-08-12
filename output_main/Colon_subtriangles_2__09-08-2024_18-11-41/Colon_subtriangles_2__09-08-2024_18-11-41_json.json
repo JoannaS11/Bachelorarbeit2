@@ -23,22 +23,22 @@
     "t_on_line": [
         "t_on_line",
         "motion_arrays",
-        "12-08-2024_14-04-30_motion_info_arrays.npz"
+        "12-08-2024_17-14-07_motion_info_arrays.npz"
     ],
     "vector_to_line": [
         "vector_to_line",
         "motion_arrays",
-        "12-08-2024_14-04-30_motion_info_arrays.npz"
+        "12-08-2024_17-14-07_motion_info_arrays.npz"
     ],
     "vector_to_line_distances": [
         "vector_to_line_distances",
         "motion_arrays",
-        "12-08-2024_14-04-30_motion_info_arrays.npz"
+        "12-08-2024_17-14-07_motion_info_arrays.npz"
     ],
     "min_distances_values": [
         "local_mins",
         "motion_arrays",
-        "12-08-2024_14-04-50_min_distances.npz"
+        "12-08-2024_17-14-45_min_distances.npz"
     ],
     "length_spline": 32.700627747544964,
     "normals_to_inside": true,
