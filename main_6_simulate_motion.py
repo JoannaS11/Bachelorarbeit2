@@ -45,6 +45,45 @@ def plot_in_segments(pcd_data_np, t_on_line, min_distances, bspline):
     #vis.update_geometry(pcd_colon)
     #vis.update_renderer()
 
+def plot_in_segments(pcd_data_np, t_on_line, min_distances, bspline):
+    vis = o3d.visualization.Visualizer()
+    vis.create_window()
+    midline = convert_array_to_pcd(np.asarray(bspline.evalpts), [0,0,0])
+    vis.add_geometry(midline)
+    colors = np.array([[1,0,0],[0,0,1], [1,0,1], [1,1,0], [0, 1, 1], [0.5,0,0.5]])
+    divisor = 6
+    k = 0
+    for i in range(np.shape(min_distances)[0]):
+        if i == 0:
+            t_smaller_arg = np.argwhere(t_on_line < min_distances[i,0])
+            t_bigger_arg = np.argwhere (((t_on_line <= min_distances[i,0] + 0.5 * (min_distances[i + 1,0]- min_distances[i,0])) & (t_on_line >= min_distances[i,0])))
+            part = pcd_data_np[np.r_[t_smaller_arg, t_bigger_arg]]
+            part_pcd = convert_array_to_pcd(np.reshape(part, [np.shape(part)[0], np.shape(part)[-1]]), colors[k%divisor])
+            vis.add_geometry(part_pcd)
+
+
+            k+=1
+        elif i == np.shape(min_distances)[0]-1:
+            t_smaller_arg = np.argwhere(((t_on_line > min_distances[i,0] - 0.5 * (min_distances[i,0]- min_distances[i-1,0])) & (t_on_line < min_distances[i,0])))
+            t_bigger_arg = np.argwhere ((t_on_line >= min_distances[i,0]))
+            part = pcd_data_np[np.r_[t_smaller_arg, t_bigger_arg]]
+            part_pcd = convert_array_to_pcd(np.reshape(part, [np.shape(part)[0], np.shape(part)[-1]]), colors[k%divisor])
+            vis.add_geometry(part_pcd)
+
+            k+=1
+        else:
+            t_smaller_arg = np.argwhere(((t_on_line > (min_distances[i,0] - 0.5 * (min_distances[i,0]- min_distances[i-1,0]))) & (t_on_line < min_distances[i,0])))
+            t_bigger_arg = np.argwhere (((t_on_line <= min_distances[i,0] + 0.5 * (min_distances[i + 1,0] - min_distances[i,0])) & (t_on_line >= min_distances[i,0])))
+
+
+            part = pcd_data_np[np.r_[t_smaller_arg, t_bigger_arg]]
+            part_pcd = convert_array_to_pcd(np.reshape(part, [np.shape(part)[0], np.shape(part)[-1]]), colors[k%divisor])
+            vis.add_geometry(part_pcd)
+
+            k+=1
+    vis.run()
+    vis.destroy_window()
+
 def convert_array_to_pcd(np_array, color):
     pcd = o3d.geometry.PointCloud()
     #print(color)
@@ -91,6 +130,15 @@ def plot_midline_as_pcd(pcd_data, midline, min_distances, b_spline):
         mesh_show_back_face=True,
     )
 
+def plot_with_texture(pcd_data, texture_path):
+    mat = o3d.visualization.rendering.MaterialRecord()
+    mat.shader = "defaultUnlit"
+    mat.albedo_img = o3d.io.read_image(texture_path)
+    print(mat.albedo_img)
+    print("here")
+
+    o3d.visualization.draw([{'name':'colon', 'geometry':pcd_data, "material": mat}])
+
 def main():
     current_dir = os.getcwd()
     # json file paths
@@ -120,9 +168,12 @@ def main():
     path_sub_17_9_28 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__17-07-2024_09-28-00", "Colon_subtriangles_2__17-07-2024_09-28-00_json.json")
     path_anim_hausten_17_9_52 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2__17-07-2024_09-52-26", "4_colon_haustren_anim_text2__17-07-2024_09-52-26_json.json")
     path_seg_compl_29_07_16_15 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__29-07-2024_16-15-42", "colon_segments_more_complicated__29-07-2024_16-15-42_json.json")
+    path_anim_haustren_09_08_15_28 = os.path.join(current_dir, "output_main","4_colon_haustren_anim_text2__09-08-2024_15-28-28","4_colon_haustren_anim_text2__09-08-2024_15-28-28_json.json")
+    path_sub_09_08_18_11 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__09-08-2024_18-11-41", "Colon_subtriangles_2__09-08-2024_18-11-41_json.json")
+    path_haustren_09_08_15_22 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2__09-08-2024_15-28-28", "4_colon_haustren_anim_text2__09-08-2024_15-28-28_json.json")
 
 
-    json_file_path = path_anim_hausten_17_9_52
+    json_file_path = path_haustren_09_08_15_22
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 
@@ -152,6 +203,9 @@ def main():
         #print(min_distances)
         
         print("after import")
+        #print(pcd_data.st)
+        #texture_path = os.path.join(current_dir, "Textures", "texture_anim_haustren.png")
+        #plot_with_texture(pcd_data, texture_path)
 
         # show the different results
         """plot_midline_distances(
@@ -167,7 +221,7 @@ def main():
         """f_simulate_motion.simulate_motion(
             medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
         )"""
-        f_simulate_motion_multiple.simulate_motion_parallel(
+        f_simulate_motion_multiple.simulate_motion_parallel_2(
             medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
         )
 

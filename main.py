@@ -82,7 +82,7 @@ def main():
     path_subtriangles_2 = "Colon_subtriangles_2.ply"
     path_anim_haustren = "4_colon_haustren_anim_text2.ply"
 
-    object_name = path_colon_seg_compl
+    object_name = path_subtriangles_2
     path = os.path.join(current_dir, "data", object_name)
 
     #load point clouds

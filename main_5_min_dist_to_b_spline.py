@@ -10,16 +10,17 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 
 
-def visualize_vectors(pcd_data, vector_to_line, mid_line):
+def visualize_vectors(pcd_data, vector_to_line, mid_line,b_spline):
     fig = plt.figure()
     print("hallo")
-
+    start_points = np.asarray(b_spline.evaluate_list(np.linspace(0,1,60)))
     ax = fig.add_subplot(111, projection='3d')
     ax.view_init(elev=0, azim=90, roll=0)
 
-    ax.quiver(pcd_data[8000:9000,0], pcd_data[8000:9000,1], pcd_data[8000:9000,2], vector_to_line[8000:9000,0], vector_to_line[8000:9000,1], vector_to_line[8000:9000,2], color='g', linewidth=1)
+    ax.quiver(pcd_data[8000:8050,0], pcd_data[8000:8050,1], pcd_data[8000:8050,2], vector_to_line[8000:8050,0], vector_to_line[8000:8050,1], vector_to_line[8000:8050,2], color='g', linewidth=1)
+    #ax.quiver(pcd_data[8000:9000,0], pcd_data[8000:9000,1], pcd_data[8000:9000,2], vector_to_line[8000:9000,0], vector_to_line[8000:9000,1], vector_to_line[8000:9000,2], color='g', linewidth=1)
     #ax.quiver(pcd_colon[1000:,0], pcd_colon[1000:,1], pcd_colon[1000:,2], vector_to_line[1000:,0], vector_to_line[1000:,1], vector_to_line[1000:,2], color='b')
-    #ax.plot(start_points[:,0], start_points[:,1], start_points[:,2], color = 'r')
+    ax.scatter(start_points[:,0], start_points[:,1], start_points[:,2], color = 'r')
     ax.scatter(mid_line[:,0], mid_line[:,1], mid_line[:,2], color = 'c')
     #ax.scatter(pcd_colon[759,0],pcd_colon[759,1], pcd_colon[759,2], color = 'b')
     #ax.scatter(l[0],l[1], l[2], color = 'b')
@@ -43,10 +44,12 @@ def main():
     path_seg_compl_10_9_39 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__10-07-2024_09-37-50", "colon_segments_more_complicated__10-07-2024_09-37-50_json.json")
     path_sub_10_09_45 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__10-07-2024_09-45-17", "Colon_subtriangles_2__10-07-2024_09-45-17_json.json")
     path_seg_compl_29_07_16_01 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__29-07-2024_16-15-42", "colon_segments_more_complicated__29-07-2024_16-15-42_json.json")
+    path_sub_09_08_18_11 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__09-08-2024_18-11-41", "Colon_subtriangles_2__09-08-2024_18-11-41_json.json")
+    path_haustren_09_08_15_22 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2__09-08-2024_15-28-28", "4_colon_haustren_anim_text2__09-08-2024_15-28-28_json.json")
 
 
 
-    json_file_path = path_seg_compl_29_07_16_01
+    json_file_path = path_haustren_09_08_15_22
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
 
@@ -73,7 +76,7 @@ def main():
         ###debugging ####
         vector_to_line = motion_arrays['vector_to_line']
     
-        visualize_vectors(np.asarray(pcd_data.points), vector_to_line, np.asarray(medial_axis_bspline.evalpts))
+        visualize_vectors(np.asarray(pcd_data.points), vector_to_line, np.asarray(medial_axis_bspline.evalpts), medial_axis_bspline)
 
         #########
         

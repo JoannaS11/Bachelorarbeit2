@@ -10,123 +10,6 @@ import geomdl
 from datetime import datetime
 import matplotlib.pyplot as plt
 
-"""def draw_geometries(pcds):
-    """"""
-    Draw Geometries
-    Args:
-        - pcds (): [pcd1,pcd2,...]
-    """"""
-    o3d.visualization.draw_geometries(pcds)
-
-def get_o3d_FOR(origin=[0, 0, 0],size=10):
-    """""" 
-    Create a FOR that can be added to the open3d point cloud
-    """"""
-    mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(
-    size=size)
-    mesh_frame.translate(origin)
-    return(mesh_frame)
-
-def vector_magnitude(vec):
-    """"""
-    Calculates a vector's magnitude.
-    Args:
-        - vec (): 
-    """"""
-    magnitude = np.sqrt(np.sum(vec**2))
-    return(magnitude)
-
-
-def calculate_zy_rotation_for_arrow(vec):
-    """"""
-    Calculates the rotations required to go from the vector vec to the 
-    z axis vector of the original FOR. The first rotation that is 
-    calculated is over the z axis. This will leave the vector vec on the
-    XZ plane. Then, the rotation over the y axis. 
-
-    Returns the angles of rotation over axis z and y required to
-    get the vector vec into the same orientation as axis z
-    of the original FOR
-
-    Args:
-        - vec (): 
-    """"""
-    # Rotation over z axis of the FOR
-    gamma = np.arctan(vec[1]/vec[0])
-    Rz = np.array([[np.cos(gamma),-np.sin(gamma),0],
-                   [np.sin(gamma),np.cos(gamma),0],
-                   [0,0,1]])
-    # Rotate vec to calculate next rotation
-    vec = Rz.T@vec.reshape(-1,1)
-    vec = vec.reshape(-1)
-    # Rotation over y axis of the FOR
-    beta = np.arctan(vec[0]/vec[2])
-    Ry = np.array([[np.cos(beta),0,np.sin(beta)],
-                   [0,1,0],
-                   [-np.sin(beta),0,np.cos(beta)]])
-    return(Rz, Ry)
-
-def create_arrow(scale=10):
-    """"""
-    Create an arrow in for Open3D
-    """"""
-    cone_height = scale*0.2
-    cylinder_height = scale*0.8
-    cone_radius = scale/10
-    cylinder_radius = scale/20
-    mesh_frame = o3d.geometry.TriangleMesh.create_arrow(cone_radius=1,
-        cone_height=cone_height,
-        cylinder_radius=0.5,
-        cylinder_height=cylinder_height)
-    return(mesh_frame)
-
-def get_arrow(origin=[0, 0, 0], end=None, vec=None):
-    """"""
-    Creates an arrow from an origin point to an end point,
-    or create an arrow from a vector vec starting from origin.
-    Args:
-        - end (): End point. [x,y,z]
-        - vec (): Vector. [i,j,k]
-    """"""
-    scale = 10
-    Ry = Rz = np.eye(3)
-    T = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    T[:3, -1] = origin
-    if end is not None:
-        vec = np.array(end) - np.array(origin)
-    elif vec is not None:
-        vec = np.array(vec)
-    if end is not None or vec is not None:
-        scale = vector_magnitude(vec)
-        Rz, Ry = calculate_zy_rotation_for_arrow(vec)
-    mesh = create_arrow(scale)
-    # Create the arrow
-    mesh.rotate(Ry, center=np.array([0, 0, 0]))
-    mesh.rotate(Rz, center=np.array([0, 0, 0]))
-    mesh.translate(origin)
-    return(mesh)
-
-def arrow_plot(vector_to_line, pcd_data, mid_points):
-    mid_pc = convert_array_to_pcd(mid_points, [0,0,0])
-    data_np = np.asarray(pcd_data.points)
-    # Create a Cartesian Frame of Reference
-    vis = o3d.visualization.Visualizer()
-    vis.create_window()
-    FOR = get_o3d_FOR()
-    # Create an arrow from point (5,5,5) to point (10,10,10)
-    # arrow = get_arrow([5,5,5],[10,10,10])
-    vis.add_geometry(mid_pc)
-    for i in range(np.shape(vector_to_line)[0]):
-    # Create an arrow representing vector vec, starting at (5,5,5)
-        arrow = get_arrow(data_np[i,:],vec=vector_to_line[i,:])
-
-        # Create an arrow in the same place as the z axis
-        arrow = get_arrow()
-
-        # Draw everything
-        vis.add_geometry([FOR,arrow])"""
-
-
 
 def plot_vectors(pcd_colon, vector_to_line):
     fig = plt.figure()
@@ -223,9 +106,10 @@ def main():
     
     path_sub_10_7_9_45 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__10-07-2024_09-45-17", "Colon_subtriangles_2__10-07-2024_09-45-17_json.json")
     path_seg_compl_29_07_16_01 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__29-07-2024_16-15-42", "colon_segments_more_complicated__29-07-2024_16-15-42_json.json")
+    path_sub_09_08_18_11 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__09-08-2024_18-11-41", "Colon_subtriangles_2__09-08-2024_18-11-41_json.json")
+    path_haustren_09_08_15_22 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2__09-08-2024_15-28-28", "4_colon_haustren_anim_text2__09-08-2024_15-28-28_json.json")
 
-
-    json_file_path = path_seg_compl_29_07_16_01
+    json_file_path = path_haustren_09_08_15_22
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
 
@@ -237,16 +121,16 @@ def main():
         medial_axis_bspline_path = os.path.join(current_dir, *input_liste["dir"],*input_liste["medial_axis_spline"])
         data_name = input_liste["data"][-1]
         data_name = data_name.replace(".ply", "")
+        mean_distance_point_to_point = input_liste["mean_distance_point_to_point"]
         #print(medial_axis_bspline_path)
 
         # read point clouds
         pcd_data = o3d.io.read_point_cloud(data_path)
         medial_axis_bspline = geomdl.exchange.import_json(medial_axis_bspline_path)[0]
 
-        print("after import")
-
         # get distance of points to mid_line & return all arrays
-        vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline(pcd_data, medial_axis_bspline, normals_to_inside)
+        #vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline(pcd_data, medial_axis_bspline, normals_to_inside)
+        vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline_4(pcd_data, medial_axis_bspline, normals_to_inside, mean_distance_point_to_point)
 
         #arrow_plot(vector_to_line, pcd_data, np.asarray(medial_axis_bspline.evalpts))
         plot_vectors(t_on_line, vector_to_line_distances)

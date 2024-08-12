@@ -22,7 +22,7 @@ def get_bSpline(pcd, sample_size):
 
     #b_spline = geomdl.fitting.interpolate_curve(line_pc_array, 2)
     b_spline_1 = geomdl.fitting.interpolate_curve(line_pc_array, 3)
-    b_spline = geomdl.fitting.interpolate_curve(b_spline_1.evalpts, 1)
+    b_spline = geomdl.fitting.interpolate_curve(b_spline_1.evalpts, 2)
     plot_bSpline(b_spline, b_spline_1)
     b_spline.sample_size = sample_size * b_spline.sample_size
 
