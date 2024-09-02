@@ -3,6 +3,8 @@ import geomdl.BSpline
 import geomdl.exchange
 import f_simulate_motion
 import f_simulate_motion_multiple
+import f_simulate_motion_multiple_peristaltic
+import f_simulate_motion_multiple_mass_movement
 import os
 import open3d as o3d
 import numpy as np
@@ -173,7 +175,7 @@ def main():
     path_haustren_09_08_15_22 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2__09-08-2024_15-28-28", "4_colon_haustren_anim_text2__09-08-2024_15-28-28_json.json")
 
 
-    json_file_path = path_haustren_09_08_15_22
+    json_file_path = path_sub_09_08_18_11
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 
@@ -221,7 +223,7 @@ def main():
         """f_simulate_motion.simulate_motion(
             medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
         )"""
-        f_simulate_motion_multiple.simulate_motion_parallel_2(
+        f_simulate_motion_multiple_mass_movement.simulate_motion_parallel_2(
             medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
         )
 

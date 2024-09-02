@@ -311,7 +311,7 @@ def get_closest_point_on_spline_3(pcd, bSpline, normals_to_inside, mean_distance
          
         max_dist_sorted = np.argsort(dist) 
 
-        limit = np.min([len(bSpline.knotvector), np.shape(start_points)[0]])
+        limit = np.min([int(len(bSpline.knotvector) * 0.5), np.shape(start_points)[0]])
         length_vector_min = np.inf
         for s_p in range(limit):
         # vector from point to closest point on spline
@@ -320,7 +320,7 @@ def get_closest_point_on_spline_3(pcd, bSpline, normals_to_inside, mean_distance
             vector_length = np.linalg.norm(vector)
             if normals_to_inside:
                 # check if normal and vector look in  approximately the same direction -> disabled
-                if np.dot(vector / vector_length, normals[i] / np.linalg.norm(normals[i])) > -0.3 and vector_length < 1.5 * mean_distance_point_to_point: # 45 ° in both directions
+                if np.dot(vector / vector_length, normals[i] / np.linalg.norm(normals[i])) > -0 and vector_length < 1 * mean_distance_point_to_point: # 45 ° in both directions
                     # save all values and go to next point
                     if length_vector_min > vector_length:
                         length_vector_min = vector_length
@@ -329,16 +329,17 @@ def get_closest_point_on_spline_3(pcd, bSpline, normals_to_inside, mean_distance
 
             else:
                 # check if normal and vector look in  approximately the opposite direction -> disabled
-                if np.dot(vector / vector_length, normals[i] / vector_length) < 0.3 and vector_length < 1.5 * mean_distance_point_to_point: # 45 ° in both directions
+                if np.dot(vector / vector_length, normals[i] / vector_length) < 0 and vector_length < 1 * mean_distance_point_to_point: # 45 ° in both directions
                     # save all values and go to next point
                     if length_vector_min > vector_length:
                         length_vector_min = vector_length
                         t_on_line[i] = t_old
                         vector_to_line[i] = vector
-        angle = 0.3
+        angle = 0
+        distance_multiplier = 1 
         while sum(vector_to_line[i]) == 0:
+            angle += np.min([1, 0.1])
             for s_p in range(limit):
-                angle += np.min([1, 0.1])
         # vector from point to closest point on spline
                 t_old = t_start[max_dist_sorted[s_p]]
                 vector = bSpline.evaluate_single(t_old) - p
@@ -361,6 +362,10 @@ def get_closest_point_on_spline_3(pcd, bSpline, normals_to_inside, mean_distance
                             length_vector_min = vector_length
                             t_on_line[i] = t_old
                             vector_to_line[i] = vector
+
+                #if angle == 1 and sum(vector_to_line[i]) == 0:
+                    #angle = 0
+                    #distance_mutliplier += 0.2
     
     vector_to_line_distances = np.zeros(np.shape(vector_to_line)[0])
     vector_to_line_distances[:] = np.abs(np.linalg.norm(vector_to_line[:], axis=1))
@@ -411,6 +416,105 @@ def get_closest_point_on_spline_4(pcd, bSpline, normals_to_inside, mean_distance
                         t_on_line[i] = t_old
                         vector_to_line[i] = vector
             
+    vector_to_line_distances = np.zeros(np.shape(vector_to_line)[0])
+    vector_to_line_distances[:] = np.abs(np.linalg.norm(vector_to_line[:], axis=1))
+    mean = np.mean(vector_to_line_distances)
+    """
+        vector_to_line: vector from pcd points to spline
+        t_on_line: corresponding t values on spline [0,1]
+        vector_to line_distances: lengths of vector_to_line vectors
+    """
+    return vector_to_line, t_on_line, vector_to_line_distances
+
+def get_closest_point_on_spline_5(pcd, bSpline, normals_to_inside, mean_distance_point_to_point, plot_on=True):
+    # get data
+    bSpline.evaluate()
+    points = np.asarray(pcd.points)
+    normals = np.asarray(pcd.normals)
+    no_startPoints = 10 * len(bSpline.knotvector)
+    # initialize arrays
+    vector_to_line = np.zeros([np.shape(points)[0], 3])
+    t_on_line = np.zeros([np.shape(points)[0]])
+
+    t_start = np.linspace(0, 1, no_startPoints)
+    # get start point on spline
+    start_points = np.asarray(bSpline.evaluate_list(np.linspace(0, 1, no_startPoints)))
+
+    for i in tqdm(range(np.shape(points)[0]), desc="Find Dist to line: "):
+        # approximate start value to be determined
+        p = points[i]
+        length_vector_min = np.inf
+
+        # calculate distances from startpoint to current point
+        dist = np.zeros(np.shape(start_points)[0])
+        for po in range(np.shape(start_points)[0]):
+            dist[po] = math.dist(p, start_points[po])
+         
+        max_dist_sorted = np.argsort(dist) 
+
+        limit = np.min([int(len(bSpline.knotvector) * 0.5), np.shape(start_points)[0]])
+        length_vector_min = np.inf
+        for s_p in range(limit):
+        # vector from point to closest point on spline
+            t_old = t_start[max_dist_sorted[s_p]]
+            vector = bSpline.evaluate_single(t_old) - p
+            vector_length = np.linalg.norm(vector)
+            if normals_to_inside:
+                # check if normal and vector look in  approximately the same direction -> disabled
+                if np.dot(vector / vector_length, normals[i] / np.linalg.norm(normals[i])) > -0 and vector_length < 1 * mean_distance_point_to_point: # 45 ° in both directions
+                    # save all values and go to next point
+                    if length_vector_min > vector_length:
+                        length_vector_min = vector_length
+                        t_on_line[i] = t_old
+                        vector_to_line[i] = vector
+
+            else:
+                # check if normal and vector look in  approximately the opposite direction -> disabled
+                if np.dot(vector / vector_length, normals[i] / vector_length) < 0 and vector_length < 1 * mean_distance_point_to_point: # 45 ° in both directions
+                    # save all values and go to next point
+                    if length_vector_min > vector_length:
+                        length_vector_min = vector_length
+                        t_on_line[i] = t_old
+                        vector_to_line[i] = vector
+        angle = 0
+        distance_multiplier = 1 
+        while sum(vector_to_line[i]) == 0:
+            angle += np.min([1, 0.1])
+            for s_p in range(limit):
+        # vector from point to closest point on spline
+                t_old = t_start[max_dist_sorted[s_p]]
+                vector = bSpline.evaluate_single(t_old) - p
+                vector_length = np.linalg.norm(vector)
+                if normals_to_inside:
+                    # check if normal and vector look in  approximately the same direction -> disabled
+                    if np.dot(vector / vector_length, normals[i] / np.linalg.norm(normals[i])) > -angle and vector_length < 1.5 * mean_distance_point_to_point: # 45 ° in both directions
+                        # save all values and go to next point
+                        if length_vector_min > vector_length:
+                            length_vector_min = vector_length
+                            t_on_line[i] = t_old
+                            vector_to_line[i] = vector
+
+
+                else:
+                    # check if normal and vector look in  approximately the opposite direction -> disabled
+                    if np.dot(vector / vector_length, normals[i] / np.linalg.norm(normals[i])) < angle and vector_length < 1.5 * mean_distance_point_to_point: # 45 ° in both directions
+                        # save all values and go to next point
+                        if length_vector_min > vector_length:
+                            length_vector_min = vector_length
+                            t_on_line[i] = t_old
+                            vector_to_line[i] = vector
+
+                #if angle == 1 and sum(vector_to_line[i]) == 0:
+                    #angle = 0
+                    #distance_mutliplier += 0.2
+            
+        random_offset = np.random.rand(1) * 0.05
+        vector_smaller = bSpline.evaluate_single(np.max([0,t_on_line[i] - random_offset])) - p
+        distance_smaller = np.linalg.norm(vector)
+        vector_bigger = bSpline.evaluate_single(np.min([1,t_on_line[i] + random_offset])) - p
+        distance_smaller = np.lina
+        
+    
     vector_to_line_distances = np.zeros(np.shape(vector_to_line)[0])
     vector_to_line_distances[:] = np.abs(np.linalg.norm(vector_to_line[:], axis=1))
     mean = np.mean(vector_to_line_distances)

@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 def visualize_vectors(pcd_data, vector_to_line, mid_line,b_spline):
     fig = plt.figure()
     print("hallo")
-    start_points = np.asarray(b_spline.evaluate_list(np.linspace(0,1,60)))
+    start_points = np.asarray(b_spline.evaluate_list(np.linspace(0,1,len(b_spline.knotvector) * 10)))
     ax = fig.add_subplot(111, projection='3d')
     ax.view_init(elev=0, azim=90, roll=0)
 
@@ -49,7 +49,7 @@ def main():
 
 
 
-    json_file_path = path_haustren_09_08_15_22
+    json_file_path = path_sub_09_08_18_11
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
 

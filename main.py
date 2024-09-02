@@ -82,8 +82,12 @@ def main():
     path_subtriangles_2 = "Colon_subtriangles_2.ply"
     path_anim_haustren = "4_colon_haustren_anim_text2.ply"
 
-    object_name = path_subtriangles_2
+    object_name = path_colon_seg
     path = os.path.join(current_dir, "data", object_name)
+
+
+    #path = "data_creation_process/colon_part_render0/point_cloud/iteration_30000/point_cloud_with_normals.ply"
+    #object_name = "point_cloud_with_normals.ply"
 
     #load point clouds
     pcd_data = o3d.io.read_point_cloud(path)

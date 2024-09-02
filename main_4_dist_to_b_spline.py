@@ -109,7 +109,7 @@ def main():
     path_sub_09_08_18_11 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__09-08-2024_18-11-41", "Colon_subtriangles_2__09-08-2024_18-11-41_json.json")
     path_haustren_09_08_15_22 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2__09-08-2024_15-28-28", "4_colon_haustren_anim_text2__09-08-2024_15-28-28_json.json")
 
-    json_file_path = path_haustren_09_08_15_22
+    json_file_path = path_sub_09_08_18_11
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
 
@@ -130,7 +130,7 @@ def main():
 
         # get distance of points to mid_line & return all arrays
         #vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline(pcd_data, medial_axis_bspline, normals_to_inside)
-        vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline_4(pcd_data, medial_axis_bspline, normals_to_inside, mean_distance_point_to_point)
+        vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline_3(pcd_data, medial_axis_bspline, normals_to_inside, mean_distance_point_to_point)
 
         #arrow_plot(vector_to_line, pcd_data, np.asarray(medial_axis_bspline.evalpts))
         plot_vectors(t_on_line, vector_to_line_distances)
