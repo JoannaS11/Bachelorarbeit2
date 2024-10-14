@@ -24,20 +24,20 @@ def plot_in_segments(pcd_data_np, t_on_line, min_distances, bspline):
     for i in range(np.shape(min_distances)[0]):
         if i == 0:
             t_smaller_arg = np.argwhere(t_on_line < min_distances[i,0])
-            t_bigger_arg = np.argwhere (((t_on_line <= min_distances[i,0] + 0.5 * (min_distances[i + 1,0]- min_distances[i,0])) & (t_on_line >= min_distances[i,0])))
+            t_bigger_arg = np.argwhere (((t_on_line <= min_distances[i,0] + 0.5 * (min_distances[i + 1,0] - min_distances[i,0])) & (t_on_line >= min_distances[i,0])))
             part = pcd_data_np[np.r_[t_smaller_arg, t_bigger_arg]]
             part_pcd = convert_array_to_pcd(np.reshape(part, [np.shape(part)[0], np.shape(part)[-1]]), colors[k%divisor])
             vis.add_geometry(part_pcd)
             k+=1
         elif i == np.shape(min_distances)[0]-1:
-            t_smaller_arg = np.argwhere(((t_on_line > min_distances[i,0] - 0.5 * (min_distances[i,0]- min_distances[i-1,0])) & (t_on_line < min_distances[i,0])))
+            t_smaller_arg = np.argwhere(((t_on_line >= min_distances[i,0] - 0.5 * (min_distances[i,0]- min_distances[i-1,0])) & (t_on_line < min_distances[i,0])))
             t_bigger_arg = np.argwhere ((t_on_line >= min_distances[i,0]))
             part = pcd_data_np[np.r_[t_smaller_arg, t_bigger_arg]]
             part_pcd = convert_array_to_pcd(np.reshape(part, [np.shape(part)[0], np.shape(part)[-1]]), colors[k%divisor])
             vis.add_geometry(part_pcd)
             k+=1
         else:
-            t_smaller_arg = np.argwhere(((t_on_line > (min_distances[i,0] - 0.5 * (min_distances[i,0]- min_distances[i-1,0]))) & (t_on_line < min_distances[i,0])))
+            t_smaller_arg = np.argwhere(((t_on_line >= (min_distances[i,0] - 0.5 * (min_distances[i,0]- min_distances[i-1,0]))) & (t_on_line < min_distances[i,0])))
             t_bigger_arg = np.argwhere (((t_on_line <= min_distances[i,0] + 0.5 * (min_distances[i + 1,0] - min_distances[i,0])) & (t_on_line >= min_distances[i,0])))
             part = pcd_data_np[np.r_[t_smaller_arg, t_bigger_arg]]
             part_pcd = convert_array_to_pcd(np.reshape(part, [np.shape(part)[0], np.shape(part)[-1]]), colors[k%divisor])
@@ -126,11 +126,13 @@ def main():
     path_anim_hausten_17_9_52 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2__17-07-2024_09-52-26", "4_colon_haustren_anim_text2__17-07-2024_09-52-26_json.json")
     path_sub_17_9_28 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__17-07-2024_09-28-00", "Colon_subtriangles_2__17-07-2024_09-28-00_json.json")
     path_seg_compl_29_07_16_15 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__29-07-2024_16-15-42", "colon_segments_more_complicated__29-07-2024_16-15-42_json.json")
+    path_intestine = os.path.join("/home/yn86eniw/Documents/Bachelorarbeit2/output_main/intestine_short_texture_264000__27-09-2024_08-42-24/intestine_short_texture_264000__27-09-2024_08-42-24_json.json")
+    path_anim_haustren_14_10 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2__14-10-2024_11-21-22", "4_colon_haustren_anim_text2__14-10-2024_11-21-22_json.json")
+    path_intestine_14_10_265000 = os.path.join(current_dir, "output_main", "intestine_short_texture_264000__14-10-2024_09-29-26", "intestine_short_texture_264000__14-10-2024_09-29-26_json.json")
+    path_sub_14_10 = os.path.join(current_dir, "output_main","Colon_subtriangles_2__14-10-2024_12-31-01", "Colon_subtriangles_2__14-10-2024_12-31-01_json.json")
 
 
-
-
-    json_file_path = path_seg_compl_29_07_16_15
+    json_file_path = path_intestine_14_10_265000
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 

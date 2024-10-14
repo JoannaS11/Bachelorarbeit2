@@ -74,7 +74,7 @@ def plot_in_segments(pcd_data_np, t_on_line, min_distances, bspline):
 
             k+=1
         else:
-            t_smaller_arg = np.argwhere(((t_on_line > (min_distances[i,0] - 0.5 * (min_distances[i,0]- min_distances[i-1,0]))) & (t_on_line < min_distances[i,0])))
+            t_smaller_arg = np.argwhere(((t_on_line >= (min_distances[i,0] - 0.5 * (min_distances[i,0]- min_distances[i-1,0]))) & (t_on_line < min_distances[i,0])))
             t_bigger_arg = np.argwhere (((t_on_line <= min_distances[i,0] + 0.5 * (min_distances[i + 1,0] - min_distances[i,0])) & (t_on_line >= min_distances[i,0])))
 
 
@@ -173,9 +173,13 @@ def main():
     path_anim_haustren_09_08_15_28 = os.path.join(current_dir, "output_main","4_colon_haustren_anim_text2__09-08-2024_15-28-28","4_colon_haustren_anim_text2__09-08-2024_15-28-28_json.json")
     path_sub_09_08_18_11 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__09-08-2024_18-11-41", "Colon_subtriangles_2__09-08-2024_18-11-41_json.json")
     path_haustren_09_08_15_22 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2__09-08-2024_15-28-28", "4_colon_haustren_anim_text2__09-08-2024_15-28-28_json.json")
+    path_virt_col_more_points = os.path.join(current_dir, "output_main", "intestine_short_texture_anim_more_points__03-09-2024_08-04-35", "intestine_short_texture_anim_more_points__03-09-2024_08-04-35_json.json")
+
+    path_int_more_point_11_09_15_44 = os.path.join(current_dir,"output_main", "intestine_short_texture_anim_more_points__11-09-2024_15-44-21", "intestine_short_texture_anim_more_points__11-09-2024_15-44-21_json.json")
+    path_intestine_14_10_265000 = os.path.join(current_dir, "output_main", "intestine_short_texture_264000__13-10-2024_15-34-22", "intestine_short_texture_264000__13-10-2024_15-34-22_json.json")
 
 
-    json_file_path = path_sub_09_08_18_11
+    json_file_path = path_intestine_14_10_265000
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 
@@ -201,8 +205,6 @@ def main():
         vector_to_line_distances = motion_arrays["vector_to_line_distances"]
         min_distances = np.load(os.path.join(current_dir, dir_json, *local_min_path))
         min_distances = min_distances["local_mins"]
-        #print(vector_to_line_distances[0:300])
-        #print(min_distances)
         
         print("after import")
         #print(pcd_data.st)
@@ -223,7 +225,13 @@ def main():
         """f_simulate_motion.simulate_motion(
             medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
         )"""
-        f_simulate_motion_multiple_mass_movement.simulate_motion_parallel_2(
+        """f_simulate_motion_multiple_mass_movement.simulate_motion_parallel_2(
+            medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
+        )"""
+        """f_simulate_motion_multiple_peristaltic.simulate_motion_parallel_2(
+            medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
+        )"""
+        f_simulate_motion_multiple.simulate_motion_parallel_2(
             medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
         )
 

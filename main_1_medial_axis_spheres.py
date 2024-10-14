@@ -64,6 +64,8 @@ def main():
     object_name = path_colon_seg_compl
     path = os.path.join(current_dir, "data", object_name)
 
+    path = "output_main/point_cloud_with_normals__10-09-2024_13-18-48/10-09-2024_13-20-14__0.426151016746085_0.09454614150339564_30_pcd_data_big_path_without_outlier.ply"
+    object_name = "point_cloud_with_normals.ply"
     #load point clouds
     pcd_data = o3d.io.read_point_cloud(path)
 

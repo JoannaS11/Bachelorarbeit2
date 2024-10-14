@@ -79,7 +79,7 @@ def create_bins_find_local_mins(t_vec_combined, bin_size, length_spline, plot_on
 
     return z # [min_t_values, min_distance_values]
 
-def get_closest_point_on_spline(pcd, bSpline, normals_to_inside, plot_on=True):
+def get_closest_point_on_spline(pcd, bSpline, normals_to_inside, plot_on=True): #newton does not work
     no_startPoints = 40
     # get data
     bSpline.evaluate()
@@ -163,7 +163,7 @@ def get_closest_point_on_spline(pcd, bSpline, normals_to_inside, plot_on=True):
     """
     return vector_to_line, t_on_line, vector_to_line_distances
 
-def get_closest_point_on_spline_2(pcd, bSpline, normals_to_inside, mean_distance_point_to_point, plot_on=True):
+def get_closest_point_on_spline_2(pcd, bSpline, normals_to_inside, mean_distance_point_to_point, plot_on=True): #newton does not work
     # get data
     no_startPoints = 60
     bSpline.evaluate()
@@ -285,7 +285,7 @@ def get_closest_point_on_spline_2(pcd, bSpline, normals_to_inside, mean_distance
     """
     return vector_to_line, t_on_line, vector_to_line_distances
 
-def get_closest_point_on_spline_3(pcd, bSpline, normals_to_inside, mean_distance_point_to_point, plot_on=True):
+def get_closest_point_on_spline_3(pcd, bSpline, normals_to_inside, mean_distance_point_to_point, plot_on=True): #choose closest point which is in angle, otherwise increase angle and try again
     # get data
     bSpline.evaluate()
     points = np.asarray(pcd.points)
@@ -378,7 +378,7 @@ def get_closest_point_on_spline_3(pcd, bSpline, normals_to_inside, mean_distance
     return vector_to_line, t_on_line, vector_to_line_distances
 
 
-def get_closest_point_on_spline_4(pcd, bSpline, normals_to_inside, mean_distance_point_to_point, plot_on=True):
+def get_closest_point_on_spline_4(pcd, bSpline, normals_to_inside, mean_distance_point_to_point, plot_on=True): # choose closest point on spline
     # get data
     bSpline.evaluate()
     points = np.asarray(pcd.points)

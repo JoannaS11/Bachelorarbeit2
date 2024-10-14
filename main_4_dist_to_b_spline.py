@@ -52,37 +52,6 @@ def plot_3d(vector_to_line, pcd_data, mid_line):
     ax.set_zlabel('z')
     plt.show()
 
-    #fig = plt.figure()
-    print("hallo")
-
-    """ax = fig.add_subplot(111, projection='3d')
-    ax.quiver(pcd_data[50000:100000,0], pcd_data[50000:100000,1], pcd_data[50000:100000,2], vector_to_line[50000:100000,0], vector_to_line[50000:100000,1], vector_to_line[50000:100000,2], color='g')
-    #ax.quiver(pcd_colon[1000:,0], pcd_colon[1000:,1], pcd_colon[1000:,2], vector_to_line[1000:,0], vector_to_line[1000:,1], vector_to_line[1000:,2], color='b')
-    #ax.plot(start_points[:,0], start_points[:,1], start_points[:,2], color = 'r')
-    ax.scatter(mid_line[:,0], mid_line[:,1], mid_line[:,2], color = 'c')
-    #ax.scatter(pcd_colon[759,0],pcd_colon[759,1], pcd_colon[759,2], color = 'b')
-    #ax.scatter(l[0],l[1], l[2], color = 'b')
-    # Set the axis labels
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('z')
-    plt.show()
-    fig = plt.figure()
-    print("hallo")
-
-    ax = fig.add_subplot(111, projection='3d')
-    ax.quiver(pcd_data[100000:,0], pcd_data[100000:,1], pcd_data[100000:,2], vector_to_line[100000:,0], vector_to_line[100000:,1], vector_to_line[100000:,2], color='g')
-    #ax.quiver(pcd_colon[1000:,0], pcd_colon[1000:,1], pcd_colon[1000:,2], vector_to_line[1000:,0], vector_to_line[1000:,1], vector_to_line[1000:,2], color='b')
-    #ax.plot(start_points[:,0], start_points[:,1], start_points[:,2], color = 'r')
-    ax.scatter(mid_line[:,0], mid_line[:,1], mid_line[:,2], color = 'c')
-    #ax.scatter(pcd_colon[759,0],pcd_colon[759,1], pcd_colon[759,2], color = 'b')
-    #ax.scatter(l[0],l[1], l[2], color = 'b')
-    # Set the axis labels
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('z')
-    plt.show()"""
-
 def convert_array_to_pcd(np_array, color = [0, 0, 1]):
     pcd = o3d.geometry.PointCloud()
     #np_array = np.asarray(np_array)
@@ -130,7 +99,7 @@ def main():
 
         # get distance of points to mid_line & return all arrays
         #vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline(pcd_data, medial_axis_bspline, normals_to_inside)
-        vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline_3(pcd_data, medial_axis_bspline, normals_to_inside, mean_distance_point_to_point)
+        vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline_4(pcd_data, medial_axis_bspline, normals_to_inside, mean_distance_point_to_point)
 
         #arrow_plot(vector_to_line, pcd_data, np.asarray(medial_axis_bspline.evalpts))
         plot_vectors(t_on_line, vector_to_line_distances)

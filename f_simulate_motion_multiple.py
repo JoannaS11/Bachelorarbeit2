@@ -119,7 +119,7 @@ def get_segments_array(min_distances, div_factor_lower = 0.5, div_factor_higher=
 
     return segments_array
 
-def simulate_motion_parallel(b_Spline, pcd_colon, min_distances, vector_to_line, t_on_line):
+"""def simulate_motion_parallel(b_Spline, pcd_colon, min_distances, vector_to_line, t_on_line):
     # initialize window
     vis = o3d.visualization.Visualizer()
     vis.create_window()
@@ -181,7 +181,7 @@ def simulate_motion_parallel(b_Spline, pcd_colon, min_distances, vector_to_line,
             reverse = True
     
     vis.run()
-    vis.destroy_window()
+    vis.destroy_window()"""
 
 def factor_fct(segments_array, motion_fct, t_on_line, two_functions_for_one_segment = True):
     list_fcts = []

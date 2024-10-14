@@ -81,12 +81,17 @@ def main():
     path_intestine_short_texture_anim = "intestine_short_texture_anim.ply"
     path_subtriangles_2 = "Colon_subtriangles_2.ply"
     path_anim_haustren = "4_colon_haustren_anim_text2.ply"
+    path_virt_gastro_1057280 = "intestine_short_texture_anim_more_points.ply"
+    path_virt_gastro_264000 = "intestine_short_texture_264000.ply"
+    path_virt_gastro_66177 = "intestine_short_texture_colon_66177_1_10_1.ply"
+    path_virt_gastro_16577 = "intestine_short_texture_anim_16577.ply"
 
-    object_name = path_colon_seg
+    object_name = path_subtriangles_2
     path = os.path.join(current_dir, "data", object_name)
 
 
     #path = "data_creation_process/colon_part_render0/point_cloud/iteration_30000/point_cloud_with_normals.ply"
+    #path = "/home/yn86eniw/2d-gaussian-splatting/output/40c271c0-5/point_cloud/iteration_50000/point_cloud_with_normals.ply"
     #object_name = "point_cloud_with_normals.ply"
 
     #load point clouds
@@ -125,6 +130,8 @@ def main():
     else:
         raise Exception("wrong input- insert either y or n")
     
+    print(f"model {object_name} with {np.shape(zyl_points)[0]}")
+    
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
 
@@ -144,6 +151,8 @@ def main():
         mini_residual = int(np.max([2, np.shape(zyl_points)[0] // 850]))
         input_liste["mini_residual"] = mini_residual
 
+        print("vor find more centralized: ", datetime.now())
+
         pcd_big_line, pcd_big_line_path,pcd_big_line_without, pcd_big_line_without_path, mean_distance_point_point, max_distance_point_to_line = find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, normals_to_inside, dir_name)
         input_liste["medial_axis_big_pcd"] = [pcd_big_line_path]
         input_liste["medial_axis_big_pcd_without_outlier"] = [pcd_big_line_without_path]
@@ -160,6 +169,8 @@ def main():
         # adjustable parameter
         #max_distance = 0.4
         max_distance = input_liste["mean_distance_point_to_point"]
+
+        print("vor find medial axis: ", datetime.now())
        
         mid_line_pcd, mid_line_pcd_path, partial_factor_min_tree = find_min_tree(pcd_big_line, np.asarray(pcd_big_line.points), np.asarray(pcd_big_line_without.points), max_distance, dir_name)
         input_liste["medial_axis_pcd"] = [mid_line_pcd_path]
@@ -189,11 +200,13 @@ def main():
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 
-        print("get b_spline done")
+        #print("get b_spline done")
 
         ############################ distances from points to spline ###########################################
+        print("vor distance from point to spline: ", datetime.now())
         # get distance of points to mid_line & return all arrays
-        vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline(pcd_data, medial_axis_bspline, normals_to_inside)
+        mean_distance_point_to_point = input_liste["mean_distance_point_to_point"]
+        vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline_4(pcd_data, medial_axis_bspline, normals_to_inside, mean_distance_point_to_point)
 
         # create dir if it doesn't already exist
         folder_name = "motion_arrays"
@@ -215,15 +228,16 @@ def main():
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 
-        print("get distances from points to spline done")
+        #print("get distances from points to spline done")
 
         ####################### min distances points to spline #################################################
         # calculate min distances from points to spline
+        print("vor local mins: ", datetime.now())
         t_on_line_path = input_liste["t_on_line"][1:]
 
         bin_size = 1 / 300
         local_mins = find_min_distances_to_spline.find_min_distances(vector_to_line_distances, t_on_line, medial_axis_bspline, pcd_data, bin_size, length_spline, plot_on=False)
-        
+        print("nach local min: ", datetime.now())
         # export as npz
         now = datetime.now()
         date_time = now.strftime("%d-%m-%Y_%H-%M-%S")

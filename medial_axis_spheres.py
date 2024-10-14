@@ -31,6 +31,7 @@ def export_pcd_as_ply(pcd, output_folder, output_name_without_ply, dir_name = No
         o3d.io.write_point_cloud(os.path.join(os.getcwd(), output_folder, f"{date_time}_{output_name_without_ply}.ply"), pcd)
 
 def get_big_line_pointcloud(pcd, zyl_points, zyl_normals, mini_residual):
+    # initialization of arrays
     midpoints = np.full([np.shape(zyl_points)[0]//mini_residual+1, 3], [-999.0, -999.0, -999.0])
     mid_p_dist= np.full([np.shape(zyl_points)[0]//mini_residual+1], [-999.0])
     #midpoints = np.zeros([np.shape(zyl_points)[0]//mini_residual+1,3])
@@ -43,9 +44,6 @@ def get_big_line_pointcloud(pcd, zyl_points, zyl_normals, mini_residual):
 
     # iterate over every mini_residual point of pcd
     for line_start in tqdm(range(0,np.shape(zyl_points)[0], mini_residual), desc="Find big line pcd:"):
-        
-        """if line_start % (mini_residual*10) == 0:
-            print(f"{np.round(line_start / np.shape(zyl_points)[0], decimals=3) * 100} % done")"""
 
         # calculate distance from points to line(startpoint + normal)
         distance = np.ndarray(np.shape(zyl_points)[0])
