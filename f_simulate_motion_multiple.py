@@ -207,7 +207,7 @@ def simulate_motion_parallel_2(b_Spline, pcd_colon, min_distances, vector_to_lin
     vis = o3d.visualization.Visualizer()
     vis.create_window()
     vis.add_geometry(pcd_colon)
-    speed = 0.01
+    speed = 0.05
     """speed_slider = open3d.visualization.gui.Slider(open3d.visualization.gui.Slider.DOUBLE)
     em = 1
     spacing = int(np.round(0.25 * em))
@@ -216,7 +216,7 @@ def simulate_motion_parallel_2(b_Spline, pcd_colon, min_distances, vector_to_lin
     set_enabled(fixed_prop_grid, True)"""
 
     # define function
-    motion_fct = adapted_sigmoid_function
+    motion_fct = sigmoid_function
     two_functions_for_one_segment = True
     moving_part = np.asarray(pcd_colon.points)
     original_points = copy.deepcopy(np.asarray(pcd_colon.points))
