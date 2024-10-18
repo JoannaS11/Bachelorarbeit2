@@ -3,15 +3,15 @@ import os
 
 
 def main():
-    directory = "coloscopy_101"
-    video_name = '101_Endo_Colo_HD.mp4'
-    down_sample = 2
+    directory = "coloscopy_102"
+    video_name = '102_Endo_Colo_HD.mp4'
+    down_sample = 5
 
     # if only part of the video should be processed
     only_part_video = True
     fps = 50
-    min_s = 7 * 60 + 51
-    total_s = 7 * 60 + 54
+    min_s = 11 * 60 + 44
+    total_s = 12 * 60 + 0
     
 
     current_dir = os.getcwd()

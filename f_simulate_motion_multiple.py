@@ -36,40 +36,6 @@ def constant_value(x):
 def reverse_direction(b_spline):
     b_spline.reverse()
 
-def setup_camera(vis, b_spline):
-    view_control = vis.get_view_control()
-    cam_params = view_control.convert_to_pinhole_camera_parameters()
-    p = b_spline.evaluate_single(0)
-    cam_params.extrinsic = np.array([
-        [1,0,0,p[0]],
-        [0,1,0,p[1]],
-        [0,0,1,p[2]],
-        [0,0,0,1]
-    ])
-    view_control.convert_from_pinhole_camera_parameters(cam_params)
-    vis.poll_events()
-    vis.update_renderer()
-    return vis
-    #cam.set_position(b_spline.evaluate_single(0))
-    #cam.look_at(b_spline.evaluate_single(0), b_spline.evaluate(0.001), [1,0,0])
-    """def rotate_view(vis):
-
-        ctr = vis.get_view_control()
-
-        ctr.translate
-
-        return False"""
-
-
-    """o3d.visualization.draw_geometries_with_animation_callback([pcd],
-
-                                                              rotate_view)"""
-    #return cam
-
-#def linear_funcation(x)
-
-
-
 def convert_array_to_pcd(np_array, color):
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(np_array)
@@ -216,7 +182,7 @@ def simulate_motion_parallel_2(b_Spline, pcd_colon, min_distances, vector_to_lin
     set_enabled(fixed_prop_grid, True)"""
 
     # define function
-    motion_fct = adapted_sigmoid_function
+    motion_fct = sigmoid_function
     two_functions_for_one_segment = True
     moving_part = np.asarray(pcd_colon.points)
     original_points = copy.deepcopy(np.asarray(pcd_colon.points))
@@ -238,7 +204,7 @@ def simulate_motion_parallel_2(b_Spline, pcd_colon, min_distances, vector_to_lin
             
 
         original_point = np.asarray(b_Spline.evaluate_single(min_distances[min_dist % 2, 0]))
-        half_point = (original_point + 0.5 * vector_to_line[t_smallest_distance_arg[0], :])[0]
+        half_point = (original_point - 0.5 * vector_to_line[t_smallest_distance_arg[0], :])[0]
         dist_half_contr_point = math.dist(original_point, half_point)
 
         if min_dist == frequency - 1:

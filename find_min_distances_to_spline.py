@@ -46,12 +46,12 @@ def create_bins_find_local_mins(t_vec_combined, bin_size, length_spline, plot_on
     # combine distances to bins where only min is saved
     for b_s in range(int(1/bin_size)):
         #print(f"b_WS {b_s}")
-        bin_arg = np.argwhere(((t_vec_combined[:,0] >= bin_size * b_s) & (t_vec_combined[:,0] <= (b_s * bin_size+ bin_size))))
+        bin_arg = np.argwhere(((t_vec_combined[:,0] >= bin_size * b_s) & (t_vec_combined[:,0] < (b_s * bin_size+ bin_size))))
         if len(bin_arg) == 0:
             continue
         min_bin = np.argmin(t_vec_combined[bin_arg[:],1])
         min_t = (t_vec_combined[bin_arg[:], 0]) [min_bin]
-        min_bin_arg[b_s] = np.argwhere(t_vec_combined[:, 0] == min_t)
+        min_bin_arg[b_s] = np.argwhere(t_vec_combined[:, 0] == min_t)[0]
 
     min_bin_arg_int = min_bin_arg.astype(int)
     min_bins = t_vec_combined[min_bin_arg_int]

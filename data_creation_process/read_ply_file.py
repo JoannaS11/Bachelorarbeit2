@@ -3,6 +3,7 @@ import numpy as np
 import os
 from scipy.spatial.transform import Rotation as R
 import open3d as o3d
+from sklearn.neighbors import NearestNeighbors
 
 def main():
     current_dir = os.getcwd()
@@ -14,13 +15,19 @@ def main():
 
     path_5 = os.path.join("/home/yn86eniw/Documents/Bachelorarbeit2/data_creation_process/colon_part_render0/point_cloud/iteration_30000")
     path_6 = os.path.join("/home/yn86eniw/2d-gaussian-splatting/output/f367cc0c-e/point_cloud/iteration_30000")
-    path_uncombined = path_6
+
+    path_04_09_render0_0_317 = "/home/yn86eniw/2d-gaussian-splatting/output/7bd58b90-1/point_cloud/iteration_30000"
+    path_x = "/home/yn86eniw/2d-gaussian-splatting/output/cc83a8ce-2/point_cloud/iteration_30000/"
+    path_p = "/home/yn86eniw/2d-gaussian-splatting/output/40c271c0-5/point_cloud/iteration_50000"
+    path_recons_11_9_1 = "/home/yn86eniw/2d-gaussian-splatting/output/perf_recon_11_9_1_scLR_0/point_cloud/iteration_30000"
+    path_uncombined = path_recons_11_9_1
     path = os.path.join(path_uncombined, "point_cloud.ply")
     #is_3D = True
     is_3D = False
     export = True
     if is_3D: 
-        with open(path, 'rb') as file:
+        pass
+        """with open(path, 'rb') as file:
             plydata = PlyData.read(file)
 
             x = np.asarray(plydata['vertex'].data['x'])
@@ -34,13 +41,13 @@ def main():
             scaling = np.stack((scale_x, scale_y, scale_z), axis=1)
             #scaling = np.exp(scaling)
             #print(np.shape(exp_scaling))
-            """smallest_sc_arg = np.ndarray.argmin(exp_scaling, axis=1)
+            """"""smallest_sc_arg = np.ndarray.argmin(exp_scaling, axis=1)
             arg = np.zeros([np.shape(smallest_sc_arg)[0], 2], dtype=int)
             z = np.linspace(0, np.shape(smallest_sc_arg)[0]-1, np.shape(smallest_sc_arg)[0], dtype=int)
             arg[:,0] = z
             arg[:,1] = smallest_sc_arg[:]
             vector = np.zeros(np.shape(exp_scaling))
-            vector[arg[:,0], arg[:,1]] = 1"""
+            vector[arg[:,0], arg[:,1]] = 1""""""
             #print(smallest_sc_arg[0:100])
             #print(vector[0:100])
             print("dann")
@@ -75,11 +82,11 @@ def main():
             y = rot_2
             z = rot_3
 
-            """r = np.array([[1.0 - 2.0 * (y[:] * y[:] + z[:] * z[:]), 2.0 * (x[:] * y[:] - r[:] * z[:]), 2.0 * (x[:] * z[:] + r[:]* y[:])],
+            """"""r = np.array([[1.0 - 2.0 * (y[:] * y[:] + z[:] * z[:]), 2.0 * (x[:] * y[:] - r[:] * z[:]), 2.0 * (x[:] * z[:] + r[:]* y[:])],
                             [2.0 * (x[:] * y[:] + r[:] * z[:]), 1.0 - 2.0 * (x[:] * x[:] + z[:] * z[:]), 2.0 * (y[:] * z[:] - r[:] * x[:])],
                             [2.0 * (x[:] * z[:] - r[:] * y[:]), 2.0 * (y[:] * z[:] + r[:] * x[:]), 1.0 - 2.0 * (x[:] * x[:] + y[:] * y[:])]])
             r = np.swapaxes(r, 0, 2)
-            r = np.swapaxes(r, 1, 2)"""
+            r = np.swapaxes(r, 1, 2)""""""
 
             s = np.zeros([np.shape(scaling)[0], 3,3])
             s[:,0,0] = scaling[:,0]
@@ -114,12 +121,12 @@ def main():
             print(normals)
             
 
-            """normals = np.reshape(np.matmul(r.as_matrix(),  np.reshape(vector, [*np.shape(vector), 1])), [np.shape(vector)[0], 3])
+            """"""normals = np.reshape(np.matmul(r.as_matrix(),  np.reshape(vector, [*np.shape(vector), 1])), [np.shape(vector)[0], 3])
             print("here")
             print(np.shape(normals))
             #print(plydata['vertex'].data['x'])
             pcd = o3d.io.read_point_cloud(path)
-            pcd.normals = o3d.utility.Vector3dVector(normals)"""
+            pcd.normals = o3d.utility.Vector3dVector(normals)""""""
 
 
             pcd = o3d.io.read_point_cloud(path)
@@ -138,7 +145,7 @@ def main():
                 mesh_show_wireframe=True,
                 mesh_show_back_face=True,
                 point_show_normal=True,
-            )
+            )"""
     else:
         with open(path, 'rb') as file:
             plydata = PlyData.read(file)
@@ -164,10 +171,10 @@ def main():
 
             print(f"rot_: {r_np}")
 
-            #cross_array = np.cross(r_np[:,0], r_np[:,1])
+            cross_array = r_np * np.array([0,0,1])
 
 
-            s = np.zeros([np.shape(scaling)[0], 3,3])
+            """s = np.zeros([np.shape(scaling)[0], 3,3])
             s[:,0,0] = scaling[:,0]
             s[:,1,1] = scaling[:,1]
             
@@ -191,17 +198,17 @@ def main():
             arg_n = np.zeros([np.shape(eig_val)[0], 2], dtype=int)
             z = np.linspace(0, np.shape(eig_val)[0]-1, np.shape(eig_val)[0], dtype=int)
             arg_n[:,0] = z
-            arg_n[:,1] = min_arg[:]
+            arg_n[:,1] = min_arg[:]"""
 
             #print(eig_vec[0, arg_n[1,1]])
             print("normals")
-            normals = eig_vec[arg_n[:,0], arg_n[:,1]]
+            normals = cross_array#eig_vec[arg_n[:,0], arg_n[:,1]]
             print(normals)
 
             pcd = o3d.io.read_point_cloud(path)
             zeros = np.zeros(np.shape(normals))
             zeros = normals
-            zeros[0:500] = normals[0:500]
+            #zeros[0:500] = normals[0:500]
             pcd.normals = o3d.utility.Vector3dVector(zeros)
 
             """pcd_2 = o3d.io.read_point_cloud(path)

@@ -85,8 +85,9 @@ def main():
     path_virt_gastro_264000 = "intestine_short_texture_264000.ply"
     path_virt_gastro_66177 = "intestine_short_texture_colon_66177_1_10_1.ply"
     path_virt_gastro_16577 = "intestine_short_texture_anim_16577.ply"
+    path_anim_haustren_color = "4_colon_haustren_anim_text2_baked_color.ply"
 
-    object_name = path_subtriangles_2
+    object_name = path_anim_haustren
     path = os.path.join(current_dir, "data", object_name)
 
 

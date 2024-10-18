@@ -7,7 +7,7 @@ y1 = np.where((x < 0) | (x > 1), 0, 1 / ( 1 + np.exp(-10 * (x - 0.5))))
 
 y2 = np.where((x < 0) | (x > 1), 0, 1 / ( 1 + np.exp(-10 * (1 - x - 0.5))))
 
-plt.rcParams['font.size'] = 28
+plt.rcParams['font.size'] = 40
 #fig, axs = plt.subplots(2, 1, figsize=(10, 8))  # 2 Zeilen, 2 Spalten
 
 # Schritt 2: Plot in jedem Subplot
@@ -81,46 +81,46 @@ plt.show()"""
 
 
 equ1 = "$sig1 = \\frac{1}{1 + exp(-10 \cdot (x - 0.5))}$"
-plt.plot(x, y1, label=equ1, color='blue', linewidth=4)
+plt.plot(x, y1, label=equ1, color='blue', linewidth=7)
 #plt.title('First sigmoid-right side of the segment')
-plt.xlabel('x')
-plt.ylabel('f(x)')
-plt.legend(loc='upper left')
+plt.xlabel('t')
+plt.ylabel('f(t)')
+plt.legend(loc='upper left', fontsize=55)
 plt.grid()
 
 # Display the plot
 plt.show()
 
-equ2 = "$sig2 = \\frac{1}{1 + exp(-10 \cdot (1 - x - 0.5))}$"
-plt.plot(x, y2, label=equ2, color='orange',linewidth=4)
+equ2 = "$sig2=\\frac{1}{1 + exp(-10 \cdot (1 - x - 0.5))}$"
+plt.plot(x, y2, label=equ2, color='orange',linewidth=7)
 #plt.title('Second sigmoid-left side of the segment')
-plt.xlabel('x')
-plt.ylabel('f(x)')
-plt.legend(loc='upper right')
+plt.xlabel('t')
+plt.ylabel('f(t)')
+plt.legend(loc='upper right', fontsize=55)
 plt.grid()
 plt.show()
 
-plt.plot(x2, y2_1, label='sigmoid 1', color='blue', alpha=0.5, linewidth=4)
-plt.plot(x2, y2_2, label='sigmoid 2', color='orange', alpha=0.7, linewidth=4)
+plt.plot(x2, y2_1, label='sigmoid 1', color='blue', alpha=0.5, linewidth=7)
+plt.plot(x2, y2_2, label='sigmoid 2', color='orange', alpha=0.7, linewidth=7)
 #plt.title('Combination of both sigmoids')
-plt.xlabel('x')
-plt.ylabel('f(x)')
+plt.xlabel('t')
+plt.ylabel('f(t)')
 ticks = np.arange(0, 1.1, 0.1)  # Tick-Marken von 0 bis 10 mit einem Abstand von 1
 plt.xticks(ticks)
-plt.legend()
+plt.legend(fontsize=55)
 plt.grid()
 
 plt.show()
 
-plt.plot(x3, y3_1, label='sigmoid 1', color='blue', linewidth=4)
-plt.plot(x4, y3_2, label='sigmoid 2', color='orange', linewidth=4)
+plt.plot(x3, y3_1, label='sigmoid 1', color='blue', linewidth=7)
+plt.plot(x4, y3_2, label='sigmoid 2', color='orange', linewidth=7)
 #plt.set_title('Combination of both sigmoids - cleaned')
-plt.xlabel('x')
-plt.ylabel('f(x)')
+plt.xlabel('t')
+plt.ylabel('f(t)')
 ticks = np.arange(0, 1.1, 0.1)  # Tick-Marken von 0 bis 10 mit einem Abstand von 1
 plt.xticks(ticks)
 #axs2.tick_params(axis='both', labelsize=12)
-plt.legend()
+plt.legend(fontsize=55)
 plt.grid()
 #lt.rcParams['font.size'] = 22
 plt.show()

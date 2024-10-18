@@ -10,6 +10,7 @@ import open3d as o3d
 import numpy as np
 import geomdl
 import matplotlib.pyplot as plt
+import tracemalloc
 
 def plot_in_segments(pcd_data_np, t_on_line, min_distances, bspline):
     vis = o3d.visualization.Visualizer()
@@ -132,15 +133,6 @@ def plot_midline_as_pcd(pcd_data, midline, min_distances, b_spline):
         mesh_show_back_face=True,
     )
 
-def plot_with_texture(pcd_data, texture_path):
-    mat = o3d.visualization.rendering.MaterialRecord()
-    mat.shader = "defaultUnlit"
-    mat.albedo_img = o3d.io.read_image(texture_path)
-    print(mat.albedo_img)
-    print("here")
-
-    o3d.visualization.draw([{'name':'colon', 'geometry':pcd_data, "material": mat}])
-
 def main():
     current_dir = os.getcwd()
     # json file paths
@@ -178,8 +170,12 @@ def main():
     path_int_more_point_11_09_15_44 = os.path.join(current_dir,"output_main", "intestine_short_texture_anim_more_points__11-09-2024_15-44-21", "intestine_short_texture_anim_more_points__11-09-2024_15-44-21_json.json")
     path_intestine_14_10_265000 = os.path.join(current_dir, "output_main", "intestine_short_texture_264000__13-10-2024_15-34-22", "intestine_short_texture_264000__13-10-2024_15-34-22_json.json")
 
+    path_anim_haustren_color_16_10 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2_baked_color__16-10-2024_16-02-50", "4_colon_haustren_anim_text2_baked_color__16-10-2024_16-02-50_json.json")
+    path_colon_seg_compl_16_10 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__16-10-2024_17-11-49", "colon_segments_more_complicated__16-10-2024_17-11-49_json.json")
 
-    json_file_path = path_intestine_14_10_265000
+    tracemalloc.start()
+
+    json_file_path = path_anim_haustren_color_16_10
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 
@@ -217,9 +213,9 @@ def main():
         )"""
         print(f"Number of min Points: {np.shape(min_distances)[0]}")
         medial_axis_points = np.asarray(medial_axis_bspline.evalpts)
-        plot_midline_as_pcd(pcd_data, medial_axis_points, min_distances, medial_axis_bspline)
+        #plot_midline_as_pcd(pcd_data, medial_axis_points, min_distances, medial_axis_bspline)
 
-        plot_in_segments(np.asarray(pcd_data.points), t_on_line, min_distances, medial_axis_bspline)
+        #plot_in_segments(np.asarray(pcd_data.points), t_on_line, min_distances, medial_axis_bspline)
         # simulate motion
         #f_simulate_motion.tread_run(medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line)
         """f_simulate_motion.simulate_motion(
@@ -234,6 +230,14 @@ def main():
         f_simulate_motion_multiple.simulate_motion_parallel_2(
             medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
         )
+
+    snapshot = tracemalloc.take_snapshot()
+    top_stats = snapshot.statistics('lineno')
+
+    print("[ Top 10 Speicherverbrauchsstellen ]")
+    for stat in top_stats[:10]:
+        print(stat)
+
 
 
 if __name__ == "__main__":
