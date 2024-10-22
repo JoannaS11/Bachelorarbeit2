@@ -1,0 +1,50 @@
+{
+    "dir": [
+        "output_main",
+        "4_colon_haustren_anim_text2__21-10-2024_15-30-02"
+    ],
+    "data": [
+        "data",
+        "4_colon_haustren_anim_text2.ply"
+    ],
+    "additional_data": [],
+    "medial_axis_big_pcd": [
+        "21-10-2024_15-55-52__0.06273257519119511_0.000431281280478688_749_pcd_data_big_path.ply"
+    ],
+    "medial_axis_big_pcd_without_outlier": [
+        "21-10-2024_15-55-52__0.06273257519119511_0.000431281280478688_749_pcd_data_big_path_without_outlier.ply"
+    ],
+    "medial_axis_pcd": [
+        "21-10-2024_15-56-04_0.06273257519119511_min_path.ply"
+    ],
+    "medial_axis_spline": [
+        "21-10-2024_15-56-05_2_bSpline_medial_axis_4_colon_haustren_anim_text2.json"
+    ],
+    "t_on_line": [
+        "t_on_line",
+        "motion_arrays",
+        "22-10-2024_07-40-45_motion_info_arrays.npz"
+    ],
+    "vector_to_line": [
+        "vector_to_line",
+        "motion_arrays",
+        "22-10-2024_07-40-45_motion_info_arrays.npz"
+    ],
+    "vector_to_line_distances": [
+        "vector_to_line_distances",
+        "motion_arrays",
+        "22-10-2024_07-40-45_motion_info_arrays.npz"
+    ],
+    "min_distances_values": [
+        "local_mins",
+        "motion_arrays",
+        "22-10-2024_07-40-47_min_distances.npz"
+    ],
+    "length_spline": 1.3413742212348139,
+    "normals_to_inside": false,
+    "mini_residual": 749,
+    "mean_distance_point_to_point": 0.06273257519119511,
+    "distance_point_to_line": 0.000431281280478688,
+    "max_distance_min_tree": 0.048617745773176214,
+    "sample_size_bSpline": 2
+}
