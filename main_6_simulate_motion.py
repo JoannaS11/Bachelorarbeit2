@@ -5,6 +5,7 @@ import f_simulate_motion
 import f_simulate_motion_multiple
 import f_simulate_motion_multiple_peristaltic
 import f_simulate_motion_multiple_mass_movement
+import f_simulate_motion_peristalsis_without_min
 import os
 import open3d as o3d
 import numpy as np
@@ -173,9 +174,12 @@ def main():
     path_anim_haustren_color_16_10 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2_baked_color__16-10-2024_16-02-50", "4_colon_haustren_anim_text2_baked_color__16-10-2024_16-02-50_json.json")
     path_colon_seg_compl_16_10 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__16-10-2024_17-11-49", "colon_segments_more_complicated__16-10-2024_17-11-49_json.json")
 
+    path_colon_subtr_22_10 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__22-10-2024_08-19-37", "Colon_subtriangles_2__22-10-2024_08-19-37_json.json")
+    path_colon_intestine_22_10_265000 = os.path.join(current_dir, "output_main", "intestine_short_texture_264000__22-10-2024_07-52-39", "intestine_short_texture_264000__22-10-2024_07-52-39_json.json")
+    path_anim_haustrae_color_22_10 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2_baked_color__22-10-2024_10-42-30", "4_colon_haustren_anim_text2_baked_color__22-10-2024_10-42-30_json.json")
     tracemalloc.start()
 
-    json_file_path = path_anim_haustren_color_16_10
+    json_file_path = path_colon_subtr_22_10
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 
@@ -218,6 +222,7 @@ def main():
         #plot_in_segments(np.asarray(pcd_data.points), t_on_line, min_distances, medial_axis_bspline)
         # simulate motion
         #f_simulate_motion.tread_run(medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line)
+        f_simulate_motion_peristalsis_without_min.simulate_motion_parallel(pcd_data, vector_to_line, t_on_line)
         """f_simulate_motion.simulate_motion(
             medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
         )"""
