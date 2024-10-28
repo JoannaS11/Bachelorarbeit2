@@ -7,6 +7,8 @@ from typing import Union
 #from open3d import geometry.PointCloud
 #import open3d.geometry.PointCloud
 
+#https://gist.github.com/AlexPasqua/f34994a0b0f8ee33f8730d6e660d55b5
+
 
 def read_pcd(path: str) -> np.ndarray:
     """
@@ -47,9 +49,9 @@ def pcd_to_bin(pcd: Union[str, o3d.open3d.geometry.PointCloud, np.ndarray], out_
 
 
 
-path = "/home/yn86eniw/Documents/2020-VirtuellerDarm_Gastromapper_experiment/colmap8/points3D.ply"
+path = "/home/yn86eniw/2d-gaussian-splatting/data/perfect_recons_virt_col_mapper_3/distorted/sparse/0/points3D.ply"
 pcd = o3d.io.read_point_cloud(path)
-pcd_to_bin(pcd, "/home/yn86eniw/Documents/2020-VirtuellerDarm_Gastromapper_experiment/colmap8/points3D")
+pcd_to_bin("/home/yn86eniw/2d-gaussian-splatting/data/perfect_recons_virt_col_mapper_3/distorted/sparse/0/points3D.ply", "/home/yn86eniw/2d-gaussian-splatting/data/perfect_recons_virt_col_mapper_3/distorted/sparse/0/points3D.bin")
 #pcd = o3d.io.read_point_cloud(path)
 #
 # o3d.io.write_point_cloud("points3D.txt", pcd)

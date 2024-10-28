@@ -47,10 +47,13 @@ def main():
     path_sub_09_08_18_11 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__09-08-2024_18-11-41", "Colon_subtriangles_2__09-08-2024_18-11-41_json.json")
     path_haustren_09_08_15_22 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2__09-08-2024_15-28-28", "4_colon_haustren_anim_text2__09-08-2024_15-28-28_json.json")
     path_anim_haustren_color_16_10 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2_baked_color__16-10-2024_16-02-50", "4_colon_haustren_anim_text2_baked_color__16-10-2024_16-02-50_json.json")
-    
+    path_intestine_14_10_265000 = os.path.join(current_dir, "output_main", "intestine_short_texture_264000__13-10-2024_15-34-22", "intestine_short_texture_264000__13-10-2024_15-34-22_json.json")
+    path_int_more_point_11_09_15_44 = os.path.join(current_dir,"output_main", "intestine_short_texture_anim_more_points__11-09-2024_15-44-21", "intestine_short_texture_anim_more_points__11-09-2024_15-44-21_json.json")
+    path_sub_14_10 = os.path.join(current_dir, "output_main","Colon_subtriangles_2__14-10-2024_12-31-01", "Colon_subtriangles_2__14-10-2024_12-31-01_json.json")
+    path_intestine_14_10_265000 = os.path.join(current_dir, "output_main", "intestine_short_texture_264000__13-10-2024_15-34-22", "intestine_short_texture_264000__13-10-2024_15-34-22_json.json")
 
 
-    json_file_path = path_anim_haustren_color_16_10
+    json_file_path = path_intestine_14_10_265000
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
 
@@ -74,17 +77,7 @@ def main():
         t_on_line = motion_arrays['t_on_line']
         vector_to_line_distances = motion_arrays['vector_to_line_distances']
 
-        ###debugging ####
-        vector_to_line = motion_arrays['vector_to_line']
-    
-        visualize_vectors(np.asarray(pcd_data.points), vector_to_line, np.asarray(medial_axis_bspline.evalpts), medial_axis_bspline)
-
-        #########
-        
-        print("after import")
-
         # calculate min distances from points to spline
-        #bin_size = length_spline / 100
         bin_size = 1 / 200
         local_mins = find_min_distances_to_spline.find_min_distances(vector_to_line_distances, t_on_line, medial_axis_bspline, pcd_data, bin_size, length_spline)
         
@@ -92,7 +85,6 @@ def main():
         now = datetime.now()
         date_time = now.strftime("%d-%m-%Y_%H-%M-%S")
 
-        print(local_mins)
         name = f"{date_time}_min_distances.npz"
         np.savez(os.path.join(current_dir, dir_json, *t_on_line_path[:-1], name), local_mins=local_mins)
 

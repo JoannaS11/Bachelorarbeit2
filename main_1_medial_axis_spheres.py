@@ -119,9 +119,6 @@ def main():
 
         mini_residual = int(np.max([2, np.shape(zyl_points)[0] // 850]))
         input_liste["mini_residual"] = mini_residual
-        
-        
-        
 
         pcd_big_line, pcd_big_line_path,pcd_big_line_without, pcd_big_line_without_path, mean_distance_point_point, max_distance_point_to_line = find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, normals_to_inside, dir_name)
         input_liste["medial_axis_big_pcd"] = [pcd_big_line_path]
@@ -129,10 +126,7 @@ def main():
         input_liste["mean_distance_point_to_point"] = mean_distance_point_point
         input_liste["distance_point_to_line"] = max_distance_point_to_line
 
-        #plot_line_pcds(pcd_big_line_2, pcd_data)
-
         input_file.seek(0)
-        print(input_liste)
         json.dump(input_liste, input_file, indent=4)
 
 if __name__=="__main__": main()
