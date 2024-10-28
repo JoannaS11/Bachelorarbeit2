@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-plt.rcParams['font.size'] = 28
+plt.rcParams['font.size'] = 40
 b_low = 0.5
 mid = 0.6 
 b_high = 0.65
@@ -34,8 +34,8 @@ for i in range(np.shape(low)[0]):
 
     y2 = z * np.where((x4 > b_high), 0, 1 / ( 1 + np.exp(-10 * (1 - b_2*(x4 - mid) - 0.5))))
 
-    plt.plot(x3, y1, label="equ1", color='blue', linewidth=4)
-    plt.plot(x4, y2, label="equ1", color='blue', linewidth=4)
+    plt.plot(x3, y1, label="equ1", color='blue', linewidth=7)
+    plt.plot(x4, y2, label="equ1", color='blue', linewidth=7)
     z *= -1
 
 
@@ -69,8 +69,8 @@ for i in range(np.shape(low)[0]):
         y1 = np.zeros_like(x3)
         y2 = np.zeros_like(x4)
 
-    plt.plot(x3, y1, label="equ1", color='blue', linewidth=4)
-    plt.plot(x4, y2, label="equ1", color='blue', linewidth=4)
+    plt.plot(x3, y1, label="equ1", color='blue', linewidth=7)
+    plt.plot(x4, y2, label="equ1", color='blue', linewidth=7)
     z *= -1
 
 
@@ -102,8 +102,8 @@ for i in range(np.shape(low)[0]):
     y2 = z * np.where((x4 > b_high), 0, 1 / ( 1 + np.exp(-10 * (1 - b_2*(x4 - mid) - 0.5))))
 
 
-    plt.plot(x3, y1, label="equ1", color='blue', linewidth=4)
-    plt.plot(x4, y2, label="equ1", color='blue', linewidth=4)
+    plt.plot(x3, y1, label="equ1", color='blue', linewidth=7)
+    plt.plot(x4, y2, label="equ1", color='blue', linewidth=7)
     z *= -1
 
 
@@ -137,8 +137,8 @@ for i in range(np.shape(low)[0]):
         y1 = np.zeros_like(x3)
         y2 = np.zeros_like(x4)
 
-    plt.plot(x3, y1, label="equ1", color='blue', linewidth=4)
-    plt.plot(x4, y2, label="equ1", color='blue', linewidth=4)
+    plt.plot(x3, y1, label="equ1", color='blue', linewidth=7)
+    plt.plot(x4, y2, label="equ1", color='blue', linewidth=7)
     #z *= -1
 
 
@@ -176,8 +176,8 @@ for i in range(np.shape(low)[0]):
         y1 = np.zeros_like(x3)
         y2 = np.zeros_like(x4)
 
-    plt.plot(x3, y1, label="equ1", color='blue', linewidth=4)
-    plt.plot(x4, y2, label="equ1", color='blue', linewidth=4)
+    plt.plot(x3, y1, label="equ1", color='blue', linewidth=7)
+    plt.plot(x4, y2, label="equ1", color='blue', linewidth=7)
     #z *= -1
 
 
@@ -215,8 +215,8 @@ for i in range(np.shape(low)[0]):
         y1 = np.zeros_like(x3)
         y2 = np.zeros_like(x4)
 
-    plt.plot(x3, y1, label="equ1", color='blue', linewidth=4)
-    plt.plot(x4, y2, label="equ1", color='blue', linewidth=4)
+    plt.plot(x3, y1, label="equ1", color='blue', linewidth=7)
+    plt.plot(x4, y2, label="equ1", color='blue', linewidth=7)
     #z *= -1
 
 
@@ -250,8 +250,8 @@ for i in range(np.shape(low)[0]):
         y1 = np.zeros_like(x3)
         y2 = np.zeros_like(x4)
 
-    plt.plot(x3, y1, label="equ1", color='blue', linewidth=4)
-    plt.plot(x4, y2, label="equ1", color='blue', linewidth=4)
+    plt.plot(x3, y1, label="equ1", color='blue', linewidth=7)
+    plt.plot(x4, y2, label="equ1", color='blue', linewidth=7)
     #z *= -1
 
 
@@ -285,8 +285,8 @@ for i in range(np.shape(low)[0]):
         y1 = np.zeros_like(x3)
         y2 = np.zeros_like(x4)
 
-    plt.plot(x3, y1, label="equ1", color='blue', linewidth=4)
-    plt.plot(x4, y2, label="equ1", color='blue', linewidth=4)
+    plt.plot(x3, y1, label="equ1", color='blue', linewidth=7)
+    plt.plot(x4, y2, label="equ1", color='blue', linewidth=7)
     #z *= -1
 
 
@@ -320,8 +320,8 @@ for i in range(np.shape(low)[0]):
         y1 = np.zeros_like(x3)
         y2 = np.zeros_like(x4)
 
-    plt.plot(x3, y1, label="equ1", color='blue', linewidth=4)
-    plt.plot(x4, y2, label="equ1", color='blue', linewidth=4)
+    plt.plot(x3, y1, label="equ1", color='blue', linewidth=7)
+    plt.plot(x4, y2, label="equ1", color='blue', linewidth=7)
     #z *= -1
 
 
@@ -355,8 +355,8 @@ for i in range(np.shape(low)[0]):
         y1 = np.zeros_like(x3)
         y2 = np.zeros_like(x4)
 
-    plt.plot(x3, y1, label="equ1", color='blue', linewidth=4)
-    plt.plot(x4, y2, label="equ1", color='blue', linewidth=4)
+    plt.plot(x3, y1, label="equ1", color='blue', linewidth=7)
+    plt.plot(x4, y2, label="equ1", color='blue', linewidth=7)
     #z *= -1
 
 
@@ -394,8 +394,8 @@ for i in range(np.shape(low)[0]):
         y1 = np.zeros_like(x3)
         y2 = np.zeros_like(x4)
 
-    plt.plot(x3, y1, label="equ1", color='blue', linewidth=4)
-    plt.plot(x4, y2, label="equ1", color='blue', linewidth=4)
+    plt.plot(x3, y1, label="equ1", color='blue', linewidth=7)
+    plt.plot(x4, y2, label="equ1", color='blue', linewidth=7)
     #z *= -1
 
 
@@ -429,8 +429,8 @@ for i in range(np.shape(low)[0]):
         y1 = np.zeros_like(x3)
         y2 = np.zeros_like(x4)
 
-    plt.plot(x3, y1, label="equ1", color='blue', linewidth=4)
-    plt.plot(x4, y2, label="equ1", color='blue', linewidth=4)
+    plt.plot(x3, y1, label="equ1", color='blue', linewidth=7)
+    plt.plot(x4, y2, label="equ1", color='blue', linewidth=7)
     #z *= -1
 
 

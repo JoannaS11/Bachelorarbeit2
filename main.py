@@ -87,15 +87,9 @@ def main():
     path_virt_gastro_16577 = "intestine_short_texture_anim_16577.ply"
     path_anim_haustren_color = "4_colon_haustren_anim_text2_baked_color.ply"
 
-    object_name = path_anim_haustren
+    object_name = path_virt_gastro_16577
     path = os.path.join(current_dir, "data", object_name)
 
-
-    #path = "data_creation_process/colon_part_render0/point_cloud/iteration_30000/point_cloud_with_normals.ply"
-    #path = "/home/yn86eniw/2d-gaussian-splatting/output/40c271c0-5/point_cloud/iteration_50000/point_cloud_with_normals.ply"
-    #object_name = "point_cloud_with_normals.ply"
-
-    #load point clouds
     pcd_data = o3d.io.read_point_cloud(path)
 
     ################################# create directory to save results ###########################################
@@ -152,7 +146,7 @@ def main():
         mini_residual = int(np.max([2, np.shape(zyl_points)[0] // 850]))
         input_liste["mini_residual"] = mini_residual
 
-        print("vor find more centralized: ", datetime.now())
+        print("Before centralizing pcd: ", datetime.now())
 
         pcd_big_line, pcd_big_line_path,pcd_big_line_without, pcd_big_line_without_path, mean_distance_point_point, max_distance_point_to_line = find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, normals_to_inside, dir_name)
         input_liste["medial_axis_big_pcd"] = [pcd_big_line_path]
@@ -162,16 +156,15 @@ def main():
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 
-        print("medial line cloud done")
+        print("centralized pcd done")
 
     ########################## find minimum tree ###################################################################
         """ can break if pointcloud is not centralized enough!!! ->reaches max recursion depth in comparison"""
 
         # adjustable parameter
-        #max_distance = 0.4
         max_distance = input_liste["mean_distance_point_to_point"]
 
-        print("vor find medial axis: ", datetime.now())
+        print("Before finding medial axis: ", datetime.now())
        
         mid_line_pcd, mid_line_pcd_path, partial_factor_min_tree = find_min_tree(pcd_big_line, np.asarray(pcd_big_line.points), np.asarray(pcd_big_line_without.points), max_distance, dir_name)
         input_liste["medial_axis_pcd"] = [mid_line_pcd_path]
@@ -180,8 +173,6 @@ def main():
         json.dump(input_liste, input_file, indent=4)
 
         print("Find minimum path done")
-
-    ######################## centralize minimum tree ############################################################
 
     ######################### get bSpline #######################################################################
         data_name = input_liste["data"][-1]
@@ -201,10 +192,8 @@ def main():
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 
-        #print("get b_spline done")
-
         ############################ distances from points to spline ###########################################
-        print("vor distance from point to spline: ", datetime.now())
+        print("Before calculating distance to spline: ", datetime.now())
         # get distance of points to mid_line & return all arrays
         mean_distance_point_to_point = input_liste["mean_distance_point_to_point"]
         vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline_4(pcd_data, medial_axis_bspline, normals_to_inside, mean_distance_point_to_point)
@@ -229,16 +218,14 @@ def main():
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 
-        #print("get distances from points to spline done")
-
         ####################### min distances points to spline #################################################
         # calculate min distances from points to spline
-        print("vor local mins: ", datetime.now())
+        print("Before calculating local mins: ", datetime.now())
         t_on_line_path = input_liste["t_on_line"][1:]
 
-        bin_size = 1 / 300
+        bin_size = 1 / 200
         local_mins = find_min_distances_to_spline.find_min_distances(vector_to_line_distances, t_on_line, medial_axis_bspline, pcd_data, bin_size, length_spline, plot_on=False)
-        print("nach local min: ", datetime.now())
+        print("After calculating local mins: ", datetime.now())
         # export as npz
         now = datetime.now()
         date_time = now.strftime("%d-%m-%Y_%H-%M-%S")

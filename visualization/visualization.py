@@ -65,10 +65,11 @@ def plot_midline_as_pcd(pcd_data, midline, min_distances, b_spline):
     mat2.point_size=5
 
     mat3 = o3d.visualization.rendering.MaterialRecord()
-    mat3.base_color = [1, 0.64, 0.0, 0.8]
+    mat3.shader = "defaultLitTransparency"
+    mat3.base_color = [1, 0.64, 0.0, 1]
     mat3.point_size=10
 
-    o3d.visualization.draw([{'name':'colon', 'geometry':pcd_data, "material": mat},{'name': 'mid_line', 'geometry': midline_pcd, 'material':mat2}, {'name':'min_dist', 'geometry':min_distances_pcd,  'material':mat3}])
+    o3d.visualization.draw([{'name':'colon', 'geometry':pcd_data, "material": mat},{'name':'min_dist', 'geometry':min_distances_pcd,  'material':mat3}])
     pcd_data.paint_uniform_color([0.5,0.5,1])
     o3d.visualization.draw_geometries(
         [pcd_data],#, midline_pcd, min_distances_pcd],
@@ -90,7 +91,7 @@ def plot_midline_and_pcd(pcd_data, midline, b_spline):
     mat.point_size = 1
     mat.base_color = [0.0, 0.0, 1.0, 0.4]
     mat2 = o3d.visualization.rendering.MaterialRecord()
-    mat2.point_size=5
+    mat2.point_size=10
     midline_pcd.paint_uniform_color([0,0,0])
     #mat.albedo_img = o3d.io.read_image("../test_scripts/google_street.png")
     #pcd_data.material = mat
@@ -117,7 +118,7 @@ def plot_smaller_pcd_and_pcd(pcd_data, pcd_smaller):
     mat.point_size = 1
     mat.base_color = [0.0, 0.0, 1.0, 0.4]
     mat2 = o3d.visualization.rendering.MaterialRecord()
-    mat2.point_size=5
+    mat2.point_size=10
     midline_pcd.paint_uniform_color([0,0,0])
     #mat.albedo_img = o3d.io.read_image("../test_scripts/google_street.png")
     #pcd_data.material = mat
@@ -131,7 +132,7 @@ def plot_distances(t_on_line,vector_to_line_distances):
     #print(f" t_on {np.shape(pcd_colon)} and vector_to {np.shape(vector_to_line)}")
     ax = fig.add_subplot()
     ax.scatter(t_on_line[ :], vector_to_line_distances[:], color ='b', s = 400)
-    ax.set_xlabel('t')
+    ax.set_xlabel('x')
     ax.set_ylabel('distances')
     #ax.set_zlabel('z')
 
@@ -153,7 +154,7 @@ def plot_distances_min_cleaned(t_on_line, vector_to_line_distances, local_min):
     ax = fig.add_subplot()
     ax.scatter(t_vec_combined[:,0], t_vec_combined[:,1], color= 'b', s = 400)
     ax.scatter(local_min[:,0], local_min[:,1],color='orange', s = 400)
-    ax.set_xlabel('t')
+    ax.set_xlabel('x')
     ax.set_ylabel('distances')
     plt.show()
 
@@ -170,8 +171,12 @@ def main():
     path_sub_14_10 = os.path.join(current_dir, "output_main","Colon_subtriangles_2__14-10-2024_12-31-01", "Colon_subtriangles_2__14-10-2024_12-31-01_json.json")
     path_anim_haustren_color_16_10 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2_baked_color__16-10-2024_16-02-50", "4_colon_haustren_anim_text2_baked_color__16-10-2024_16-02-50_json.json")
     
+    path_colon_subtr_22_10 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__22-10-2024_08-19-37", "Colon_subtriangles_2__22-10-2024_08-19-37_json.json")
+    path_colon_intestine_22_10_265000 = os.path.join(current_dir, "output_main", "intestine_short_texture_264000__22-10-2024_07-52-39", "intestine_short_texture_264000__22-10-2024_07-52-39_json.json")
+    path_anim_haustrae_color_22_10 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2_baked_color__22-10-2024_10-42-30", "4_colon_haustren_anim_text2_baked_color__22-10-2024_10-42-30_json.json")
+    
 
-    json_file_path = path_anim_haustren_color_16_10
+    json_file_path = path_anim_haustren_14_10
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 

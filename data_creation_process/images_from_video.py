@@ -3,12 +3,12 @@ import os
 
 
 def main():
-    directory = "coloscopy_102"
-    video_name = '102_Endo_Colo_HD.mp4'
+    directory = "videos"
+    video_name = 'peristaltic_outside_anim_haustrae_22_10_without_min.mp4'
     down_sample = 5
 
     # if only part of the video should be processed
-    only_part_video = True
+    only_part_video = False
     fps = 50
     min_s = 11 * 60 + 44
     total_s = 12 * 60 + 0
@@ -16,7 +16,7 @@ def main():
 
     current_dir = os.getcwd()
     video_path = os.path.join(current_dir, 'data_creation_process', directory, video_name)
-    image_path = os.path.join(current_dir, 'data_creation_process', directory, "images")
+    image_path = os.path.join(current_dir, 'data_creation_process', directory, f"images_{video_name}")
     
     # create images directory
     if not os.path.exists(image_path):
@@ -30,7 +30,7 @@ def main():
         # capture frame
         ret, frame = cap.read()
 
-        print(frame_no)
+        #print(frame_no)
         # set frame no up
         frame_no += 1
         if only_part_video:   

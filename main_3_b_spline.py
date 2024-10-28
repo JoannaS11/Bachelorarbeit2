@@ -6,7 +6,6 @@ import numpy as np
 
 def convert_array_to_pcd(np_array, color = [0, 0, 1]):
     pcd = o3d.geometry.PointCloud()
-    #np_array = np.asarray(np_array)
     pcd.points = o3d.utility.Vector3dVector(np_array)
     pcd.paint_uniform_color(color)
 
