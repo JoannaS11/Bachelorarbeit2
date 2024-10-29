@@ -11,6 +11,7 @@ def convert_array_to_pcd(np_array, color = [0, 0, 1]):
 
     return pcd
 
+
 def plot_bSpline(line_bSpline, pcd_data):
     line_pcd = convert_array_to_pcd(np.asarray(line_bSpline.evalpts), [0,1,0])
     o3d.visualization.draw_geometries(
@@ -60,10 +61,6 @@ def main():
         line_bSpline = find_bSpline.get_bSpline(pcd_medial_axis, sample_size)
         file_name = find_bSpline.export_spline_as_json(line_bSpline, f"{sample_size}_bSpline_medial_axis_{data_name}", [dir_json])
         plot_bSpline(line_bSpline, pcd_data)
-
-
-
-
 
         length_spline = find_bSpline.get_spline_length(line_bSpline)
         # add file name to json file

@@ -44,6 +44,7 @@ def plot_in_segments(pcd_data_np, t_on_line, min_distances, bspline):
     vis.run()
     vis.destroy_window()
 
+
 def plot_in_segments(pcd_data_np, t_on_line, min_distances, bspline):
     vis = o3d.visualization.Visualizer()
     vis.create_window()
@@ -82,6 +83,7 @@ def plot_in_segments(pcd_data_np, t_on_line, min_distances, bspline):
             k+=1
     vis.run()
     vis.destroy_window()
+
 
 def convert_array_to_pcd(np_array, color):
     pcd = o3d.geometry.PointCloud()
@@ -124,6 +126,7 @@ def plot_midline_as_pcd(pcd_data, midline, min_distances, b_spline):
         mesh_show_wireframe=True,
         mesh_show_back_face=True,
     )
+
 
 def main():
     current_dir = os.getcwd()
@@ -212,7 +215,6 @@ def main():
         f_simulate_motion_multiple.simulate_motion_parallel_2(
             medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line, speed
         )
-
 
 
 if __name__ == "__main__":

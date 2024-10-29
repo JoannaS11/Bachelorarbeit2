@@ -10,26 +10,6 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 
 
-def visualize_vectors(pcd_data, vector_to_line, mid_line,b_spline):
-    fig = plt.figure()
-    print("hallo")
-    start_points = np.asarray(b_spline.evaluate_list(np.linspace(0,1,len(b_spline.knotvector) * 10)))
-    ax = fig.add_subplot(111, projection='3d')
-    ax.view_init(elev=0, azim=90, roll=0)
-
-    ax.quiver(pcd_data[8000:8050,0], pcd_data[8000:8050,1], pcd_data[8000:8050,2], vector_to_line[8000:8050,0], vector_to_line[8000:8050,1], vector_to_line[8000:8050,2], color='g', linewidth=1)
-    #ax.quiver(pcd_data[8000:9000,0], pcd_data[8000:9000,1], pcd_data[8000:9000,2], vector_to_line[8000:9000,0], vector_to_line[8000:9000,1], vector_to_line[8000:9000,2], color='g', linewidth=1)
-    #ax.quiver(pcd_colon[1000:,0], pcd_colon[1000:,1], pcd_colon[1000:,2], vector_to_line[1000:,0], vector_to_line[1000:,1], vector_to_line[1000:,2], color='b')
-    ax.scatter(start_points[:,0], start_points[:,1], start_points[:,2], color = 'r')
-    ax.scatter(mid_line[:,0], mid_line[:,1], mid_line[:,2], color = 'c')
-    #ax.scatter(pcd_colon[759,0],pcd_colon[759,1], pcd_colon[759,2], color = 'b')
-    #ax.scatter(l[0],l[1], l[2], color = 'b')
-    # Set the axis labels
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('z')
-    plt.show()
-
 def main():
     current_dir = os.getcwd()
     # json file paths
@@ -93,5 +73,6 @@ def main():
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
         print("after adding motion path to json file")
+
 
 if __name__=="__main__": main()

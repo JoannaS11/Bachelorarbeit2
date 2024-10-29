@@ -4,9 +4,7 @@ import open3d as o3d
 import scipy
 import math
 import scipy.interpolate
-import geomdl.fitting
 from datetime import datetime
-from sklearn.neighbors import NearestNeighbors
 from tqdm.autonotebook import tqdm
 
 
@@ -80,7 +78,11 @@ def find_line(pcd_np, pcd_np_without_outlier, mean_thickness):
     adj_matr = {
         0: np.zeros([p_number, np.shape(pcd_np)[0], np.shape(pcd_np)[0]]),
         1: np.zeros(
-            [p_number, np.shape(pcd_np_without_outlier)[0], np.shape(pcd_np_without_outlier)[0]]
+            [
+                p_number,
+                np.shape(pcd_np_without_outlier)[0],
+                np.shape(pcd_np_without_outlier)[0],
+            ]
         ),
     }
 
@@ -132,7 +134,9 @@ def find_line(pcd_np, pcd_np_without_outlier, mean_thickness):
     # search for longest overall path
     longest_path = np.argwhere(path_lengths == np.max(path_lengths))[0]
     mid_line = np.flip(
-        data[longest_path[0]][path_indexes_collection[f"{longest_path[0]}{longest_path[1]}"]],
+        data[longest_path[0]][
+            path_indexes_collection[f"{longest_path[0]}{longest_path[1]}"]
+        ],
         axis=0,
     )
 

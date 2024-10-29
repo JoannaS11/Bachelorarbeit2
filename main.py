@@ -34,19 +34,6 @@ def find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, norm
     name_with = export_pcd_as_ply(pcd_big_line_with, dir_name, f"_{mean_distance_point_point}_{mean_distance_point_to_line}_{mini_residual}_pcd_data_big_path")
     name_without = export_pcd_as_ply(pcd_big_line_without, dir_name, filename)
 
-    """colors_2 = np.asarray(pcd_big_line_2.colors)
-    colors_2[0:100] = [0,0,0]
-    colors_2[100:] = [1,0,1]
-
-    pcd_big_line_2.colors = o3d.utility.Vector3dVector(colors_2)
-    pcd_data.paint_uniform_color([1,1,0])
-
-    # visualize
-    o3d.visualization.draw_geometries([pcd_data, pcd_big_line_2],
-        mesh_show_wireframe = True,
-        mesh_show_back_face = True,
-        point_show_normal = True
-    )"""
     return pcd_big_line_with, name_with, pcd_big_line_without, name_without, mean_distance_point_point, mean_distance_point_to_line
 
 
@@ -61,9 +48,6 @@ def find_min_tree(pcd_big_line_2, pcd_data_np, pcd_data_np_without_outlier, max_
     # color pcd_data
     mid_line_pcd.paint_uniform_color([1,0,0])
     pcd_big_line_2.paint_uniform_color([0, 1, 0])
-
-    # visualize
-    #o3d.visualization.draw_geometries([pcd_big_line_2, mid_line_pcd], mesh_show_wireframe = True, mesh_show_back_face = True, point_show_normal = True)
 
     return mid_line_pcd, name, partial_factor_min_tree
 

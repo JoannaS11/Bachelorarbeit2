@@ -22,6 +22,7 @@ def plot_vectors(pcd_colon, vector_to_line):
 
     plt.show()
 
+
 def plot_3d(vector_to_line, pcd_data, mid_line):
 
     fig = plt.figure()
@@ -45,6 +46,7 @@ def plot_3d(vector_to_line, pcd_data, mid_line):
     ax.set_zlabel('z')
     plt.show()
 
+
 def convert_array_to_pcd(np_array, color = [0, 0, 1]):
     pcd = o3d.geometry.PointCloud()
     #np_array = np.asarray(np_array)
@@ -52,6 +54,7 @@ def convert_array_to_pcd(np_array, color = [0, 0, 1]):
     pcd.paint_uniform_color(color)
 
     return pcd
+
 
 def main():
     current_dir = os.getcwd()
@@ -76,7 +79,6 @@ def main():
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
 
-
         # extract data from json file
         dir_json = os.path.join (*input_liste["dir"])
         data_path = os.path.join(current_dir, *input_liste["data"])
@@ -100,7 +102,6 @@ def main():
         if not os.path.exists(os.path.join(os.getcwd(), dir_json, folder_name)):
             os.mkdir(os.path.join(dir_json, folder_name))
         
-        
         # export as npz
         now = datetime.now()
         date_time = now.strftime("%d-%m-%Y_%H-%M-%S")
@@ -115,5 +116,6 @@ def main():
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
         print("after adding motion path to json file")
+
 
 if __name__=="__main__": main()

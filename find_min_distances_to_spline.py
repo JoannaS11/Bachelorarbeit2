@@ -14,7 +14,7 @@ def find_min_distances(
     length_spline,
     plot_on=True,
 ):
-    
+
     t_vec_combined = np.c_[t_on_line, vector_to_line_distances]
 
     if plot_on:
@@ -106,8 +106,8 @@ def create_bins_find_local_mins(t_vec_combined, bin_size, length_spline, plot_on
 
 def get_closest_point_on_spline_4(
     pcd, bSpline, normals_to_inside, mean_distance_point_to_point, plot_on=True
-):  
-    """ This function chooses closest point on spline as the corresponding point, ignoring the normal direction"""
+):
+    """This function chooses closest point on spline as the corresponding point, ignoring the normal direction"""
     # get data
     bSpline.evaluate()
     points = np.asarray(pcd.points)
@@ -132,7 +132,7 @@ def get_closest_point_on_spline_4(
 
         # sort distances from start points to current point
         max_dist_sorted = np.argsort(dist)
-        
+
         # vector from point to closest point on spline
         t_old = t_start[max_dist_sorted[0]]
         vector = bSpline.evaluate_single(t_old) - p
