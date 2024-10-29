@@ -13,6 +13,7 @@ def export_pcd_as_ply(pcd, path, output_name_without_ply):
     o3d.io.write_point_cloud(os.path.join(path, f"{date_time}_{output_name_without_ply}.ply"), pcd)
     return name
 
+
 def find_min_tree(medial_axis_big_pcd, pcd_data_np, pcd_data_without_outlier, max_distance, path, plot_on=True):
     # find line pcd_data
     mid_line_pcd, partial_factor_min_tree = find_minimun_tree.find_line(pcd_data_np, pcd_data_without_outlier, max_distance)
@@ -30,6 +31,7 @@ def find_min_tree(medial_axis_big_pcd, pcd_data_np, pcd_data_without_outlier, ma
         o3d.visualization.draw_geometries([medial_axis_big_pcd, mid_line_pcd], mesh_show_wireframe = True, mesh_show_back_face = True, point_show_normal = True)
 
     return mid_line_pcd, name, partial_factor_min_tree
+
 
 def main():
     current_dir = os.getcwd()

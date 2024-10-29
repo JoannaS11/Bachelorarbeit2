@@ -1,0 +1,50 @@
+{
+    "dir": [
+        "output_main",
+        "intestine_short_texture_colon_66177_1_10_1__14-10-2024_09-21-42"
+    ],
+    "data": [
+        "data",
+        "intestine_short_texture_colon_66177_1_10_1.ply"
+    ],
+    "additional_data": [],
+    "medial_axis_big_pcd": [
+        "14-10-2024_09-24-38__1.9298744993258599_0.03014618442119103_78_pcd_data_big_path.ply"
+    ],
+    "medial_axis_big_pcd_without_outlier": [
+        "14-10-2024_09-24-38__1.9298744993258599_0.03014618442119103_78_pcd_data_big_path_without_outlier.ply"
+    ],
+    "medial_axis_pcd": [
+        "14-10-2024_09-25-42_1.9298744993258599_min_path.ply"
+    ],
+    "medial_axis_spline": [
+        "14-10-2024_09-25-42_2_bSpline_medial_axis_intestine_short_texture_colon_66177_1_10_1.json"
+    ],
+    "t_on_line": [
+        "t_on_line",
+        "motion_arrays",
+        "14-10-2024_09-27-35_motion_info_arrays.npz"
+    ],
+    "vector_to_line": [
+        "vector_to_line",
+        "motion_arrays",
+        "14-10-2024_09-27-35_motion_info_arrays.npz"
+    ],
+    "vector_to_line_distances": [
+        "vector_to_line_distances",
+        "motion_arrays",
+        "14-10-2024_09-27-35_motion_info_arrays.npz"
+    ],
+    "min_distances_values": [
+        "local_mins",
+        "motion_arrays",
+        "14-10-2024_09-27-35_min_distances.npz"
+    ],
+    "length_spline": 17.954698767227757,
+    "normals_to_inside": false,
+    "mini_residual": 78,
+    "mean_distance_point_to_point": 1.9298744993258599,
+    "distance_point_to_line": 0.03014618442119103,
+    "max_distance_min_tree": 1.2061715620786624,
+    "sample_size_bSpline": 2
+}

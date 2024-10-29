@@ -34,19 +34,6 @@ def find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, norm
     name_with = export_pcd_as_ply(pcd_big_line_with, dir_name, f"_{mean_distance_point_point}_{mean_distance_point_to_line}_{mini_residual}_pcd_data_big_path")
     name_without = export_pcd_as_ply(pcd_big_line_without, dir_name, filename)
 
-    """colors_2 = np.asarray(pcd_big_line_2.colors)
-    colors_2[0:100] = [0,0,0]
-    colors_2[100:] = [1,0,1]
-
-    pcd_big_line_2.colors = o3d.utility.Vector3dVector(colors_2)
-    pcd_data.paint_uniform_color([1,1,0])
-
-    # visualize
-    o3d.visualization.draw_geometries([pcd_data, pcd_big_line_2],
-        mesh_show_wireframe = True,
-        mesh_show_back_face = True,
-        point_show_normal = True
-    )"""
     return pcd_big_line_with, name_with, pcd_big_line_without, name_without, mean_distance_point_point, mean_distance_point_to_line
 
 
@@ -61,9 +48,6 @@ def find_min_tree(pcd_big_line_2, pcd_data_np, pcd_data_np_without_outlier, max_
     # color pcd_data
     mid_line_pcd.paint_uniform_color([1,0,0])
     pcd_big_line_2.paint_uniform_color([0, 1, 0])
-
-    # visualize
-    #o3d.visualization.draw_geometries([pcd_big_line_2, mid_line_pcd], mesh_show_wireframe = True, mesh_show_back_face = True, point_show_normal = True)
 
     return mid_line_pcd, name, partial_factor_min_tree
 
@@ -81,11 +65,15 @@ def main():
     path_intestine_short_texture_anim = "intestine_short_texture_anim.ply"
     path_subtriangles_2 = "Colon_subtriangles_2.ply"
     path_anim_haustren = "4_colon_haustren_anim_text2.ply"
+    path_virt_gastro_1057280 = "intestine_short_texture_anim_more_points.ply"
+    path_virt_gastro_264000 = "intestine_short_texture_264000.ply"
+    path_virt_gastro_66177 = "intestine_short_texture_colon_66177_1_10_1.ply"
+    path_virt_gastro_16577 = "intestine_short_texture_anim_16577.ply"
+    path_anim_haustren_color = "4_colon_haustren_anim_text2_baked_color.ply"
 
-    object_name = path_subtriangles_2
+    object_name = path_virt_gastro_16577
     path = os.path.join(current_dir, "data", object_name)
 
-    #load point clouds
     pcd_data = o3d.io.read_point_cloud(path)
 
     ################################# create directory to save results ###########################################
@@ -121,6 +109,8 @@ def main():
     else:
         raise Exception("wrong input- insert either y or n")
     
+    print(f"model {object_name} with {np.shape(zyl_points)[0]}")
+    
     with open(json_file_path, 'r+') as input_file:
         input_liste = json.load(input_file)
 
@@ -140,6 +130,8 @@ def main():
         mini_residual = int(np.max([2, np.shape(zyl_points)[0] // 850]))
         input_liste["mini_residual"] = mini_residual
 
+        print("Before centralizing pcd: ", datetime.now())
+
         pcd_big_line, pcd_big_line_path,pcd_big_line_without, pcd_big_line_without_path, mean_distance_point_point, max_distance_point_to_line = find_smaller_pcd_data(pcd_data, zyl_points, zyl_normals, mini_residual, normals_to_inside, dir_name)
         input_liste["medial_axis_big_pcd"] = [pcd_big_line_path]
         input_liste["medial_axis_big_pcd_without_outlier"] = [pcd_big_line_without_path]
@@ -148,14 +140,15 @@ def main():
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 
-        print("medial line cloud done")
+        print("centralized pcd done")
 
     ########################## find minimum tree ###################################################################
         """ can break if pointcloud is not centralized enough!!! ->reaches max recursion depth in comparison"""
 
         # adjustable parameter
-        #max_distance = 0.4
         max_distance = input_liste["mean_distance_point_to_point"]
+
+        print("Before finding medial axis: ", datetime.now())
        
         mid_line_pcd, mid_line_pcd_path, partial_factor_min_tree = find_min_tree(pcd_big_line, np.asarray(pcd_big_line.points), np.asarray(pcd_big_line_without.points), max_distance, dir_name)
         input_liste["medial_axis_pcd"] = [mid_line_pcd_path]
@@ -164,8 +157,6 @@ def main():
         json.dump(input_liste, input_file, indent=4)
 
         print("Find minimum path done")
-
-    ######################## centralize minimum tree ############################################################
 
     ######################### get bSpline #######################################################################
         data_name = input_liste["data"][-1]
@@ -185,11 +176,11 @@ def main():
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 
-        print("get b_spline done")
-
         ############################ distances from points to spline ###########################################
+        print("Before calculating distance to spline: ", datetime.now())
         # get distance of points to mid_line & return all arrays
-        vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline(pcd_data, medial_axis_bspline, normals_to_inside)
+        mean_distance_point_to_point = input_liste["mean_distance_point_to_point"]
+        vector_to_line, t_on_line, vector_to_line_distances = find_min_distances_to_spline.get_closest_point_on_spline_4(pcd_data, medial_axis_bspline, normals_to_inside, mean_distance_point_to_point)
 
         # create dir if it doesn't already exist
         folder_name = "motion_arrays"
@@ -211,15 +202,14 @@ def main():
         input_file.seek(0)
         json.dump(input_liste, input_file, indent=4)
 
-        print("get distances from points to spline done")
-
         ####################### min distances points to spline #################################################
         # calculate min distances from points to spline
+        print("Before calculating local mins: ", datetime.now())
         t_on_line_path = input_liste["t_on_line"][1:]
 
-        bin_size = 1 / 300
+        bin_size = 1 / 200
         local_mins = find_min_distances_to_spline.find_min_distances(vector_to_line_distances, t_on_line, medial_axis_bspline, pcd_data, bin_size, length_spline, plot_on=False)
-        
+        print("After calculating local mins: ", datetime.now())
         # export as npz
         now = datetime.now()
         date_time = now.strftime("%d-%m-%Y_%H-%M-%S")

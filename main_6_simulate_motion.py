@@ -1,8 +1,10 @@
 import json
 import geomdl.BSpline
 import geomdl.exchange
-import f_simulate_motion
-import f_simulate_motion_multiple
+import f_simulate_motion_multiple as f_simulate_motion_multiple
+import f_simulate_motion_multiple_peristaltic
+import f_simulate_motion_multiple_mass_movement
+import f_simulate_motion_peristalsis_without_min
 import os
 import open3d as o3d
 import numpy as np
@@ -41,9 +43,7 @@ def plot_in_segments(pcd_data_np, t_on_line, min_distances, bspline):
             k+=1
     vis.run()
     vis.destroy_window()
-    #vis.poll_events()
-    #vis.update_geometry(pcd_colon)
-    #vis.update_renderer()
+
 
 def plot_in_segments(pcd_data_np, t_on_line, min_distances, bspline):
     vis = o3d.visualization.Visualizer()
@@ -72,7 +72,7 @@ def plot_in_segments(pcd_data_np, t_on_line, min_distances, bspline):
 
             k+=1
         else:
-            t_smaller_arg = np.argwhere(((t_on_line > (min_distances[i,0] - 0.5 * (min_distances[i,0]- min_distances[i-1,0]))) & (t_on_line < min_distances[i,0])))
+            t_smaller_arg = np.argwhere(((t_on_line >= (min_distances[i,0] - 0.5 * (min_distances[i,0]- min_distances[i-1,0]))) & (t_on_line < min_distances[i,0])))
             t_bigger_arg = np.argwhere (((t_on_line <= min_distances[i,0] + 0.5 * (min_distances[i + 1,0] - min_distances[i,0])) & (t_on_line >= min_distances[i,0])))
 
 
@@ -84,10 +84,9 @@ def plot_in_segments(pcd_data_np, t_on_line, min_distances, bspline):
     vis.run()
     vis.destroy_window()
 
+
 def convert_array_to_pcd(np_array, color):
     pcd = o3d.geometry.PointCloud()
-    #print(color)
-    #np_array = np.asarray(np_array)
     pcd.points = o3d.utility.Vector3dVector(np_array)
     pcd.paint_uniform_color(color)
 
@@ -114,9 +113,7 @@ def plot_midline_as_pcd(pcd_data, midline, min_distances, b_spline):
     midline_pcd = convert_array_to_pcd(np.asarray(midline), [0, 0, 0])
     min_points = b_spline.evaluate_list(min_distances[:, 0])
     min_distances_pcd = convert_array_to_pcd(np.asarray(min_points), [1, 0, 0])
-    #pcd_data.points = pcd_data.points[0:300]
 
-    #pcd_data.shader = "defaultLitTransparency"
     o3d.visualization.draw_geometries(
         [pcd_data, midline_pcd, min_distances_pcd],
         mesh_show_wireframe=True,
@@ -130,14 +127,6 @@ def plot_midline_as_pcd(pcd_data, midline, min_distances, b_spline):
         mesh_show_back_face=True,
     )
 
-def plot_with_texture(pcd_data, texture_path):
-    mat = o3d.visualization.rendering.MaterialRecord()
-    mat.shader = "defaultUnlit"
-    mat.albedo_img = o3d.io.read_image(texture_path)
-    print(mat.albedo_img)
-    print("here")
-
-    o3d.visualization.draw([{'name':'colon', 'geometry':pcd_data, "material": mat}])
 
 def main():
     current_dir = os.getcwd()
@@ -171,9 +160,19 @@ def main():
     path_anim_haustren_09_08_15_28 = os.path.join(current_dir, "output_main","4_colon_haustren_anim_text2__09-08-2024_15-28-28","4_colon_haustren_anim_text2__09-08-2024_15-28-28_json.json")
     path_sub_09_08_18_11 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__09-08-2024_18-11-41", "Colon_subtriangles_2__09-08-2024_18-11-41_json.json")
     path_haustren_09_08_15_22 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2__09-08-2024_15-28-28", "4_colon_haustren_anim_text2__09-08-2024_15-28-28_json.json")
+    path_virt_col_more_points = os.path.join(current_dir, "output_main", "intestine_short_texture_anim_more_points__03-09-2024_08-04-35", "intestine_short_texture_anim_more_points__03-09-2024_08-04-35_json.json")
 
+    path_int_more_point_11_09_15_44 = os.path.join(current_dir,"output_main", "intestine_short_texture_anim_more_points__11-09-2024_15-44-21", "intestine_short_texture_anim_more_points__11-09-2024_15-44-21_json.json")
+    path_intestine_14_10_265000 = os.path.join(current_dir, "output_main", "intestine_short_texture_264000__13-10-2024_15-34-22", "intestine_short_texture_264000__13-10-2024_15-34-22_json.json")
 
-    json_file_path = path_haustren_09_08_15_22
+    path_anim_haustren_color_16_10 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2_baked_color__16-10-2024_16-02-50", "4_colon_haustren_anim_text2_baked_color__16-10-2024_16-02-50_json.json")
+    path_colon_seg_compl_16_10 = os.path.join(current_dir, "output_main", "colon_segments_more_complicated__16-10-2024_17-11-49", "colon_segments_more_complicated__16-10-2024_17-11-49_json.json")
+
+    path_colon_subtr_22_10 = os.path.join(current_dir, "output_main", "Colon_subtriangles_2__22-10-2024_08-19-37", "Colon_subtriangles_2__22-10-2024_08-19-37_json.json")
+    path_colon_intestine_22_10_265000 = os.path.join(current_dir, "output_main", "intestine_short_texture_264000__22-10-2024_07-52-39", "intestine_short_texture_264000__22-10-2024_07-52-39_json.json")
+    path_anim_haustrae_color_22_10 = os.path.join(current_dir, "output_main", "4_colon_haustren_anim_text2_baked_color__22-10-2024_10-42-30", "4_colon_haustren_anim_text2_baked_color__22-10-2024_10-42-30_json.json")
+
+    json_file_path = path_colon_subtr_22_10
     with open(json_file_path, "r+") as input_file:
         input_liste = json.load(input_file)
 
@@ -199,30 +198,22 @@ def main():
         vector_to_line_distances = motion_arrays["vector_to_line_distances"]
         min_distances = np.load(os.path.join(current_dir, dir_json, *local_min_path))
         min_distances = min_distances["local_mins"]
-        #print(vector_to_line_distances[0:300])
-        #print(min_distances)
         
         print("after import")
-        #print(pcd_data.st)
-        #texture_path = os.path.join(current_dir, "Textures", "texture_anim_haustren.png")
-        #plot_with_texture(pcd_data, texture_path)
-
-        # show the different results
-        """plot_midline_distances(
-            pcd_data.points, medial_axis_bspline.evalpts, min_distances
-        )"""
-        print(f"Number of min Points: {np.shape(min_distances)[0]}")
-        medial_axis_points = np.asarray(medial_axis_bspline.evalpts)
-        plot_midline_as_pcd(pcd_data, medial_axis_points, min_distances, medial_axis_bspline)
-
         plot_in_segments(np.asarray(pcd_data.points), t_on_line, min_distances, medial_axis_bspline)
-        # simulate motion
-        #f_simulate_motion.tread_run(medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line)
-        """f_simulate_motion.simulate_motion(
-            medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
-        )"""
+
+        speed = 0.01
+        reverse = False
+
+        #f_simulate_motion_peristalsis_without_min.simulate_motion_parallel(pcd_data, vector_to_line, t_on_line)
+        f_simulate_motion_multiple_mass_movement.simulate_motion_parallel_2(
+            medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line, speed, reverse
+        )
+        f_simulate_motion_multiple_peristaltic.simulate_motion_parallel_2(
+            medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line, speed
+        )
         f_simulate_motion_multiple.simulate_motion_parallel_2(
-            medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line
+            medial_axis_bspline, pcd_data, min_distances, vector_to_line, t_on_line, speed
         )
 
 
