@@ -38,7 +38,7 @@
     "min_distances_values": [
         "local_mins",
         "motion_arrays",
-        "28-10-2024_14-14-23_min_distances.npz"
+        "02-11-2024_10-44-09_min_distances.npz"
     ],
     "length_spline": 17.96520732549938,
     "normals_to_inside": false,

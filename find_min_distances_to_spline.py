@@ -68,12 +68,15 @@ def create_bins_find_local_mins(t_vec_combined, bin_size, length_spline, plot_on
             )
         )
         if len(bin_arg) == 0:
+            min_bin_arg[b_s] = -1
             continue
 
         min_bin = np.argmin(t_vec_combined[bin_arg[:], 1])
         min_t = (t_vec_combined[bin_arg[:], 0])[min_bin]
         min_bin_arg[b_s] = np.argwhere(t_vec_combined[:, 0] == min_t)[0]
 
+    min_bin_arg_wrong = np.argwhere(min_bin_arg == [-1])
+    min_bin_arg = np.delete(min_bin_arg, min_bin_arg_wrong, axis=0)
     min_bin_arg_int = min_bin_arg.astype(int)
     min_bins = t_vec_combined[min_bin_arg_int]
     min_distances_vector = t_vec_combined[min_bin_arg_int, 1]
